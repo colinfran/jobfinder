@@ -2,7 +2,7 @@
 import React, { FC, useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 
-export const AuthError:FC = () => {
+export const AuthError: FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const searchParams = useSearchParams()
   const router = useRouter()
