@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FC, useState } from "react"
+import React, { FC, Suspense, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
@@ -43,7 +43,9 @@ const Page: FC = () => {
 
         <CardFooter className="flex flex-col">
           {/* Display authentication errors */}
-          <AuthError />
+          <Suspense fallback={null}>
+            <AuthError />
+          </Suspense>
 
           <Button
             className="flex w-full cursor-pointer gap-2"
