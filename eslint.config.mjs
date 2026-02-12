@@ -26,6 +26,7 @@ export default tseslint.config(
       "./next-env.d.ts",
       "./public/*",
       "./lib/config/search-queries.ts",
+      "./scripts/**",
     ],
   },
   js.configs.recommended,

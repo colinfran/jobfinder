@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 import "./globals.css"
 import { FC } from "react"
@@ -37,61 +38,52 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
 
         <title>Job Scraper | AI Powered Job Search Aggregator</title>
 
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Job Scraper" />
-        <meta name="author" content="Job Scraper" />
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="yes" name="mobile-web-app-capable" />
+        <meta content="default" name="apple-mobile-web-app-status-bar-style" />
+        <meta content="Job Scraper" name="apple-mobile-web-app-title" />
+        <meta content="Job Scraper" name="author" />
 
         {/* SEO Meta Tags */}
         <meta
-          name="description"
           content="Job Scraper is an AI powered job search aggregator that automatically discovers and extracts job listings from multiple platforms using Google Search and intelligent parsing. Track applications, manage deadlines, and never miss an opportunity."
+          name="description"
         />
         <meta
-          name="keywords"
           content="job scraper, job search aggregator, AI job search, job listing scraper, application tracker, job board aggregator, tech jobs, remote jobs, Google job search automation"
+          name="keywords"
         />
-        <meta name="robots" content="index, follow" />
+        <meta content="index, follow" name="robots" />
 
         {/* Open Graph Meta Tags */}
-        <meta property="og:type" content="website" />
+        <meta content="website" property="og:type" />
+        <meta content="Job Scraper | AI Powered Job Search Aggregator" property="og:title" />
         <meta
-          property="og:title"
-          content="Job Scraper | AI Powered Job Search Aggregator"
-        />
-        <meta
-          property="og:description"
           content="Automatically scrape and aggregate job listings from multiple platforms using AI. Manage applications, track deadlines, and centralize your job search in one dashboard."
+          property="og:description"
         />
-        <meta property="og:url" content="https://jobfinder.dev" />
-        <meta property="og:image" content="https://jobfinder.dev/og-image.jpg" />
+        <meta content="https://jobfinder.dev" property="og:url" />
+        <meta content="https://jobfinder.dev/og-image.jpg" property="og:image" />
         <meta
-          property="og:image:alt"
           content="Dashboard view of Job Scraper aggregating job listings"
+          property="og:image:alt"
         />
-        <meta property="og:site_name" content="Job Scraper" />
+        <meta content="Job Scraper" property="og:site_name" />
 
         {/* Twitter Card Meta Tags */}
-        <meta name="twitter:card" content="summary_large_image" />
+        <meta content="summary_large_image" name="twitter:card" />
+        <meta content="Job Scraper | AI Powered Job Search Aggregator" name="twitter:title" />
         <meta
-          name="twitter:title"
-          content="Job Scraper | AI Powered Job Search Aggregator"
-        />
-        <meta
-          name="twitter:description"
           content="AI powered job search aggregator that scrapes listings, extracts details, and helps you track applications and deadlines in one place."
+          name="twitter:description"
         />
+        <meta content="https://jobfinder.dev/og-image.jpg" name="twitter:image" />
         <meta
-          name="twitter:image"
-          content="https://jobfinder.dev/og-image.jpg"
-        />
-        <meta
-          name="twitter:image:alt"
           content="Job Scraper dashboard showing aggregated job listings"
+          name="twitter:image:alt"
         />
 
-        <link rel="canonical" href="https://jobfinder.dev" />
+        <link href="https://jobfinder.dev" rel="canonical" />
         <link href="/manifest.json" rel="manifest" />
       </head>
 
@@ -102,10 +94,12 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
           disableTransitionOnChange
           enableSystem
         >
+          <TooltipProvider>
             <div className="flex flex-col sm:gap-4 sm:px-7 sm:py-4">
               <Header />
               <main className="flex-1 items-start gap-2 md:gap-4">{children}</main>
             </div>
+          </TooltipProvider>
         </ThemeProvider>
         <Analytics />
       </body>
@@ -113,5 +107,4 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
   )
 }
 
-export default RootLayout;
-
+export default RootLayout

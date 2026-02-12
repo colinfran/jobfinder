@@ -1,5 +1,5 @@
 "use client"
-import React, { FC, useEffect, useState } from "react"
+import React, { FC, useState } from "react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,13 +8,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
-import { Bell, DollarSignIcon, HomeIcon, InfoIcon } from "lucide-react"
+import { HomeIcon, InfoIcon } from "lucide-react"
 import ThemeButton from "./theme-button"
 import MenuButton from "./menu-button"
 
 const HeaderDropdown: FC = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [isStandalone, setIsStandalone] = useState(false)
 
   return (
     <div className="flex w-full items-center justify-end gap-8">

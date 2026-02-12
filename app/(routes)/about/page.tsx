@@ -33,9 +33,9 @@ const Page: FC = async () => {
             <h3 className="text-lg font-semibold mb-2">How It Works</h3>
             <p className="text-muted-foreground leading-relaxed">
               The system uses Google Search via the Serper API to discover job postings across the
-              web. AI powered extraction parses structured details such as title, company,
-              location, and application links. Everything is stored in a PostgreSQL database and
-              displayed in a centralized dashboard.
+              web. AI powered extraction parses structured details such as title, company, location,
+              and application links. Everything is stored in a PostgreSQL database and displayed in
+              a centralized dashboard.
             </p>
           </div>
 
@@ -53,8 +53,8 @@ const Page: FC = async () => {
         <div className="mb-12">
           <h2 className="text-2xl font-bold mb-4">Tech Stack</h2>
           <p className="text-muted-foreground leading-relaxed">
-            Next.js, React, Vercel, PostgreSQL, Drizzle ORM, Tailwind CSS, shadcn/ui, and Serper
-            API for search driven job discovery.
+            Next.js, React, Vercel, PostgreSQL, Drizzle ORM, Tailwind CSS, shadcn/ui, and Serper API
+            for search driven job discovery.
           </p>
         </div>
 

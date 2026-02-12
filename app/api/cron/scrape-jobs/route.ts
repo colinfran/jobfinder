@@ -1,6 +1,4 @@
 import { NextResponse } from "next/server"
-import { db } from "@/lib/db"
-import { jobs } from "@/lib/db/schema"
 import { SEARCH_QUERIES } from "@/lib/config/search-queries"
 import { extractSource } from "@/app/api/cron/scrape-jobs/extract-source"
 import { extractCompany } from "@/app/api/cron/scrape-jobs/extract-company"
@@ -18,7 +16,6 @@ interface SerperResponse {
 }
 
 const serperApiKey = process.env.SERPER_API_KEY!
-
 
 export const GET = async (request: Request): Promise<NextResponse> => {
   // Verify cron secret in production
@@ -82,7 +79,7 @@ export const GET = async (request: Request): Promise<NextResponse> => {
             console.log(`❌ Failed to insert: ${result.title}`)
           }
         } catch (err) {
-          console.error(`❌ Error inserting job:`, err)
+          console.error("❌ Error inserting job:", err)
         }
       }
     } catch (err) {

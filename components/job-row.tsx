@@ -83,8 +83,8 @@ export const JobRow: FC<{ job: Job; onToggleApplied: () => void }> = ({ job, onT
               ? "bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25"
               : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-foreground"
           }`}
-          onClick={onToggleApplied}
           title="Click to toggle applied status"
+          onClick={onToggleApplied}
         >
           {job.applied ? (
             <>

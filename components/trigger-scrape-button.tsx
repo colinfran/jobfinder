@@ -51,8 +51,8 @@ export const TriggerScrapeButton: FC = () => {
       <Button
         className={`${loading || !hasCronSecret ? "cursor-not-allowed" : "cursor-pointer"}`}
         disabled={loading || !hasCronSecret}
-        onClick={handleScrape}
         title={!hasCronSecret ? "CRON_SECRET not set in localStorage" : ""}
+        onClick={handleScrape}
       >
         {loading ? (
           <>
