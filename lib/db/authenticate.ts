@@ -13,10 +13,3 @@ export const authenticate = async (): Promise<void> => {
   }
 }
 
-export const signOut = async (): Promise<void> => {
-  try {
-    await authClient.signOut()
-  } catch (error) {
-    console.error(error)
-  }
-}

@@ -11,7 +11,6 @@ import Link from "next/link"
 import { HomeIcon, InfoIcon, Loader2, LogOut } from "lucide-react"
 import ThemeButton from "./theme-button"
 import MenuButton from "./menu-button"
-import { signOut } from "@/lib/db/authenticate"
 import { useRouter } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
 
@@ -23,11 +22,20 @@ const HeaderDropdown: FC = () => {
   const [isOpen, setIsOpen] = useState(false)
 
   const [loading, setLoading] = useState(false)
+  
   const onClick = async (): Promise<void> => {
     setLoading(true)
-    await signOut()
-    router.push("/")
-    setLoading(false)
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          setLoading(false)
+          router.push("/");
+        },
+        onError: () => {          
+          setLoading(false)
+        }
+      },
+    });
   }
 
   return (
