@@ -8,18 +8,33 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
-import { HomeIcon, InfoIcon } from "lucide-react"
+import { HomeIcon, InfoIcon, Loader2, LogOut } from "lucide-react"
 import ThemeButton from "./theme-button"
 import MenuButton from "./menu-button"
+import { signOut } from "@/lib/db/authenticate"
+import { useRouter } from "next/navigation"
+import { authClient } from "@/lib/auth-client"
 
 const HeaderDropdown: FC = () => {
+  const router = useRouter()
+
+  const { data: session } = authClient.useSession()
+
   const [isOpen, setIsOpen] = useState(false)
+
+  const [loading, setLoading] = useState(false)
+  const onClick = async (): Promise<void> => {
+    setLoading(true)
+    await signOut()
+    router.push("/")
+    setLoading(false)
+  }
 
   return (
     <div className="flex w-full items-center justify-end gap-8">
       <div className="">
         <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-          <DropdownMenuTrigger className="flex" asChild>
+          <DropdownMenuTrigger className="flex cursor-pointer" asChild>
             <MenuButton isOpen={isOpen} />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -39,11 +54,30 @@ const HeaderDropdown: FC = () => {
               className="flex w-full cursor-pointer flex-row items-center gap-2"
               asChild
             >
-              <Link href="/about">
+              <Link href="/about" prefetch>
                 <InfoIcon size={16} />
                 <span>About</span>
               </Link>
             </DropdownMenuItem>
+            {session && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <button
+                    className="flex w-full flex-row items-center gap-2"
+                    type="submit"
+                    onClick={onClick}
+                  >
+                    {loading ? (
+                      <Loader2 className="animate-spin" size={16} />
+                    ) : (
+                      <LogOut size={16} />
+                    )}
+                    <span>Sign Out</span>
+                  </button>
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

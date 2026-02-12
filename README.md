@@ -1,4 +1,4 @@
-# Job Scraper
+# JobFinder
 
 An intelligent job search aggregator that automatically scrapes job listings from multiple platforms using Google Search and AI-powered extraction. Never miss an opportunity again—manage all your applications in one place.
 

@@ -9,11 +9,11 @@ const Page: FC = async () => {
       <div className="container mx-auto px-4 py-12 max-w-3xl">
         {/* Hero */}
         <div className="mb-12">
-          <h1 className="text-4xl font-bold mb-4 text-balance">Job Scraper</h1>
+          <h1 className="text-4xl font-bold mb-4 text-balance">JobFinder</h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            A personal job search engine I built to automatically find, extract, and organize job
-            listings I can apply to. Instead of manually checking multiple job boards every day,
-            this system aggregates everything into one structured dashboard.
+            An intelligent job search aggregator that automatically scrapes job listings from
+            multiple platforms using Google Search and AI-powered extraction. Never miss an
+            opportunity again—manage all your applications in one place.
           </p>
         </div>
 
@@ -22,27 +22,27 @@ const Page: FC = async () => {
           <div>
             <h3 className="text-lg font-semibold mb-2">Why This Exists</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Job hunting is repetitive and inefficient. The same roles appear across different
-              platforms, and new listings require constant manual searching. I built Job Scraper to
-              automate that process for myself, reduce noise, and surface relevant opportunities
-              faster.
+              Job hunting is repetitive and time-consuming. The same roles appear across different
+              platforms, and staying on top of new listings requires constant manual searching.
+              JobFinder automates this process, surfaces relevant opportunities faster, and
+              centralizes everything in one dashboard.
             </p>
           </div>
 
           <div>
             <h3 className="text-lg font-semibold mb-2">How It Works</h3>
             <p className="text-muted-foreground leading-relaxed">
-              The system uses Google Search via the Serper API to discover job postings across the
-              web. AI powered extraction parses structured details such as title, company, location,
-              and application links. Everything is stored in a PostgreSQL database and displayed in
-              a centralized dashboard.
+              JobFinder leverages Google Search and the Serper API to discover job postings across
+              the web. AI-powered extraction parses structured details such as title, company,
+              location, and application links. All data is stored in PostgreSQL and presented in a
+              centralized dashboard.
             </p>
           </div>
 
           <div>
             <h3 className="text-lg font-semibold mb-2">Application Management</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Once listings are collected, I can track application status, organize roles by
+              Once listings are collected, you can track application status, organize roles by
               priority, and set reminders for deadlines. The goal is simple: never miss a strong
               opportunity and avoid wasting time on manual browsing.
             </p>
@@ -54,7 +54,7 @@ const Page: FC = async () => {
           <h2 className="text-2xl font-bold mb-4">Tech Stack</h2>
           <p className="text-muted-foreground leading-relaxed">
             Next.js, React, Vercel, PostgreSQL, Drizzle ORM, Tailwind CSS, shadcn/ui, and Serper API
-            for search driven job discovery.
+            for AI-powered job discovery.
           </p>
         </div>
 
@@ -123,7 +123,7 @@ const Page: FC = async () => {
         {/* Project Status */}
         <div className="mb-6">
           <p className="text-muted-foreground leading-relaxed">
-            This project is actively evolving as I refine my job search workflow. While others are
+            JobFinder is actively evolving as I refine my job search workflow. While others are
             welcome to use it, it is primarily a personal tool designed around my own application
             strategy and filtering preferences.
           </p>
@@ -131,8 +131,8 @@ const Page: FC = async () => {
 
         {/* Disclaimer */}
         <p className="text-sm text-muted-foreground italic">
-          Job Scraper aggregates publicly available listings. Always verify job details directly
-          with the employer before applying.
+          JobFinder aggregates publicly available listings. Always verify job details directly with
+          the employer before applying.
         </p>
       </div>
     </div>

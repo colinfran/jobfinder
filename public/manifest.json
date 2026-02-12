@@ -1,11 +1,11 @@
 {
-  "name": "My Job Scraper - Personal AI Job Search",
-  "short_name": "My Job Scraper",
-  "description": "A personal AI-powered job search tool that automatically finds, extracts, and organizes job listings I can apply to.",
+  "name": "JobFinder - Personal AI Job Search",
+  "short_name": "JobFinder",
+  "description": "An intelligent job search aggregator that automatically scrapes job listings from multiple platforms using Google Search and AI-powered extraction. Never miss an opportunity again—manage all your applications in one place.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fff",
-  "theme_color": "#fff",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "orientation": "portrait-primary",
   "icons": [
     {

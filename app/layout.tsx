@@ -12,9 +12,9 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Job Scraper",
+  title: "JobFinder",
   description:
-    "Automated job scraper that finds and tracks job postings from Greenhouse, Lever, and Ashby.",
+    "An intelligent job search aggregator that automatically scrapes job listings from multiple platforms using Google Search and AI-powered extraction. Never miss an opportunity again—manage all your applications in one place.",
 }
 
 export const viewport = {
@@ -36,50 +36,50 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
         <link href="/favicon-96x96.png" rel="icon" sizes="96x96" type="image/png" />
         <link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png" />
 
-        <title>Job Scraper | AI Powered Job Search Aggregator</title>
+        <title>JobFinder | AI Powered Job Search Aggregator</title>
 
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta content="yes" name="mobile-web-app-capable" />
         <meta content="default" name="apple-mobile-web-app-status-bar-style" />
-        <meta content="Job Scraper" name="apple-mobile-web-app-title" />
-        <meta content="Job Scraper" name="author" />
+        <meta content="JobFinder" name="apple-mobile-web-app-title" />
+        <meta content="JobFinder" name="author" />
 
         {/* SEO Meta Tags */}
         <meta
-          content="Job Scraper is an AI powered job search aggregator that automatically discovers and extracts job listings from multiple platforms using Google Search and intelligent parsing. Track applications, manage deadlines, and never miss an opportunity."
+          content="An intelligent job search aggregator that automatically scrapes job listings from multiple platforms using Google Search and AI-powered extraction. Never miss an opportunity again—manage all your applications in one place."
           name="description"
         />
         <meta
-          content="job scraper, job search aggregator, AI job search, job listing scraper, application tracker, job board aggregator, tech jobs, remote jobs, Google job search automation"
+          content="job search, AI job aggregator, job listings, application tracker, Google job search, remote jobs, tech jobs"
           name="keywords"
         />
         <meta content="index, follow" name="robots" />
 
         {/* Open Graph Meta Tags */}
         <meta content="website" property="og:type" />
-        <meta content="Job Scraper | AI Powered Job Search Aggregator" property="og:title" />
+        <meta content="JobFinder | AI Powered Job Search Aggregator" property="og:title" />
         <meta
-          content="Automatically scrape and aggregate job listings from multiple platforms using AI. Manage applications, track deadlines, and centralize your job search in one dashboard."
+          content="An intelligent job search aggregator that automatically scrapes job listings from multiple platforms using Google Search and AI-powered extraction. Track applications, manage deadlines, and centralize your job search in one place."
           property="og:description"
         />
         <meta content="https://jobfinder.dev" property="og:url" />
         <meta content="https://jobfinder.dev/og-image.jpg" property="og:image" />
         <meta
-          content="Dashboard view of Job Scraper aggregating job listings"
+          content="Dashboard view of JobFinder aggregating job listings"
           property="og:image:alt"
         />
-        <meta content="Job Scraper" property="og:site_name" />
+        <meta content="JobFinder" property="og:site_name" />
 
         {/* Twitter Card Meta Tags */}
         <meta content="summary_large_image" name="twitter:card" />
-        <meta content="Job Scraper | AI Powered Job Search Aggregator" name="twitter:title" />
+        <meta content="JobFinder | AI Powered Job Search Aggregator" name="twitter:title" />
         <meta
-          content="AI powered job search aggregator that scrapes listings, extracts details, and helps you track applications and deadlines in one place."
+          content="An intelligent job search aggregator that automatically scrapes job listings from multiple platforms using Google Search and AI-powered extraction. Track applications and deadlines in one place."
           name="twitter:description"
         />
         <meta content="https://jobfinder.dev/og-image.jpg" name="twitter:image" />
         <meta
-          content="Job Scraper dashboard showing aggregated job listings"
+          content="JobFinder dashboard showing aggregated job listings"
           name="twitter:image:alt"
         />
 

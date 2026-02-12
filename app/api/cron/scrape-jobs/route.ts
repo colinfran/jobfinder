@@ -3,6 +3,7 @@ import { SEARCH_QUERIES } from "@/lib/config/search-queries"
 import { extractSource } from "@/app/api/cron/scrape-jobs/extract-source"
 import { extractCompany } from "@/app/api/cron/scrape-jobs/extract-company"
 import { insertJob } from "@/lib/db/insert-job"
+import { isValidJobLink } from "./is-valid-job"
 
 interface SerperOrganicResult {
   title: string
@@ -39,7 +40,7 @@ export const GET = async (request: Request): Promise<NextResponse> => {
           "X-API-KEY": serperApiKey,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ q: query, num: 20, tbs: "qdr:w" }),
+        body: JSON.stringify({ q: query, num: 20, tbs: "qdr:m" }),
       })
 
       console.log(`📡 Serper API response status: ${response.status}`)
@@ -60,6 +61,11 @@ export const GET = async (request: Request): Promise<NextResponse> => {
       }
 
       for (const result of data.organic) {
+        if (!isValidJobLink(result.link)) {
+          console.log(`⚠️ Skipping non-job link: ${result.link}`)
+          continue
+        }
+
         try {
           const { success, alreadyExists } = await insertJob({
             title: result.title,

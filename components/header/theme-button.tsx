@@ -10,7 +10,7 @@ const ThemeButton: FC = () => {
 
   return (
     <DropdownMenuItem
-      className="gap-2"
+      className="gap-2 cursor-pointer"
       data-testid="theme-button"
       onClick={(e) => {
         e.preventDefault()
