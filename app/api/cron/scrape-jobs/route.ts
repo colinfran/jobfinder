@@ -40,7 +40,7 @@ export const GET = async (request: Request): Promise<NextResponse> => {
           "X-API-KEY": serperApiKey,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ q: query, num: 20, tbs: "qdr:m" }),
+        body: JSON.stringify({ q: query, num: 20, tbs: "qdr:w" }),
       })
 
       console.log(`📡 Serper API response status: ${response.status}`)
