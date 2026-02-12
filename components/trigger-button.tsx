@@ -4,11 +4,7 @@ import { FC, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Spinner } from "./ui/spinner"
 import { Button } from "./ui/button"
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "./ui/tooltip"
+import { Tooltip, TooltipTrigger, TooltipContent } from "./ui/tooltip"
 
 export const TriggerButton: FC = () => {
   const [loading, setLoading] = useState(false)
