@@ -22,20 +22,20 @@ const HeaderDropdown: FC = () => {
   const [isOpen, setIsOpen] = useState(false)
 
   const [loading, setLoading] = useState(false)
-  
+
   const onClick = async (): Promise<void> => {
     setLoading(true)
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
           setLoading(false)
-          router.push("/");
+          router.push("/")
         },
-        onError: () => {          
+        onError: () => {
           setLoading(false)
-        }
+        },
       },
-    });
+    })
   }
 
   return (

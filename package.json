@@ -12,9 +12,7 @@
     "start": "next start",
     "prepare": "husky",
     "postbuild": "next-sitemap",
-    "db:setup": "node scripts/setup-db.js",
-    "drizzle:generate": "drizzle-kit generate:migration",
-    "drizzle:push": "drizzle-kit push"
+    "db:setup": "drizzle-kit push"
   },
   "dependencies": {
     "@alpacahq/alpaca-trade-api": "^3.1.3",

@@ -12,4 +12,3 @@ export const authenticate = async (): Promise<void> => {
     console.error(error)
   }
 }
-
