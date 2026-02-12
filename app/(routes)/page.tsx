@@ -2,7 +2,7 @@ import { db } from "@/lib/db"
 import { jobs } from "@/lib/db/schema"
 import { desc } from "drizzle-orm"
 import { JobList } from "@/components/job-list"
-import { TriggerScrapeButton } from "@/components/trigger-scrape-button"
+import { TriggerButton } from "@/components/trigger-button"
 import { FC } from "react"
 
 export const dynamic = "force-dynamic"
@@ -19,7 +19,7 @@ const Page: FC = async () => {
             {allJobs.length} jobs found across {new Set(allJobs.map((j) => j.source)).size} sources
           </p>
         </div>
-        <TriggerScrapeButton />
+        <TriggerButton />
       </header>
       <main>
         <JobList jobs={allJobs} />
