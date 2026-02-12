@@ -1,25 +1,42 @@
 "use client"
 
-import { FC, useState } from "react"
+import { FC, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Spinner } from "./ui/spinner"
+import { Button } from "./ui/button"
 
 export const TriggerScrapeButton: FC = () => {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<string | null>(null)
+  const [hasCronSecret, setHasCronSecret] = useState(false)
   const router = useRouter()
 
+  useEffect(() => {
+    const cronSecret = localStorage.getItem("CRON_SECRET")
+    setHasCronSecret(!!cronSecret)
+  }, [])
+
   const handleScrape = async (): Promise<void> => {
+    const cronSecret = localStorage.getItem("CRON_SECRET")
+    if (!cronSecret) {
+      setResult("CRON_SECRET not found in localStorage")
+      return
+    }
+
     setLoading(true)
     setResult(null)
     try {
-      const res = await fetch("/api/cron/scrape-jobs")
+      const res = await fetch("/api/cron/scrape-jobs", {
+        headers: {
+          Authorization: `Bearer ${cronSecret}`,
+        },
+      })
       const data = await res.json()
       if (data.success) {
         setResult(`Scraped ${data.jobsInserted} new jobs`)
         router.refresh()
       } else {
-        setResult("Scrape failed")
+        setResult(data.error || "Scrape failed")
       }
     } catch {
       setResult("Error triggering scrape")
@@ -31,10 +48,11 @@ export const TriggerScrapeButton: FC = () => {
   return (
     <div className="flex items-center gap-3">
       {result && <span className="text-xs text-muted-foreground">{result}</span>}
-      <button
-        className="inline-flex h-9 items-center gap-2 rounded-md bg-foreground px-4 text-sm font-medium text-background transition-opacity hover:opacity-80 disabled:opacity-50 cursor-pointer"
-        disabled={loading}
+      <Button
+        className={`${loading || !hasCronSecret ? "cursor-not-allowed" : "cursor-pointer"}`}
+        disabled={loading || !hasCronSecret}
         onClick={handleScrape}
+        title={!hasCronSecret ? "CRON_SECRET not set in localStorage" : ""}
       >
         {loading ? (
           <>
@@ -44,7 +62,7 @@ export const TriggerScrapeButton: FC = () => {
         ) : (
           "Scrape Now"
         )}
-      </button>
+      </Button>
     </div>
   )
 }

@@ -10,9 +10,14 @@ export type InsertJobParams = {
   searchQuery: string
 }
 
-export const insertJob = async (params: InsertJobParams): Promise<boolean> => {
+export type InsertJobResult = {
+  success: boolean
+  alreadyExists: boolean
+}
+
+export const insertJob = async (params: InsertJobParams): Promise<InsertJobResult> => {
   try {
-    await db
+    const result = await db
       .insert(jobs)
       .values({
         title: params.title,
@@ -23,10 +28,15 @@ export const insertJob = async (params: InsertJobParams): Promise<boolean> => {
         searchQuery: params.searchQuery,
       })
       .onConflictDoNothing({ target: jobs.link })
+      .returning()
 
-    return true
+    if (result.length > 0) {
+      return { success: true, alreadyExists: false }
+    } else {
+      return { success: true, alreadyExists: true }
+    }
   } catch (err) {
     console.error("Failed to insert job", err)
-    return false
+    return { success: false, alreadyExists: false }
   }
 }

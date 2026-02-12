@@ -22,10 +22,10 @@ const serperApiKey = process.env.SERPER_API_KEY!
 
 export const GET = async (request: Request): Promise<NextResponse> => {
   // Verify cron secret in production
-  // const authHeader = request.headers.get("authorization")
-  // if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-  //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  // }
+  const authHeader = request.headers.get("authorization")
+  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
 
   console.log("🚀 Scrape-jobs endpoint called")
   console.log(`📊 Processing ${SEARCH_QUERIES.length} search queries`)
@@ -42,7 +42,7 @@ export const GET = async (request: Request): Promise<NextResponse> => {
           "X-API-KEY": serperApiKey,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ q: query, num: 20 }),
+        body: JSON.stringify({ q: query, num: 20, tbs: "qdr:w" }),
       })
 
       console.log(`📡 Serper API response status: ${response.status}`)
@@ -64,7 +64,7 @@ export const GET = async (request: Request): Promise<NextResponse> => {
 
       for (const result of data.organic) {
         try {
-          const inserted = await insertJob({
+          const { success, alreadyExists } = await insertJob({
             title: result.title,
             company: extractCompany(result.title, result.link),
             link: result.link,
@@ -73,14 +73,16 @@ export const GET = async (request: Request): Promise<NextResponse> => {
             searchQuery: query,
           })
 
-          if (inserted) {
+          if (success && !alreadyExists) {
             totalInserted++
-            console.log(`💾 Inserted: ${result.title}`)
+            console.log(`✅ Inserted: ${result.title}`)
+          } else if (alreadyExists) {
+            console.log(`📌 Already exists: ${result.title}`)
           } else {
-            console.log(`⚠️ Skipped insert or failed for: ${result.title}`)
+            console.log(`❌ Failed to insert: ${result.title}`)
           }
         } catch (err) {
-          console.error(`❌ Failed to insert job:`, err)
+          console.error(`❌ Error inserting job:`, err)
         }
       }
     } catch (err) {
