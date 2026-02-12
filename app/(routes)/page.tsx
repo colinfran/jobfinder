@@ -1,39 +1,18 @@
 "use client"
-import React, { FC, useState, useEffect } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
+
+import React, { FC, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
 import { Github, Loader2 } from "lucide-react"
 import Link from "next/link"
 import Icon from "@/components/icon"
 import { authenticate } from "@/lib/db/authenticate"
+import { AuthError } from "@/components/auth-error"
 
 const Page: FC = () => {
   const [loading, setLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  const searchParams = useSearchParams()
   const router = useRouter()
-
-  useEffect(() => {
-    const error = searchParams.get("error")
-    const errorDescription = searchParams.get("error_description")
-
-    if (error) {
-      let message = "Something went wrong during authentication."
-
-      if (error === "access_denied") {
-        message = "You denied access to the application. Please try again."
-      } else if (errorDescription) {
-        message = decodeURIComponent(errorDescription.replace(/\+/g, " "))
-      }
-
-      setErrorMessage(message)
-
-      // Remove query params from URL
-      router.replace("/", { scroll: false })
-    }
-  }, [searchParams, router])
 
   const onSubmit = (): void => {
     setLoading(true)
@@ -63,11 +42,8 @@ const Page: FC = () => {
         </CardHeader>
 
         <CardFooter className="flex flex-col">
-          {errorMessage && (
-            <div className="mb-4 w-full rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-700">
-              {errorMessage}
-            </div>
-          )}
+          {/* Display authentication errors */}
+          <AuthError />
 
           <Button
             className="flex w-full cursor-pointer gap-2"
