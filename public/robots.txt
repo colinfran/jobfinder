@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://jobfinder.dev/
+
+# Sitemaps
+Sitemap: https://jobfinder.dev/sitemap.xml
