@@ -1,7 +1,8 @@
 {
-  "name": "jobscraper",
+  "name": "jobfinder",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -10,7 +11,8 @@
     "test": "jest",
     "start": "next start",
     "prepare": "husky",
-    "postbuild": "next-sitemap"
+    "postbuild": "next-sitemap",
+    "db:setup": "node scripts/setup-db.js"
   },
   "dependencies": {
     "@alpacahq/alpaca-trade-api": "^3.1.3",

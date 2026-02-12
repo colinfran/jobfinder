@@ -27,7 +27,7 @@ An intelligent job search aggregator that automatically scrapes job listings fro
 
    ```bash
    git clone <repository>
-   cd jobscraper
+   cd jobfinder
    ```
 
 2. Install dependencies:
@@ -41,14 +41,14 @@ An intelligent job search aggregator that automatically scrapes job listings fro
    Create a `.env.local` file with:
 
    ```env
-   DATABASE_URL=postgresql://user:password@localhost:5432/jobscraper
+   DATABASE_URL=postgresql://your_database
    SERPER_API_KEY=your_serper_api_key
    ```
 
 4. Set up the database:
 
    ```bash
-   npm run db:push
+   npm run db:setup
    ```
 
 5. Start the development server:

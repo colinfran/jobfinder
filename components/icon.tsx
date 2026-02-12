@@ -22,7 +22,7 @@ const Icon: FC<Props> = ({ size = 32 }) => {
   return (
     <Image
       alt="logo"
-      className={isDark ? "invert" : ""}
+      className={isDark ? "" : "invert"}
       height={size}
       src={"/logo.png"}
       width={size}
