@@ -54,25 +54,33 @@ const FINANCE_QUERIES = [
   // Greenhouse - Finance
   ...FINANCE_KEYWORDS.flatMap((keyword) => [
     `site:greenhouse.io "${keyword}" "San Francisco" "hybrid"`,
-    `site:greenhouse.io "${keyword}" "San Francisco" "remote"`,
+    `site:greenhouse.io "${keyword}" "San Francisco" "in office"`,
+    `site:greenhouse.io "${keyword}" "California" "remote"`,
+    `site:greenhouse.io "${keyword}" "United States" "remote"`,
   ]),
 
   // Lever - Finance
   ...FINANCE_KEYWORDS.flatMap((keyword) => [
     `site:lever.co "${keyword}" "San Francisco" "hybrid"`,
-    `site:lever.co "${keyword}" "San Francisco" "remote"`,
+    `site:lever.co "${keyword}" "San Francisco" "in office"`,
+    `site:lever.co "${keyword}" "California" "remote"`,
+    `site:lever.co "${keyword}" "United States" "remote"`,
   ]),
 
   // Ashby - Finance
   ...FINANCE_KEYWORDS.flatMap((keyword) => [
     `site:ashbyhq.com "${keyword}" "San Francisco" "hybrid"`,
-    `site:ashbyhq.com "${keyword}" "San Francisco" "remote"`,
+    `site:ashbyhq.com "${keyword}" "San Francisco" "in office"`,
+    `site:ashbyhq.com "${keyword}" "California" "remote"`,
+    `site:ashbyhq.com "${keyword}" "United States" "remote"`,
   ]),
 
   // Workday - Finance
   ...FINANCE_KEYWORDS.flatMap((keyword) => [
     `site:myworkdayjobs.com "${keyword}" "San Francisco" "hybrid"`,
-    `site:myworkdayjobs.com "${keyword}" "San Francisco" "remote"`,
+    `site:myworkdayjobs.com "${keyword}" "San Francisco" "in office"`,
+    `site:myworkdayjobs.com "${keyword}" "California" "remote"`,
+    `site:myworkdayjobs.com "${keyword}" "United States" "remote"`,
   ]),
 ]
 
