@@ -31,9 +31,7 @@ export const extractCompany = (title: string, link: string): string | null => {
       // Extract from hostname subdomain (e.g., "shipt" from "shipt.wd1.myworkdayjobs.com")
       const subdomain = url.hostname.split(".")[0]
       return subdomain
-        ? subdomain
-            .replace(/-/g, " ")
-            .replace(/\b\w/g, (c) => c.toUpperCase())
+        ? subdomain.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
         : null
     }
   } catch {
