@@ -45,12 +45,12 @@ const Page: FC = async () => {
     <div className="mx-auto min-h-screen max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Job Scraper</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">JobFinder</h1>
         </div>
         <TriggerButton />
       </header>
       <main>
-        <JobList initialTopic={initialTopic} jobs={allJobs} topics={TOPICS} />
+        <JobList initialTopic={initialTopic} jobs={allJobs} topics={[...TOPICS]} />
       </main>
     </div>
   )
