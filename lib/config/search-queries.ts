@@ -60,7 +60,7 @@ const FINANCE_QUERIES = [
   // Greenhouse - Finance
   ...FINANCE_KEYWORDS.flatMap((keyword) => [
     `site:greenhouse.io "${keyword}" "San Francisco" "hybrid"`,
-    `site:greenhouse.io "${keyword}" "San Francisco" "in office"`,
+    `site:greenhouse.io "${keyword}" "San Francisco" "on-site"`,
     `site:greenhouse.io "${keyword}" "California" "remote"`,
     `site:greenhouse.io "${keyword}" "United States" "remote"`,
   ]),
@@ -68,7 +68,7 @@ const FINANCE_QUERIES = [
   // Lever - Finance
   ...FINANCE_KEYWORDS.flatMap((keyword) => [
     `site:lever.co "${keyword}" "San Francisco" "hybrid"`,
-    `site:lever.co "${keyword}" "San Francisco" "in office"`,
+    `site:lever.co "${keyword}" "San Francisco" "on-site"`,
     `site:lever.co "${keyword}" "California" "remote"`,
     `site:lever.co "${keyword}" "United States" "remote"`,
   ]),
