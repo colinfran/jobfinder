@@ -65,3 +65,7 @@ JobFinder is an automated job search aggregator that collects listings from mult
 
 6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+
+## Ashby Validation Note
+
+Ashby job pages are rendered client-side and return 200 with a minimal HTML shell even when a job is removed. Because of that, simple HTTP checks cannot reliably detect invalid Ashby links in Vercel cron. We use a GitHub Actions workflow with Puppeteer to render the page, confirm the job content, and remove invalid Ashby jobs safely.
