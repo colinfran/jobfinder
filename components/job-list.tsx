@@ -154,7 +154,7 @@ export const JobList: FC<{
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16">
           <p className="text-sm text-muted-foreground">
             {jobs.length === 0
-              ? "No jobs scraped yet. The cron job runs every 30 minutes, or you can trigger it manually."
+              ? "No jobs found yet. The cron job runs every 6 hours. Please check back soon!"
               : "No jobs match your current filters."}
           </p>
         </div>

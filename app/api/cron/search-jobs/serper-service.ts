@@ -1,5 +1,5 @@
-import { extractSource } from "@/app/api/cron/scrape-jobs/extract-source"
-import { extractCompany } from "@/app/api/cron/scrape-jobs/extract-company"
+import { extractSource } from "@/app/api/cron/search-jobs/extract-source"
+import { extractCompany } from "@/app/api/cron/search-jobs/extract-company"
 import { insertJob } from "@/lib/db/insert-job"
 import { isValidJobLink } from "./is-valid-job"
 import { normalizeJobUrl } from "./normalize-url"

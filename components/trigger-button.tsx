@@ -37,27 +37,27 @@ export const TriggerButton: FC = () => {
     return () => clearInterval(interval)
   }, [hasTriggerSecret])
 
-  const handleScrape = async (): Promise<void> => {
+  const handleSearch = async (): Promise<void> => {
     const triggerSecret = localStorage.getItem("TRIGGER_SECRET")
     if (!triggerSecret) return
 
     setLoading(true)
     setResult(null)
     try {
-      const res = await fetch("/api/cron/scrape-jobs", {
+      const res = await fetch("/api/cron/search-jobs", {
         headers: {
           Authorization: `Bearer ${triggerSecret}`,
         },
       })
       const data = await res.json()
       if (data.success) {
-        setResult(`Scraped ${data.jobsInserted} new jobs`)
+        setResult(`Searched ${data.jobsInserted} new jobs`)
         router.refresh()
       } else {
-        setResult(data.error || "Scrape failed")
+        setResult(data.error || "Search failed")
       }
     } catch {
-      setResult("Error triggering scrape")
+      setResult("Error triggering search")
     } finally {
       setLoading(false)
     }
@@ -66,7 +66,7 @@ export const TriggerButton: FC = () => {
   if (!hasTriggerSecret) {
     return (
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <span>Next scrape in</span>
+        <span>Next search in</span>
         {mounted && timeToNextRun ? (
           <span className="font-medium tabular-nums">{timeToNextRun}</span>
         ) : (
@@ -79,14 +79,14 @@ export const TriggerButton: FC = () => {
   return (
     <div className="flex items-center gap-3">
       {result && <span className="text-xs text-muted-foreground">{result}</span>}
-      <Button className="cursor-pointer" disabled={loading} onClick={handleScrape}>
+      <Button className="cursor-pointer" disabled={loading} onClick={handleSearch}>
         {loading ? (
           <>
             <Spinner />
-            Scraping...
+            Searching...
           </>
         ) : (
-          "Scrape Now"
+          "Search Now"
         )}
       </Button>
     </div>
