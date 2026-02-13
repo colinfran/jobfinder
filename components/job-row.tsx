@@ -26,6 +26,8 @@ const sourceColor = (source: string): string => {
       return "bg-sky-500/15 text-sky-400"
     case "ashbyhq.com":
       return "bg-amber-500/15 text-amber-400"
+    case "myworkdayjobs.com":
+      return "bg-blue-500/15 text-blue-400"
     default:
       return "bg-muted text-muted-foreground"
   }

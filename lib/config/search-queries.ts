@@ -29,6 +29,16 @@ const SOFTWARE_QUERIES = [
   // Ashby - Full Stack
   'site:ashbyhq.com "full stack" "San Francisco" "hybrid"',
   'site:ashbyhq.com "full stack" "San Francisco" "remote"',
+
+  // Workday - Frontend
+  'site:myworkdayjobs.com "frontend" "San Francisco" "hybrid"',
+  'site:myworkdayjobs.com "frontend" "San Francisco" "remote"',
+  'site:myworkdayjobs.com "front end" "San Francisco" "hybrid"',
+
+  // Workday - Full Stack
+  'site:myworkdayjobs.com "full stack" "San Francisco" "hybrid"',
+  'site:myworkdayjobs.com "full stack" "San Francisco" "remote"',
+  'site:myworkdayjobs.com "fullstack" "San Francisco" "hybrid"',
 ]
 
 const FINANCE_KEYWORDS = [
@@ -57,6 +67,12 @@ const FINANCE_QUERIES = [
   ...FINANCE_KEYWORDS.flatMap((keyword) => [
     `site:ashbyhq.com "${keyword}" "San Francisco" "hybrid"`,
     `site:ashbyhq.com "${keyword}" "San Francisco" "remote"`,
+  ]),
+
+  // Workday - Finance
+  ...FINANCE_KEYWORDS.flatMap((keyword) => [
+    `site:myworkdayjobs.com "${keyword}" "San Francisco" "hybrid"`,
+    `site:myworkdayjobs.com "${keyword}" "San Francisco" "remote"`,
   ]),
 ]
 
