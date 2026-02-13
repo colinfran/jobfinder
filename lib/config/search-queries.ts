@@ -17,18 +17,24 @@ const SOFTWARE_QUERIES = [
   // Lever - Frontend
   'site:lever.co "frontend" "San Francisco" "hybrid"',
   'site:lever.co "frontend" "San Francisco" "remote"',
+  'site:lever.co "front end" "San Francisco" "hybrid"',
+
 
   // Lever - Full Stack
   'site:lever.co "full stack" "San Francisco" "hybrid"',
   'site:lever.co "full stack" "San Francisco" "remote"',
+  'site:lever.co "fullstack" "San Francisco" "hybrid"',
 
   // Ashby - Frontend
   'site:ashbyhq.com "frontend" "San Francisco" "hybrid"',
   'site:ashbyhq.com "frontend" "San Francisco" "remote"',
+  'site:ashbyhq.com "front end" "San Francisco" "hybrid"',
 
   // Ashby - Full Stack
   'site:ashbyhq.com "full stack" "San Francisco" "hybrid"',
   'site:ashbyhq.com "full stack" "San Francisco" "remote"',
+  'site:ashbyhq.com "fullstack" "San Francisco" "hybrid"',
+
 
   // Workday - Frontend
   'site:myworkdayjobs.com "frontend" "San Francisco" "hybrid"',
