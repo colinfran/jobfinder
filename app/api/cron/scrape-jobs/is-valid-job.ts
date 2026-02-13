@@ -20,6 +20,11 @@ export const isValidJobLink = (link: string): boolean => {
       return pathParts.length === 2 && uuidRegex.test(pathParts[1])
     }
 
+    // Workday: /.../job/<job-id>
+    if (url.hostname.includes("myworkdayjobs.com")) {
+      return pathParts.includes("job") && pathParts.length >= 2
+    }
+
     return false
   } catch {
     return false
