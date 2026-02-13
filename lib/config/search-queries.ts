@@ -76,7 +76,7 @@ const FINANCE_QUERIES = [
   // Ashby - Finance
   ...FINANCE_KEYWORDS.flatMap((keyword) => [
     `site:ashbyhq.com "${keyword}" "San Francisco" "hybrid"`,
-    `site:ashbyhq.com "${keyword}" "San Francisco" "in office"`,
+    `site:ashbyhq.com "${keyword}" "San Francisco" "on-site"`,
     `site:ashbyhq.com "${keyword}" "California" "remote"`,
     `site:ashbyhq.com "${keyword}" "United States" "remote"`,
   ]),
