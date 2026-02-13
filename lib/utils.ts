@@ -4,3 +4,34 @@ import { twMerge } from "tailwind-merge"
 export const cn = (...inputs: ClassValue[]): string => {
   return twMerge(clsx(inputs))
 }
+
+export const getNextCronRun = (): Date => {
+  // Cron: "0 */6 * * *" - runs every 6 hours at minute 0
+  const now = new Date()
+  const next = new Date(now)
+  // Find the next hour that's a multiple of 6
+  const currentHour = now.getHours()
+  const nextHour = Math.ceil((currentHour + 1) / 6) * 6
+  if (nextHour >= 24) {
+    // Next run is tomorrow
+    next.setDate(next.getDate() + 1)
+    next.setHours(0, 0, 0, 0)
+  } else {
+    next.setHours(nextHour, 0, 0, 0)
+  }
+  return next
+}
+
+export const formatTimeRemaining = (ms: number): string => {
+  const hours = Math.floor(ms / (1000 * 60 * 60))
+  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((ms % (1000 * 60)) / 1000)
+  const pad = (n: number): string => n.toString().padStart(2, "0")
+  if (hours > 0) {
+    return `${hours}h ${pad(minutes)}m ${pad(seconds)}s`
+  }
+  if (minutes > 0) {
+    return `${pad(minutes)}m ${pad(seconds)}s`
+  }
+  return `${pad(seconds)}s`
+}
