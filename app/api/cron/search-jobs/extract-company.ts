@@ -28,8 +28,10 @@ export const extractCompany = (title: string, link: string): string | null => {
     }
 
     if (url.hostname.includes("myworkdayjobs")) {
-      return pathParts[0]
-        ? decodeURIComponent(pathParts[0])
+      // Extract from hostname subdomain (e.g., "shipt" from "shipt.wd1.myworkdayjobs.com")
+      const subdomain = url.hostname.split(".")[0]
+      return subdomain
+        ? subdomain
             .replace(/-/g, " ")
             .replace(/\b\w/g, (c) => c.toUpperCase())
         : null

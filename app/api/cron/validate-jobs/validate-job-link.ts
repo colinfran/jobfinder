@@ -1,6 +1,7 @@
 import { eq, inArray } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { jobs } from "@/lib/db/schema"
+import { normalizeJobUrl } from "../search-jobs/normalize-url"
 
 // Helper: check if a URL has unnecessary suffixes
 export const hasUnnecessarySuffix = (link: string): boolean => {
@@ -11,21 +12,6 @@ export const hasUnnecessarySuffix = (link: string): boolean => {
     return /\/(application|apply)$/.test(pathname)
   } catch {
     return false
-  }
-}
-
-// Helper: normalize a URL to detect duplicates
-export const normalizeJobUrl = (link: string): string => {
-  try {
-    const url = new URL(link)
-    // Remove trailing slash
-    let pathname = url.pathname.replace(/\/$/, "")
-    // Remove common suffixes that don't change the job posting
-    pathname = pathname.replace(/\/(application|apply|career-opportunity)$/, "")
-    // Reconstruct normalized URL
-    return `${url.protocol}//${url.hostname}${pathname}`
-  } catch {
-    return link
   }
 }
 
