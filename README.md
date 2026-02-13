@@ -26,7 +26,7 @@ JobFinder is an automated job search aggregator that collects listings from mult
 1. Clone and navigate to the project:
 
    ```bash
-   git clone <repository>
+   git clone https://github.com/colinfran/jobfinder.git
    cd jobfinder
    ```
 
@@ -66,6 +66,9 @@ JobFinder is an automated job search aggregator that collects listings from mult
 6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 
-## Ashby Validation Note
+## Three Core Processes
 
-Ashby job pages are rendered client-side and return 200 with a minimal HTML shell even when a job is removed. Because of that, simple HTTP checks cannot reliably detect invalid Ashby links in Vercel cron. We use a GitHub Actions workflow with Puppeteer to render the page, confirm the job content, and remove invalid Ashby jobs safely.
+1. **Search** (Vercel cron) – Calls Serper API with predefined queries, validates links are live, inserts jobs.
+2. **Validation** (Vercel cron) – Removes duplicates and dead links (except Ashby).
+3. **Ashby Validation** (GitHub Actions) – Uses Puppeteer to check Ashby jobs (JavaScript-rendered sites need a real browser).
+
