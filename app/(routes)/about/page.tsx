@@ -11,7 +11,9 @@ const Page: FC = async () => {
         <div className="mb-12">
           <h1 className="text-4xl font-bold mb-4 text-balance">JobFinder</h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            An automated job search aggregator that collects listings from multiple platforms using Google Search. Never miss an opportunity again. Track and manage all your applications in one place.
+            An automated job search aggregator that collects listings from multiple platforms using
+            Google Search. Never miss an opportunity again. Track and manage all your applications
+            in one place.
           </p>
         </div>
 
@@ -30,7 +32,10 @@ const Page: FC = async () => {
           <div>
             <h3 className="text-lg font-semibold mb-2">How It Works</h3>
             <p className="text-muted-foreground leading-relaxed">
-              JobFinder uses Google Search and the Serper API to discover job postings across the web. Structured job details such as title, company, location, and application links are programmatically extracted and stored in PostgreSQL. Everything is presented in a centralized dashboard for easy tracking.
+              JobFinder uses Google Search and the Serper API to discover job postings across the
+              web. Structured job details such as title, company, location, and application links
+              are programmatically extracted and stored in PostgreSQL. Everything is presented in a
+              centralized dashboard for easy tracking.
             </p>
           </div>
 
@@ -48,7 +53,8 @@ const Page: FC = async () => {
         <div className="mb-12">
           <h2 className="text-2xl font-bold mb-4">Tech Stack</h2>
           <p className="text-muted-foreground leading-relaxed">
-            Next.js, React, Vercel, PostgreSQL, Drizzle ORM, Tailwind CSS, shadcn/ui, and the Serper API for job discovery.
+            Next.js, React, Vercel, PostgreSQL, Drizzle ORM, Tailwind CSS, shadcn/ui, and the Serper
+            API for job discovery.
           </p>
         </div>
 
