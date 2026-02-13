@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const puppeteer = require("puppeteer")
+import puppeteer from "puppeteer"
 
 async function validateAshbyJobs() {
   const appUrl = process.env.APP_URL || "http://localhost:3000"
