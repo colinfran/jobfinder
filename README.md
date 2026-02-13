@@ -1,6 +1,6 @@
 # JobFinder
 
-An intelligent job search aggregator that automatically scrapes job listings from multiple platforms using Google Search and AI-powered extraction. Never miss an opportunity again—manage all your applications in one place.
+JobFinder is an automated job search aggregator that collects listings from multiple platforms using Google Search. Never miss an opportunity again. Track and manage all your applications in one place.
 
 ## Technologies Used
 

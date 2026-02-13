@@ -14,7 +14,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "JobFinder",
   description:
-    "An intelligent job search aggregator that automatically scrapes job listings from multiple platforms using Google Search and AI-powered extraction. Never miss an opportunity again—manage all your applications in one place.",
+    "An automated job search aggregator that collects listings from multiple platforms using Google Search. Never miss an opportunity again. Track and manage all your applications in one place.",
 }
 
 export const viewport = {
@@ -36,7 +36,7 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
         <link href="/favicon-96x96.png" rel="icon" sizes="96x96" type="image/png" />
         <link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png" />
 
-        <title>JobFinder | AI Powered Job Search Aggregator</title>
+        <title>JobFinder | Automated Job Search Aggregator</title>
 
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta content="yes" name="mobile-web-app-capable" />
@@ -46,20 +46,20 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
 
         {/* SEO Meta Tags */}
         <meta
-          content="An intelligent job search aggregator that automatically scrapes job listings from multiple platforms using Google Search and AI-powered extraction. Never miss an opportunity again—manage all your applications in one place."
+          content="An automated job search aggregator that collects listings from multiple platforms using Google Search. Never miss an opportunity again. Track and manage all your applications in one place."
           name="description"
         />
         <meta
-          content="job search, AI job aggregator, job listings, application tracker, Google job search, remote jobs, tech jobs"
+          content="job search, job aggregator, job listings, application tracker, Google job search, remote jobs, tech jobs"
           name="keywords"
         />
         <meta content="index, follow" name="robots" />
 
         {/* Open Graph Meta Tags */}
         <meta content="website" property="og:type" />
-        <meta content="JobFinder | AI Powered Job Search Aggregator" property="og:title" />
+        <meta content="JobFinder | Automated Job Search Aggregator" property="og:title" />
         <meta
-          content="An intelligent job search aggregator that automatically scrapes job listings from multiple platforms using Google Search and AI-powered extraction. Track applications, manage deadlines, and centralize your job search in one place."
+          content="An automated job search aggregator that collects listings from multiple platforms using Google Search. Never miss an opportunity again. Track and manage all your applications in one place."
           property="og:description"
         />
         <meta content="https://jobfinder.dev" property="og:url" />
@@ -72,9 +72,9 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
 
         {/* Twitter Card Meta Tags */}
         <meta content="summary_large_image" name="twitter:card" />
-        <meta content="JobFinder | AI Powered Job Search Aggregator" name="twitter:title" />
+        <meta content="JobFinder | Automated Job Search Aggregator" name="twitter:title" />
         <meta
-          content="An intelligent job search aggregator that automatically scrapes job listings from multiple platforms using Google Search and AI-powered extraction. Track applications and deadlines in one place."
+          content="An automated job search aggregator that collects listings from multiple platforms using Google Search. Never miss an opportunity again. Track and manage all your applications in one place."
           name="twitter:description"
         />
         <meta content="https://jobfinder.dev/og-image.jpg" name="twitter:image" />

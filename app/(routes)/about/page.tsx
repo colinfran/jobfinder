@@ -11,9 +11,7 @@ const Page: FC = async () => {
         <div className="mb-12">
           <h1 className="text-4xl font-bold mb-4 text-balance">JobFinder</h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            An intelligent job search aggregator that automatically scrapes job listings from
-            multiple platforms using Google Search and AI-powered extraction. Never miss an
-            opportunity again—manage all your applications in one place.
+            An automated job search aggregator that collects listings from multiple platforms using Google Search. Never miss an opportunity again. Track and manage all your applications in one place.
           </p>
         </div>
 
@@ -32,10 +30,7 @@ const Page: FC = async () => {
           <div>
             <h3 className="text-lg font-semibold mb-2">How It Works</h3>
             <p className="text-muted-foreground leading-relaxed">
-              JobFinder leverages Google Search and the Serper API to discover job postings across
-              the web. AI-powered extraction parses structured details such as title, company,
-              location, and application links. All data is stored in PostgreSQL and presented in a
-              centralized dashboard.
+              JobFinder uses Google Search and the Serper API to discover job postings across the web. Structured job details such as title, company, location, and application links are programmatically extracted and stored in PostgreSQL. Everything is presented in a centralized dashboard for easy tracking.
             </p>
           </div>
 
@@ -53,8 +48,7 @@ const Page: FC = async () => {
         <div className="mb-12">
           <h2 className="text-2xl font-bold mb-4">Tech Stack</h2>
           <p className="text-muted-foreground leading-relaxed">
-            Next.js, React, Vercel, PostgreSQL, Drizzle ORM, Tailwind CSS, shadcn/ui, and Serper API
-            for AI-powered job discovery.
+            Next.js, React, Vercel, PostgreSQL, Drizzle ORM, Tailwind CSS, shadcn/ui, and the Serper API for job discovery.
           </p>
         </div>
 

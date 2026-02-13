@@ -1,7 +1,7 @@
 {
-  "name": "JobFinder - Personal AI Job Search",
+  "name": "JobFinder - Automated Job Search Aggregator",
   "short_name": "JobFinder",
-  "description": "An intelligent job search aggregator that automatically scrapes job listings from multiple platforms using Google Search and AI-powered extraction. Never miss an opportunity again—manage all your applications in one place.",
+  "description": "An automated job search aggregator that collects listings from multiple platforms using Google Search. Never miss an opportunity again. Track and manage all your applications in one place.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
