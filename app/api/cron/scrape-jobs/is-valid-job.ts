@@ -15,9 +15,9 @@ export const isValidJobLink = (link: string): boolean => {
       return pathParts.length >= 2 && uuidRegex.test(pathParts[1])
     }
 
-    // Ashby: /CompanyName/<UUID>
+    // Ashby: /CompanyName/<UUID>[/application]
     if (url.hostname.includes("ashbyhq.com")) {
-      return pathParts.length === 2 && uuidRegex.test(pathParts[1])
+      return pathParts.length >= 2 && uuidRegex.test(pathParts[1])
     }
 
     // Workday: /.../job/<job-id>
