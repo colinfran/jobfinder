@@ -21,7 +21,7 @@ export const normalizeJobUrl = (link: string): string => {
     // Remove trailing slash
     let pathname = url.pathname.replace(/\/$/, "")
     // Remove common suffixes that don't change the job posting
-    pathname = pathname.replace(/\/(application|career-opportunity)$/, "")
+    pathname = pathname.replace(/\/(application|apply|career-opportunity)$/, "")
     // Reconstruct normalized URL
     return `${url.protocol}//${url.hostname}${pathname}`
   } catch {

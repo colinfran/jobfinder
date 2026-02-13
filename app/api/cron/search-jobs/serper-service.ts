@@ -3,6 +3,7 @@ import { extractCompany } from "@/app/api/cron/search-jobs/extract-company"
 import { insertJob } from "@/lib/db/insert-job"
 import { isValidJobLink } from "./is-valid-job"
 import { normalizeJobUrl } from "./normalize-url"
+import { isLinkStillValid } from "@/app/api/cron/validate-jobs/validate-job-link"
 
 interface SerperOrganicResult {
   title: string
@@ -54,6 +55,13 @@ export const processJobResult = async (
 }> => {
   if (!isValidJobLink(result.link)) {
     console.log(`⚠️ Skipping non-job link: ${result.link}`)
+    return { success: false, inserted: false, alreadyExists: false, title: result.title }
+  }
+
+  // Validate that the link is still active before inserting
+  const isValid = await isLinkStillValid(result.link)
+  if (!isValid) {
+    console.log(`⚠️ Skipping dead link: ${result.link}`)
     return { success: false, inserted: false, alreadyExists: false, title: result.title }
   }
 
