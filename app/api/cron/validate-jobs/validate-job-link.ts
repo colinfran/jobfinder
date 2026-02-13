@@ -145,12 +145,14 @@ export const processDuplicateJobs = async (
 // Helper: validate all job links
 export const validateJobLinks = async (): Promise<{ removed: number; errors: string[] }> => {
   const allJobs = await db.select().from(jobs)
-  
+
   // Filter out Ashby jobs (validated by GitHub Actions)
   const remainingJobs = allJobs.filter((job) => !job.source?.includes("ashbyhq"))
-  
-  console.log(`⏭️ Skipping ${allJobs.length - remainingJobs.length} Ashby jobs (validated by GitHub Actions)`)
-  
+
+  console.log(
+    `⏭️ Skipping ${allJobs.length - remainingJobs.length} Ashby jobs (validated by GitHub Actions)`,
+  )
+
   let removed = 0
   const errors: string[] = []
 

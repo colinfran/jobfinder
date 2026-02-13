@@ -21,7 +21,7 @@ export const POST = async (request: Request): Promise<NextResponse> => {
       )
     }
 
-    console.log(`🚀 Ashby validation endpoint called`)
+    console.log("🚀 Ashby validation endpoint called")
     console.log(`🗑️ Removing ${invalidJobIds.length} invalid Ashby jobs`)
 
     // Delete the invalid jobs
