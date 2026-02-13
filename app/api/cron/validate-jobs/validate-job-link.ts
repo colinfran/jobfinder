@@ -67,11 +67,9 @@ export const isLinkStillValid = async (link: string): Promise<boolean> => {
 
     // Workday: check for error indicators
     if (url.hostname.includes("myworkdayjobs")) {
-      return (
-        !body.includes("Job not found") &&
-        !body.includes("This job is no longer available") &&
-        !body.includes("404")
-      )
+      if (
+        body.includes("Job not found") || body.includes("The job you are looking for is no longer available") || body.includes("The page you are looking for doesn't exist.")
+      ) return false
     }
 
     // ashbyhq: fetch request not reliable; skipping this check here
