@@ -1,0 +1,33 @@
+name: Validate Ashby Jobs
+
+on:
+  schedule:
+    # Run daily at 1 AM, 7 AM, 1 PM, and 7 PM UTC
+    - cron: "0 1,7,13,19 * * *"
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  validate-ashby:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm install puppeteer
+
+      - name: Validate Ashby jobs
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: node scripts/validate-ashby-jobs.js
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "Ashby job validation failed"

@@ -32,11 +32,12 @@ export const normalizeJobUrl = (link: string): string => {
 // Helper: check if a job link is still active
 export const isLinkStillValid = async (link: string): Promise<boolean> => {
   try {
+    const url = new URL(link)
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 5000) // 5 second timeout
 
     const response = await fetch(link, {
-      method: "HEAD",
+      method: "GET",
       redirect: "follow",
       signal: controller.signal,
       headers: {
@@ -46,8 +47,37 @@ export const isLinkStillValid = async (link: string): Promise<boolean> => {
 
     clearTimeout(timeout)
 
-    // Consider 2xx and 3xx as valid, 4xx and 5xx as invalid
-    return response.status < 400
+    // Consider 4xx and 5xx as invalid
+    if (response.status >= 400) {
+      return false
+    }
+
+    // Read response body to check for dead job indicators
+    const body = await response.text()
+
+    // Lever: check for "Apply for this job" button
+    if (url.hostname.includes("lever.co")) {
+      return body.includes("Apply for this job")
+    }
+
+    // Greenhouse: check for error or not found indicators
+    if (url.hostname.includes("greenhouse")) {
+      return !body.includes("This job is no longer available") && !body.includes("not found")
+    }
+
+    // Workday: check for error indicators
+    if (url.hostname.includes("myworkdayjobs")) {
+      return (
+        !body.includes("Job not found") &&
+        !body.includes("This job is no longer available") &&
+        !body.includes("404")
+      )
+    }
+
+    // ashbyhq: fetch request not reliable; skipping this check here
+    // using GitHub Actions with Puppeteer to validate Ashby jobs instead
+
+    return true
   } catch (error) {
     // Timeout, network error, or other issues = treat as invalid
     return false
@@ -114,7 +144,13 @@ export const processDuplicateJobs = async (
 
 // Helper: validate all job links
 export const validateJobLinks = async (): Promise<{ removed: number; errors: string[] }> => {
-  const remainingJobs = await db.select().from(jobs)
+  const allJobs = await db.select().from(jobs)
+  
+  // Filter out Ashby jobs (validated by GitHub Actions)
+  const remainingJobs = allJobs.filter((job) => !job.source?.includes("ashbyhq"))
+  
+  console.log(`⏭️ Skipping ${allJobs.length - remainingJobs.length} Ashby jobs (validated by GitHub Actions)`)
+  
   let removed = 0
   const errors: string[] = []
 
