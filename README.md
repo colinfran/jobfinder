@@ -19,7 +19,7 @@ JobFinder is an automated job search aggregator that collects listings from mult
 
 - Node.js 18+ and npm
 - PostgreSQL database (or Neon Serverless)
-- Serper API key (for job scraping)
+- Serper API key (for job searching)
 
 ### Installation
 
