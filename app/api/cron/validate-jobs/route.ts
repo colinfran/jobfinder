@@ -37,9 +37,7 @@ export const GET = async (request: Request): Promise<NextResponse> => {
     for (const [normalizedUrl, jobGroup] of urlMap.entries()) {
       if (jobGroup.length > 1) {
         // Sort by createdAt, keep the first one (oldest)
-        jobGroup.sort(
-          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-        )
+        jobGroup.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
         // Mark duplicates for deletion
         for (let i = 1; i < jobGroup.length; i++) {
           jobsToDelete.push(jobGroup[i].id)
