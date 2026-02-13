@@ -1,5 +1,5 @@
 "use client"
-import React, { FC, useState } from "react"
+import React, { FC, useState, useEffect } from "react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,17 +11,18 @@ import Link from "next/link"
 import { HomeIcon, InfoIcon, Loader2, LogOut } from "lucide-react"
 import ThemeButton from "./theme-button"
 import MenuButton from "./menu-button"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import { Skeleton } from "../ui/skeleton"
 
 const HeaderDropdown: FC = () => {
   const router = useRouter()
+  const pathname = usePathname()
 
   const { data: session } = authClient.useSession()
 
   const [isOpen, setIsOpen] = useState(false)
-
   const [loading, setLoading] = useState(false)
 
   const onClick = async (): Promise<void> => {
@@ -46,12 +47,18 @@ const HeaderDropdown: FC = () => {
         .join("")
     : "UN"
 
+  const isDashboard = pathname === "/dashboard"
+  // On dashboard, show skeleton until we have actual session data (not undefined, not null)
+  const showSkeleton = isDashboard && !session
+
   return (
     <div className="flex w-full items-center justify-end gap-8">
       <div className="">
         <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
           <DropdownMenuTrigger className="flex cursor-pointer" asChild>
-            {session ? (
+            {showSkeleton ? (
+              <Skeleton className="h-10 w-10 rounded-full" />
+            ) : session ? (
               <Avatar>
                 <AvatarImage src={session?.user?.image || undefined} />
                 <AvatarFallback>{initials}</AvatarFallback>

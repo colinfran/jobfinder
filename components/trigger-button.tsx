@@ -12,9 +12,11 @@ export const TriggerButton: FC = () => {
   const [result, setResult] = useState<string | null>(null)
   const [hasTriggerSecret, setHasTriggerSecret] = useState(false)
   const [timeToNextRun, setTimeToNextRun] = useState<string>("")
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
+    setMounted(true)
     const triggerSecret = localStorage.getItem("TRIGGER_SECRET")
     setHasTriggerSecret(!!triggerSecret)
   }, [])
@@ -65,7 +67,7 @@ export const TriggerButton: FC = () => {
     return (
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <span>Next scrape in</span>
-        {timeToNextRun ? (
+        {mounted && timeToNextRun ? (
           <span className="font-medium tabular-nums">{timeToNextRun}</span>
         ) : (
           <Skeleton className="h-5 w-16" />

@@ -134,6 +134,17 @@ const Page: FC = async () => {
           JobFinder aggregates publicly available listings. Always verify job details directly with
           the employer before applying.
         </p>
+
+        {/* Legal Links */}
+        <div className="mt-8 pt-6 border-t border-border flex gap-4 text-sm text-muted-foreground">
+          <Link className="hover:text-foreground transition-colors" href="/terms">
+            Terms of Service
+          </Link>
+          <span>·</span>
+          <Link className="hover:text-foreground transition-colors" href="/privacy">
+            Privacy Policy
+          </Link>
+        </div>
       </div>
     </div>
   )
