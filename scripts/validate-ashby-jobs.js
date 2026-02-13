@@ -39,32 +39,28 @@ async function validateAshbyJobs() {
 
     const invalidJobIds = []
 
-    // Create a single page for all validations
-    const page = await browser.newPage()
-    page.setDefaultTimeout(10000)
-
     // Process jobs in batches of 5 for concurrency
     const batchSize = 5
     for (let i = 0; i < jobs.length; i += batchSize) {
       const batch = jobs.slice(i, i + batchSize)
       await Promise.all(
         batch.map(async (job) => {
+          const page = await browser.newPage()
+          page.setDefaultTimeout(10000)
           try {
             console.log(`🔍 Validating: ${job.title}`)
 
             try {
-              await page.goto(job.link, { waitUntil: "networkidle2" })
-
-              // Clear cookies between navigations to avoid state carryover
-              await page.deleteCookie(...(await page.cookies()))
+              const response = await page.goto(job.link, {
+                waitUntil: "networkidle2",
+              })
 
               // Check if the page contains "Job not found"
               const content = await page.content()
               if (
+                !response || response.status() >= 400 ||
                 content.includes("The job you requested was not found") ||
-                content.includes("Job not found") ||
-                content.includes("404") ||
-                content.includes("Page not found")
+                content.includes("Job not found")
               ) {
                 console.log(`❌ Invalid: ${job.title}`)
                 invalidJobIds.push(job.id)
@@ -73,10 +69,11 @@ async function validateAshbyJobs() {
               }
             } catch (err) {
               console.log(`⚠️ Error loading page: ${job.title}`)
-              invalidJobIds.push(job.id)
             }
           } catch (err) {
             console.error(`Error validating job ${job.id}:`, err)
+          } finally {
+            await page.close()
           }
         }),
       )
@@ -84,8 +81,6 @@ async function validateAshbyJobs() {
       // Small delay between batches
       await new Promise((resolve) => setTimeout(resolve, 500))
     }
-
-    await page.close()
 
     // Send invalid job IDs to your API
     if (invalidJobIds.length > 0) {
