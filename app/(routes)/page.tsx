@@ -26,7 +26,7 @@ const Page: FC = () => {
       <h1 className="mb-6 w-full text-center text-3xl font-bold">JobFinder</h1>
 
       <h3 className="mx-auto mb-6 max-w-[400px] text-center">
-        JobFinder is a personal job discovery engine that helps me automatically find and organize
+        JobFinder is a personal job discovery engine that helps automatically find and organize
         relevant roles across the web. Instead of manually checking multiple job boards, everything
         is surfaced and structured in one focused dashboard.
       </h3>
