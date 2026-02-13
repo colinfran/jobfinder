@@ -1,4 +1,9 @@
-export const SEARCH_QUERIES = [
+export const TOPICS = ["software", "finance"] as const
+export type Topic = (typeof TOPICS)[number]
+
+export const DEFAULT_TOPIC: Topic = "software"
+
+const SOFTWARE_QUERIES = [
   // Greenhouse - Frontend
   'site:greenhouse.io "frontend" "San Francisco" "hybrid"',
   'site:greenhouse.io "frontend" "San Francisco" "remote"',
@@ -25,3 +30,45 @@ export const SEARCH_QUERIES = [
   'site:ashbyhq.com "full stack" "San Francisco" "hybrid"',
   'site:ashbyhq.com "full stack" "San Francisco" "remote"',
 ]
+
+const FINANCE_KEYWORDS = [
+  "Finance",
+  "Finance manager",
+  "FP&A",
+  "FP&A Manager",
+  "Senior Financial Analyst",
+  "Financial Analyst",
+]
+
+const FINANCE_QUERIES = [
+  // Greenhouse - Finance
+  ...FINANCE_KEYWORDS.flatMap((keyword) => [
+    `site:greenhouse.io "${keyword}" "San Francisco" "hybrid"`,
+    `site:greenhouse.io "${keyword}" "San Francisco" "remote"`,
+  ]),
+
+  // Lever - Finance
+  ...FINANCE_KEYWORDS.flatMap((keyword) => [
+    `site:lever.co "${keyword}" "San Francisco" "hybrid"`,
+    `site:lever.co "${keyword}" "San Francisco" "remote"`,
+  ]),
+
+  // Ashby - Finance
+  ...FINANCE_KEYWORDS.flatMap((keyword) => [
+    `site:ashbyhq.com "${keyword}" "San Francisco" "hybrid"`,
+    `site:ashbyhq.com "${keyword}" "San Francisco" "remote"`,
+  ]),
+]
+
+export const SEARCH_QUERIES_BY_TOPIC: Record<Topic, string[]> = {
+  software: SOFTWARE_QUERIES,
+  finance: FINANCE_QUERIES,
+}
+
+export const SEARCH_QUERIES = Object.values(SEARCH_QUERIES_BY_TOPIC).flat()
+
+export const TOPIC_BY_QUERY: Record<string, Topic> = Object.fromEntries(
+  Object.entries(SEARCH_QUERIES_BY_TOPIC).flatMap(([topic, queries]) =>
+    queries.map((query) => [query, topic as Topic]),
+  ),
+)

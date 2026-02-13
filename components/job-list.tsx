@@ -1,18 +1,30 @@
 "use client"
 
 import { FC, useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 import type { Job } from "@/lib/db/schema"
-import { markAsApplied, markAsUnapplied } from "@/app/actions"
+import { markAsApplied, markAsUnapplied, setLastViewedTopic } from "@/app/actions"
 import { JobRow } from "@/components/job-row"
+import type { Topic } from "@/lib/config/search-queries"
 
 type FilterTab = "all" | "new" | "applied"
+type JobWithMeta = Job & { applied: boolean; topic: Topic }
 
-export const JobList: FC<{ jobs: Job[] }> = ({ jobs }) => {
+export const JobList: FC<{
+  jobs: JobWithMeta[]
+  topics: Topic[]
+  initialTopic: Topic
+}> = ({ jobs, topics, initialTopic }) => {
   const [filter, setFilter] = useState<FilterTab>("all")
   const [search, setSearch] = useState("")
+  const [topic, setTopic] = useState<Topic>(initialTopic)
   const [, startTransition] = useTransition()
+  const router = useRouter()
 
-  const filteredJobs = jobs.filter((job) => {
+  const topicJobs = jobs.filter((job) => job.topic === topic)
+  const topicSources = new Set(topicJobs.map((job) => job.source || "unknown"))
+
+  const filteredJobs = topicJobs.filter((job) => {
     // Tab filter
     if (filter === "new" && job.applied) return false
     if (filter === "applied" && !job.applied) return false
@@ -32,18 +44,26 @@ export const JobList: FC<{ jobs: Job[] }> = ({ jobs }) => {
   })
 
   const counts = {
-    all: jobs.length,
-    new: jobs.filter((j) => !j.applied).length,
-    applied: jobs.filter((j) => j.applied).length,
+    all: topicJobs.length,
+    new: topicJobs.filter((j) => !j.applied).length,
+    applied: topicJobs.filter((j) => j.applied).length,
   }
 
-  const handleApplyToggle = (job: Job): void => {
+  const handleTopicChange = (nextTopic: Topic): void => {
+    setTopic(nextTopic)
+    startTransition(async () => {
+      await setLastViewedTopic(nextTopic)
+    })
+  }
+
+  const handleApplyToggle = (job: JobWithMeta): void => {
     startTransition(async () => {
       if (job.applied) {
         await markAsUnapplied(job.id)
       } else {
         await markAsApplied(job.id)
       }
+      router.refresh()
     })
   }
 
@@ -55,55 +75,77 @@ export const JobList: FC<{ jobs: Job[] }> = ({ jobs }) => {
 
   return (
     <div className="flex flex-col gap-6">
+      <p className="text-sm text-muted-foreground">
+        {topicJobs.length} jobs found across {topicSources.size} sources
+      </p>
       {/* Header controls */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        {/* Tabs */}
-        <div className="flex items-center gap-1 rounded-lg bg-muted p-1">
-          {tabs.map((tab) => (
+      <div className="flex flex-col gap-4">
+        {/* Topics */}
+        <div className="flex flex-wrap items-center gap-2">
+          {topics.map((tabTopic) => (
             <button
-              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                filter === tab.key
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                topic === tabTopic
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:text-foreground"
               }`}
-              key={tab.key}
-              onClick={() => setFilter(tab.key)}
+              key={tabTopic}
+              onClick={() => handleTopicChange(tabTopic)}
             >
-              {tab.label}
-              <span
-                className={`ml-1.5 inline-flex items-center rounded-full px-1.5 py-0.5 text-xs ${
-                  filter === tab.key ? "bg-muted text-foreground" : "text-muted-foreground"
-                }`}
-              >
-                {counts[tab.key]}
-              </span>
+              {tabTopic === "software" ? "Software" : "Finance"}
             </button>
           ))}
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          {/* Tabs */}
+          <div className="flex items-center gap-1 rounded-lg bg-muted p-1">
+            {tabs.map((tab) => (
+              <button
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                  filter === tab.key
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                key={tab.key}
+                onClick={() => setFilter(tab.key)}
+              >
+                {tab.label}
+                <span
+                  className={`ml-1.5 inline-flex items-center rounded-full px-1.5 py-0.5 text-xs ${
+                    filter === tab.key ? "bg-muted text-foreground" : "text-muted-foreground"
+                  }`}
+                >
+                  {counts[tab.key]}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Search */}
+          <div className="relative">
+            <svg
+              className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <input
+              className="h-9 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring sm:w-64"
+              placeholder="Search jobs..."
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
-          </svg>
-          <input
-            className="h-9 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring sm:w-64"
-            placeholder="Search jobs..."
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          </div>
         </div>
       </div>
 

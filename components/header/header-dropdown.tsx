@@ -13,6 +13,7 @@ import ThemeButton from "./theme-button"
 import MenuButton from "./menu-button"
 import { useRouter } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 const HeaderDropdown: FC = () => {
   const router = useRouter()
@@ -38,12 +39,26 @@ const HeaderDropdown: FC = () => {
     })
   }
 
+  const initials = session?.user?.name
+    ? session.user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+    : "UN"
+
   return (
     <div className="flex w-full items-center justify-end gap-8">
       <div className="">
         <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
           <DropdownMenuTrigger className="flex cursor-pointer" asChild>
-            <MenuButton isOpen={isOpen} />
+            {session ? (
+              <Avatar>
+                <AvatarImage src={session?.user?.image || undefined} />
+                <AvatarFallback>{initials}</AvatarFallback>
+              </Avatar>
+            ) : (
+              <MenuButton isOpen={isOpen} />
+            )}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem

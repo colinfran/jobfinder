@@ -1,7 +1,6 @@
 "use client"
 
 import React, { FC, Suspense, useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
 import { Github, Loader2 } from "lucide-react"
@@ -12,7 +11,6 @@ import { AuthError } from "@/components/auth-error"
 
 const Page: FC = () => {
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
 
   const onSubmit = (): void => {
     setLoading(true)

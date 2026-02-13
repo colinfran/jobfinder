@@ -1,16 +1,50 @@
 "use server"
 
 import { db } from "@/lib/db"
-import { jobs } from "@/lib/db/schema"
-import { eq } from "drizzle-orm"
+import { user, userJobs } from "@/lib/db/schema"
+import { and, eq } from "drizzle-orm"
+import { headers } from "next/headers"
 import { revalidatePath } from "next/cache"
+import { auth } from "@/lib/auth"
+import { DEFAULT_TOPIC, TOPICS, type Topic } from "@/lib/config/search-queries"
 
 export const markAsApplied = async (jobId: number): Promise<void> => {
-  await db.update(jobs).set({ applied: true }).where(eq(jobs.id, jobId))
-  revalidatePath("/")
+  const session = await auth.api.getSession({ headers: await headers() })
+  const userId = session?.user?.id
+
+  if (!userId) {
+    throw new Error("Unauthorized")
+  }
+
+  await db
+    .insert(userJobs)
+    .values({ userId, jobId, status: "applied", appliedAt: new Date() })
+    .onConflictDoNothing({ target: [userJobs.userId, userJobs.jobId] })
+
+  revalidatePath("/dashboard")
 }
 
 export const markAsUnapplied = async (jobId: number): Promise<void> => {
-  await db.update(jobs).set({ applied: false }).where(eq(jobs.id, jobId))
-  revalidatePath("/")
+  const session = await auth.api.getSession({ headers: await headers() })
+  const userId = session?.user?.id
+
+  if (!userId) {
+    throw new Error("Unauthorized")
+  }
+
+  await db.delete(userJobs).where(and(eq(userJobs.userId, userId), eq(userJobs.jobId, jobId)))
+  revalidatePath("/dashboard")
+}
+
+export const setLastViewedTopic = async (topic: Topic): Promise<void> => {
+  const session = await auth.api.getSession({ headers: await headers() })
+  const userId = session?.user?.id
+
+  if (!userId) {
+    throw new Error("Unauthorized")
+  }
+
+  const nextTopic = TOPICS.includes(topic) ? topic : DEFAULT_TOPIC
+
+  await db.update(user).set({ lastTopic: nextTopic }).where(eq(user.id, userId))
 }

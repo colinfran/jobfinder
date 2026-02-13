@@ -31,7 +31,12 @@ const sourceColor = (source: string): string => {
   }
 }
 
-export const JobRow: FC<{ job: Job; onToggleApplied: () => void }> = ({ job, onToggleApplied }) => {
+type JobWithApplied = Job & { applied: boolean }
+
+export const JobRow: FC<{ job: JobWithApplied; onToggleApplied: () => void }> = ({
+  job,
+  onToggleApplied,
+}) => {
   const handleLinkClick = (): void => {
     if (!job.applied) {
       onToggleApplied()
