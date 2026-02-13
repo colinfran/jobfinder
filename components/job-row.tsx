@@ -21,13 +21,13 @@ const timeAgo = (date: Date): string => {
 const sourceColor = (source: string): string => {
   switch (source) {
     case "greenhouse.io":
-      return "bg-emerald-500/15 text-emerald-400"
+      return "bg-teal-500/15 text-teal-600"
     case "lever.co":
-      return "bg-sky-500/15 text-sky-400"
+      return "bg-gray-100/15 text-gray-400"
     case "ashbyhq.com":
-      return "bg-amber-500/15 text-amber-400"
+      return "bg-violet-500/15 text-violet-600"
     case "myworkdayjobs.com":
-      return "bg-blue-500/15 text-blue-400"
+      return "bg-blue-500/15 text-blue-600"
     default:
       return "bg-muted text-muted-foreground"
   }
