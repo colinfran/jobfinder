@@ -83,8 +83,8 @@ const FINANCE_QUERIES = [
 
   // Workday - Finance
   ...FINANCE_KEYWORDS.flatMap((keyword) => [
-    `site:myworkdayjobs.com "${keyword}" "San Francisco" "hybrid"`,
-    `site:myworkdayjobs.com "${keyword}" "San Francisco" "in office"`,
+    `site:myworkdayjobs.com "${keyword}" "San Francisco"`,
+    `site:myworkdayjobs.com "${keyword}" "San Francisco"`,
     `site:myworkdayjobs.com "${keyword}" "California" "remote"`,
     `site:myworkdayjobs.com "${keyword}" "United States" "remote"`,
   ]),
