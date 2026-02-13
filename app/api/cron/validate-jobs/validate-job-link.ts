@@ -77,9 +77,7 @@ export const processDuplicateJobs = async (
   for (const [normalizedUrl, jobGroup] of urlMap.entries()) {
     if (jobGroup.length > 1) {
       // Sort by createdAt, keep the first one (oldest)
-      jobGroup.sort(
-        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      )
+      jobGroup.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
       const jobToKeep = jobGroup[0]
 
       // Queue the oldest job's URL to be updated to the clean version
@@ -94,9 +92,7 @@ export const processDuplicateJobs = async (
       // Mark duplicates for deletion
       for (let i = 1; i < jobGroup.length; i++) {
         jobsToDelete.push(jobGroup[i].id)
-        console.log(
-          `🔀 Removing duplicate: ${jobGroup[i].title} (kept oldest with clean URL)`,
-        )
+        console.log(`🔀 Removing duplicate: ${jobGroup[i].title} (kept oldest with clean URL)`)
         duplicatesRemoved++
       }
     }
@@ -109,10 +105,7 @@ export const processDuplicateJobs = async (
 
   // Then update the URLs
   for (const update of jobsToUpdate) {
-    await db
-      .update(jobs)
-      .set({ link: update.newLink })
-      .where(eq(jobs.id, update.id))
+    await db.update(jobs).set({ link: update.newLink }).where(eq(jobs.id, update.id))
     console.log(`🔗 Updated URL for: ${update.title}`)
   }
 
