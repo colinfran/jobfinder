@@ -9,6 +9,7 @@ import { headers } from "next/headers"
 import { DEFAULT_TOPIC, TOPICS, TOPIC_BY_QUERY, type Topic } from "@/lib/config/search-queries"
 
 export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 const Page: FC = async () => {
   const session = await auth.api.getSession({ headers: await headers() })
