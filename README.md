@@ -41,8 +41,14 @@ JobFinder is an automated job search aggregator that collects listings from mult
    Create a `.env.local` file with:
 
    ```env
-   DATABASE_URL=postgresql://your_database
+   DATABASE_URL=postgresql://your_database_url
    SERPER_API_KEY=your_serper_api_key
+   CRON_SECRET=your_cron_secret
+   BETTER_AUTH_SECRET=your_betterauth_secret
+   BETTER_AUTH_URL=http://localhost:3000 // or production url
+   GITHUB_CLIENT_ID=your_github_client_id
+   GITHUB_CLIENT_SECRET=your_github_client_secret
+   NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000 // or production url
    ```
 
 4. Set up the database:
