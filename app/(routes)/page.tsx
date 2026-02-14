@@ -6,7 +6,7 @@ import { Card, CardDescription, CardFooter, CardHeader } from "@/components/ui/c
 import { Github, Loader2 } from "lucide-react"
 import Link from "next/link"
 import Icon from "@/components/icon"
-import { authenticate } from "@/lib/db/authenticate"
+import { authenticate } from "@/lib/auth/auth-client"
 import { AuthError } from "@/components/auth-error"
 
 const Page: FC = () => {

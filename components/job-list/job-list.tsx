@@ -1,89 +1,27 @@
 "use client"
 
-import { FC, useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
-import type { Job } from "@/lib/db/schema"
-import {
-  markAsApplied,
-  markAsUnapplied,
-  markAsNotRelevant,
-  setLastViewedTopic,
-} from "@/components/job-list/actions"
+import { FC } from "react"
 import { JobRow } from "@/components/job-list/job-row"
-import type { Topic } from "@/lib/config/search-queries"
 import { SearchIcon } from "lucide-react"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group"
 import { ScrollArea, ScrollBar } from "../ui/scroll-area"
+import { useJobListContext, type FilterTab } from "@/providers/job-list-provider"
 
-type FilterTab = "all" | "new" | "applied" | "not_relevant"
-type JobWithMeta = Job & { applied: boolean; notRelevant: boolean; topic: Topic }
-
-export const JobList: FC<{
-  jobs: JobWithMeta[]
-  topics: Topic[]
-  initialTopic: Topic
-}> = ({ jobs, topics, initialTopic }) => {
-  const [filter, setFilter] = useState<FilterTab>("all")
-  const [search, setSearch] = useState("")
-  const [topic, setTopic] = useState<Topic>(initialTopic)
-  const [, startTransition] = useTransition()
-  const router = useRouter()
-
-  const topicJobs = jobs.filter((job) => job.topic === topic)
-  const topicSources = new Set(topicJobs.map((job) => job.source || "unknown"))
-
-  const filteredJobs = topicJobs.filter((job) => {
-    // Tab filter
-    if (filter === "new" && (job.applied || job.notRelevant)) return false
-    if (filter === "applied" && !job.applied) return false
-    if (filter === "not_relevant" && !job.notRelevant) return false
-
-    // Text search
-    if (search) {
-      const q = search.toLowerCase()
-      return (
-        job.title.toLowerCase().includes(q) ||
-        (job.company && job.company.toLowerCase().includes(q)) ||
-        (job.snippet && job.snippet.toLowerCase().includes(q)) ||
-        (job.source && job.source.toLowerCase().includes(q))
-      )
-    }
-
-    return true
-  })
-
-  const counts = {
-    all: topicJobs.length,
-    new: topicJobs.filter((j) => !j.applied && !j.notRelevant).length,
-    applied: topicJobs.filter((j) => j.applied).length,
-    not_relevant: topicJobs.filter((j) => j.notRelevant).length,
-  }
-
-  const handleTopicChange = (nextTopic: Topic): void => {
-    setTopic(nextTopic)
-    setFilter("all")
-    startTransition(async () => {
-      await setLastViewedTopic(nextTopic)
-    })
-  }
-
-  const handleApplyToggle = (job: JobWithMeta): void => {
-    startTransition(async () => {
-      if (job.applied) {
-        await markAsUnapplied(job.id)
-      } else {
-        await markAsApplied(job.id)
-      }
-      router.refresh()
-    })
-  }
-
-  const handleMarkNotRelevant = (job: JobWithMeta): void => {
-    startTransition(async () => {
-      await markAsNotRelevant(job.id)
-      router.refresh()
-    })
-  }
+export const JobList: FC = () => {
+  const {
+    filter,
+    setFilter,
+    search,
+    setSearch,
+    topic,
+    filteredJobs,
+    topicJobs,
+    topicSources,
+    counts,
+    topics,
+    jobs,
+    handleTopicChange,
+  } = useJobListContext()
 
   const tabs: { key: FilterTab; label: string }[] = [
     { key: "all", label: "All" },
@@ -195,12 +133,7 @@ export const JobList: FC<{
           {/* Table rows */}
           <div className="divide-y divide-border">
             {filteredJobs.map((job) => (
-              <JobRow
-                job={job}
-                key={job.id}
-                onMarkNotRelevant={() => handleMarkNotRelevant(job)}
-                onToggleApplied={() => handleApplyToggle(job)}
-              />
+              <JobRow job={job} key={job.id} />
             ))}
           </div>
         </div>

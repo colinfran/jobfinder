@@ -26,7 +26,7 @@ async function validateAshbyJobs(): Promise<void> {
 
     // Launch browser
     browser = await puppeteer.launch({
-      headless: "new",
+      headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     })
 
@@ -53,6 +53,9 @@ async function validateAshbyJobs(): Promise<void> {
       const batch = jobs.slice(i, i + batchSize)
       await Promise.all(
         batch.map(async (job) => {
+          if (!browser) {
+            throw new Error("Browser is not initialized")
+          }
           const page = await browser.newPage()
           page.setDefaultTimeout(10000)
           try {

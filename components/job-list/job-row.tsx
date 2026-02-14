@@ -1,6 +1,5 @@
 "use client"
 
-import type { Job } from "@/lib/db/schema"
 import { FC } from "react"
 import { Check, Plus, EllipsisVertical } from "lucide-react"
 import {
@@ -11,17 +10,16 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "../ui/button"
 import { sourceColor, timeAgo } from "./job-utils"
-
-type JobWithApplied = Job & { applied: boolean; notRelevant: boolean }
+import { useJobListContext, type JobWithMeta } from "@/providers/job-list-provider"
 
 export const JobRow: FC<{
-  job: JobWithApplied
-  onToggleApplied: () => void
-  onMarkNotRelevant: () => void
-}> = ({ job, onToggleApplied, onMarkNotRelevant }) => {
+  job: JobWithMeta
+}> = ({ job }) => {
+  const { handleApplyToggle, handleMarkNotRelevant } = useJobListContext()
+
   const handleLinkClick = (): void => {
     if (!job.applied) {
-      onToggleApplied()
+      handleApplyToggle(job)
     }
   }
 
@@ -70,7 +68,7 @@ export const JobRow: FC<{
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem className="cursor-pointer" onClick={onMarkNotRelevant}>
+            <DropdownMenuItem className="cursor-pointer" onClick={() => handleMarkNotRelevant(job)}>
               {job.notRelevant ? "Mark as Relevant" : "Mark as Not Relevant"}
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -89,7 +87,7 @@ export const JobRow: FC<{
           }`}
           disabled={job.notRelevant}
           title="Click to toggle applied status"
-          onClick={onToggleApplied}
+          onClick={() => handleApplyToggle(job)}
         >
           {job.notRelevant ? (
             <>

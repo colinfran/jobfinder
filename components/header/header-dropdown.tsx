@@ -12,7 +12,7 @@ import { HomeIcon, InfoIcon, Loader2, LogOut } from "lucide-react"
 import ThemeButton from "./theme-button"
 import MenuButton from "./menu-button"
 import { usePathname } from "next/navigation"
-import { authClient } from "@/lib/auth-client"
+import { authClient, signOut } from "@/lib/auth/auth-client"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Skeleton } from "../ui/skeleton"
 
@@ -26,19 +26,7 @@ const HeaderDropdown: FC = () => {
 
   const onClick = async (): Promise<void> => {
     setLoading(true)
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          console.log("Signed out successfully")
-          window.location.replace("/")
-          setLoading(false)
-        },
-        onError: () => {
-          console.log("Error signing out")
-          setLoading(false)
-        },
-      },
-    })
+    await signOut(setLoading)
   }
 
   const initials = session?.user?.name
@@ -49,7 +37,6 @@ const HeaderDropdown: FC = () => {
     : "UN"
 
   const isDashboard = pathname === "/dashboard"
-  // On dashboard, show skeleton until we have actual session data (not undefined, not null)
   const showSkeleton = isDashboard && !session
 
   return (

@@ -4,9 +4,10 @@ import { and, desc, eq } from "drizzle-orm"
 import { JobList } from "@/components/job-list/job-list"
 import { TriggerButton } from "@/components/trigger-button"
 import { FC } from "react"
-import { auth } from "@/lib/auth"
+import { auth } from "@/lib/auth/auth"
 import { headers } from "next/headers"
 import { DEFAULT_TOPIC, TOPICS, TOPIC_BY_QUERY, type Topic } from "@/lib/config/search-queries"
+import { JobListProvider } from "@/providers/job-list-provider"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -52,7 +53,9 @@ const Page: FC = async () => {
         <TriggerButton />
       </header>
       <main>
-        <JobList initialTopic={initialTopic} jobs={allJobs} topics={[...TOPICS]} />
+        <JobListProvider initialTopic={initialTopic} jobs={allJobs} topics={[...TOPICS]}>
+          <JobList />
+        </JobListProvider>
       </main>
     </div>
   )
