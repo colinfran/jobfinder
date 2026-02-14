@@ -30,11 +30,13 @@ const HeaderDropdown: FC = () => {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
+          console.log("Signed out successfully")
           setLoading(false)
-          router.push("/")
           router.refresh()
+          router.push("/")
         },
         onError: () => {
+          console.log("Error signing out")
           setLoading(false)
         },
       },
