@@ -11,13 +11,12 @@ import Link from "next/link"
 import { HomeIcon, InfoIcon, Loader2, LogOut } from "lucide-react"
 import ThemeButton from "./theme-button"
 import MenuButton from "./menu-button"
-import { useRouter, usePathname } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Skeleton } from "../ui/skeleton"
 
 const HeaderDropdown: FC = () => {
-  const router = useRouter()
   const pathname = usePathname()
 
   const { data: session } = authClient.useSession()

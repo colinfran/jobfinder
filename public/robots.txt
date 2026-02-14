@@ -1,9 +1,14 @@
-# *
 User-agent: *
-Allow: /
+Disallow: /
+
+# Allow homepage and key static pages
+Allow: /$
+Allow: /about
+Allow: /privacy
+Allow: /terms
 
 # Host
 Host: https://jobfinder.dev/
 
-# Sitemaps
+# Sitemap
 Sitemap: https://jobfinder.dev/sitemap.xml
