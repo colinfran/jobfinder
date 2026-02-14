@@ -112,9 +112,9 @@ export const JobList: FC<{
           ))}
         </div>
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 min-[800px]:flex-row min-[800px]:items-center min-[800px]:justify-between">
           {/* Tabs */}
-          <div className="flex items-center gap-1 rounded-lg bg-muted p-1">
+          <div className="flex items-center gap-1 rounded-lg bg-muted p-1 w-max">
             {tabs.map((tab) => (
               <button
                 className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
@@ -180,10 +180,10 @@ export const JobList: FC<{
             <div className="col-span-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Job
             </div>
-            <div className="col-span-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="col-span-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Source
             </div>
-            <div className="col-span-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="col-span-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Found
             </div>
             <div className="col-span-1 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">

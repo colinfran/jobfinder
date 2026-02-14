@@ -54,7 +54,7 @@ export const JobRow: FC<{
 
   return (
     <div
-      className={`group flex flex-col gap-2 px-4 py-3 transition-colors hover:bg-muted/30 sm:grid sm:grid-cols-12 sm:items-center sm:gap-4 ${
+      className={`group relative flex flex-col gap-2 px-4 py-3 transition-colors hover:bg-muted/30 sm:grid sm:grid-cols-12 sm:items-center sm:gap-4 ${
         job.applied ? "opacity-60" : ""
       }`}
     >
@@ -76,7 +76,7 @@ export const JobRow: FC<{
       </div>
 
       {/* Source */}
-      <div className="col-span-2">
+      <div className="col-span-3">
         <span
           className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${sourceColor(job.source || "")}`}
         >
@@ -85,11 +85,11 @@ export const JobRow: FC<{
       </div>
 
       {/* Date */}
-      <div className="col-span-3">
+      <div className="col-span-2">
         <span className="text-xs text-muted-foreground">{timeAgo(new Date(job.createdAt))}</span>
       </div>
 
-      <div className="col-span-1 flex justify-end items-center ">
+      <div className="absolute top-3 right-4 sm:static sm:col-span-1 sm:flex sm:justify-end sm:items-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
