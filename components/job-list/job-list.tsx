@@ -115,7 +115,7 @@ export const JobList: FC<{
           ))}
         </div>
 
-        <div className="flex flex-col gap-4 min-[827px]:flex-row min-[827px]:items-center min-[826px]:justify-between">
+        <div className="flex flex-col gap-4 min-[832px]:flex-row min-[832px]:items-center min-[832px]:justify-between">
           {/* Tabs */}
           <div className="max-w-full overflow-x-auto">
             <div className="flex w-max items-center gap-1 rounded-lg bg-muted p-1">
