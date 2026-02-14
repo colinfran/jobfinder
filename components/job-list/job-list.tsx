@@ -118,7 +118,7 @@ export const JobList: FC<{
 
         <div className="flex flex-col gap-4 min-[832px]:flex-row min-[832px]:items-center min-[832px]:justify-between">
           {/* Tabs */}
-          <ScrollArea className="max-w-full pb-3 sm:pb-0">
+          <ScrollArea>
             <div className="flex w-max items-center gap-1 rounded-lg bg-muted p-1">
               {tabs.map((tab) => (
                 <button
@@ -141,7 +141,7 @@ export const JobList: FC<{
                 </button>
               ))}
             </div>
-            <ScrollBar className="mt-2" orientation="horizontal" />
+            <ScrollBar orientation="horizontal" />
           </ScrollArea>
 
           {/* Search */}
