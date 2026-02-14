@@ -108,15 +108,22 @@ export const JobRow: FC<{
       {/* Status & Menu */}
       <div className="col-span-2 flex justify-end items-center gap-2">
         <button
-          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
-            job.applied
-              ? "bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25"
-              : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-foreground"
+          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+            job.notRelevant
+              ? "bg-muted text-muted-foreground"
+              : job.applied
+                ? "bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25"
+                : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-foreground"
           }`}
+          disabled={job.notRelevant}
           title="Click to toggle applied status"
           onClick={onToggleApplied}
         >
-          {job.applied ? (
+          {job.notRelevant ? (
+            <>
+              <span>Not Relevant</span>
+            </>
+          ) : job.applied ? (
             <>
               <Check className="h-3 w-3" />
               Applied
