@@ -3,11 +3,11 @@
   "crons": [
     {
       "path": "/api/cron/search-jobs",
-      "schedule": "0 0,12 * * *",
+      "schedule": "0 0,12 * * *"
     },
     {
       "path": "/api/cron/validate-jobs",
-      "schedule": "0 2,14 * * *",
+      "schedule": "0 2,14 * * *"
     }
   ]
 }
