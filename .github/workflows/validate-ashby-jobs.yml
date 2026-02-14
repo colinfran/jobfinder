@@ -23,16 +23,18 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/puppeteer
-          key: chromium-${{ runner.os }}-${{ hashFiles('**/package.json') }}
+          key: chromium-${{ runner.os }}-${{ hashFiles('scripts/ashby-validator/package.json') }}
 
       - name: Install dependencies
-        run: npm install puppeteer --no-save --no-package-lock
+        working-directory: scripts/ashby-validator
+        run: npm install
 
       - name: Validate Ashby jobs
         env:
           APP_URL: ${{ secrets.APP_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-        run: node scripts/validate-ashby-jobs.js
+        working-directory: scripts/ashby-validator
+        run: npm run start
 
       - name: Notify on failure
         if: failure()

@@ -1,8 +1,16 @@
-#!/usr/bin/env node
-
 import puppeteer from "puppeteer"
 
-async function validateAshbyJobs() {
+type AshbyJob = {
+  id: string
+  title: string
+  link: string
+}
+
+type AshbyJobsResponse = {
+  jobs: AshbyJob[]
+}
+
+async function validateAshbyJobs(): Promise<void> {
   const appUrl = process.env.APP_URL || "http://localhost:3000"
   const cronSecret = process.env.CRON_SECRET
 
@@ -11,7 +19,7 @@ async function validateAshbyJobs() {
     process.exit(1)
   }
 
-  let browser
+  let browser: puppeteer.Browser | undefined
 
   try {
     console.log("🚀 Starting Ashby job validation")
@@ -34,10 +42,10 @@ async function validateAshbyJobs() {
       throw new Error(`Failed to fetch Ashby jobs: ${jobsResponse.statusText}`)
     }
 
-    const { jobs } = await jobsResponse.json()
+    const { jobs } = (await jobsResponse.json()) as AshbyJobsResponse
     console.log(`📋 Found ${jobs.length} Ashby jobs to validate`)
 
-    const invalidJobIds = []
+    const invalidJobIds: string[] = []
 
     // Process jobs in batches of 5 for concurrency
     const batchSize = 5
@@ -58,7 +66,8 @@ async function validateAshbyJobs() {
               // Check if the page contains "Job not found"
               const content = await page.content()
               if (
-                !response || response.status() >= 400 ||
+                !response ||
+                response.status() >= 400 ||
                 content.includes("The job you requested was not found") ||
                 content.includes("Job not found")
               ) {
@@ -75,7 +84,7 @@ async function validateAshbyJobs() {
           } finally {
             await page.close()
           }
-        }),
+        })
       )
 
       // Small delay between batches
@@ -96,12 +105,10 @@ async function validateAshbyJobs() {
       })
 
       if (!deleteResponse.ok) {
-        throw new Error(
-          `Failed to delete jobs: ${deleteResponse.statusText}`,
-        )
+        throw new Error(`Failed to delete jobs: ${deleteResponse.statusText}`)
       }
 
-      const result = await deleteResponse.json()
+      const result = (await deleteResponse.json()) as { jobsRemoved: number }
       console.log(`✨ ${result.jobsRemoved} jobs removed`)
     } else {
       console.log("✨ All Ashby jobs are valid!")
