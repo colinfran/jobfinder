@@ -31,7 +31,7 @@ const HeaderDropdown: FC = () => {
       fetchOptions: {
         onSuccess: () => {
           setLoading(false)
-          router.push("/")
+          setTimeout(() => router.push("/"), 100)
         },
         onError: () => {
           setLoading(false)
