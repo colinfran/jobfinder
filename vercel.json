@@ -1,14 +1,13 @@
+
 {
   "crons": [
     {
       "path": "/api/cron/search-jobs",
       "schedule": "0 0,12 * * *",
-      "description": "Search for new jobs at 4am and 4pm PST (5 AM and 5 PM PDT)"
     },
     {
       "path": "/api/cron/validate-jobs",
       "schedule": "0 2,14 * * *",
-      "description": "Validate jobs at 6am and 6pm PST (7 AM and 7 PM PDT)"
     }
   ]
 }
