@@ -36,6 +36,35 @@ export const markAsUnapplied = async (jobId: number): Promise<void> => {
   revalidatePath("/dashboard")
 }
 
+export const markAsNotRelevant = async (jobId: number): Promise<void> => {
+  const session = await auth.api.getSession({ headers: await headers() })
+  const userId = session?.user?.id
+
+  if (!userId) {
+    throw new Error("Unauthorized")
+  }
+
+  // Check current status
+  const existing = await db
+    .select({ status: userJobs.status })
+    .from(userJobs)
+    .where(and(eq(userJobs.userId, userId), eq(userJobs.jobId, jobId)))
+    .limit(1)
+
+  const currentStatus = existing[0]?.status
+  const newStatus = currentStatus === "not_relevant" ? "saved" : "not_relevant"
+
+  await db
+    .insert(userJobs)
+    .values({ userId, jobId, status: newStatus })
+    .onConflictDoUpdate({
+      target: [userJobs.userId, userJobs.jobId],
+      set: { status: newStatus },
+    })
+
+  revalidatePath("/dashboard")
+}
+
 export const setLastViewedTopic = async (topic: Topic): Promise<void> => {
   const session = await auth.api.getSession({ headers: await headers() })
   const userId = session?.user?.id

@@ -38,7 +38,8 @@ const Page: FC = async () => {
 
   const allJobs = rows.map((row) => ({
     ...row.jobs,
-    applied: !!row.user_jobs,
+    applied: row.user_jobs?.status === "applied",
+    notRelevant: row.user_jobs?.status === "not_relevant",
     topic: TOPIC_BY_QUERY[row.jobs.searchQuery ?? ""] ?? DEFAULT_TOPIC,
   }))
 

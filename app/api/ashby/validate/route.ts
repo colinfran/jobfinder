@@ -25,7 +25,7 @@ export const POST = async (request: Request): Promise<NextResponse> => {
     console.log(`🗑️ Removing ${invalidJobIds.length} invalid Ashby jobs`)
 
     // Delete the invalid jobs
-    const result = await db.delete(jobs).where(inArray(jobs.id, invalidJobIds))
+    await db.delete(jobs).where(inArray(jobs.id, invalidJobIds))
 
     console.log(`✨ Removed ${invalidJobIds.length} invalid Ashby jobs`)
 

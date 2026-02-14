@@ -3,12 +3,17 @@
 import { FC, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import type { Job } from "@/lib/db/schema"
-import { markAsApplied, markAsUnapplied, setLastViewedTopic } from "@/app/actions"
+import {
+  markAsApplied,
+  markAsUnapplied,
+  markAsNotRelevant,
+  setLastViewedTopic,
+} from "@/app/actions"
 import { JobRow } from "@/components/job-row"
 import type { Topic } from "@/lib/config/search-queries"
 
-type FilterTab = "all" | "new" | "applied"
-type JobWithMeta = Job & { applied: boolean; topic: Topic }
+type FilterTab = "all" | "new" | "applied" | "not_relevant"
+type JobWithMeta = Job & { applied: boolean; notRelevant: boolean; topic: Topic }
 
 export const JobList: FC<{
   jobs: JobWithMeta[]
@@ -26,8 +31,9 @@ export const JobList: FC<{
 
   const filteredJobs = topicJobs.filter((job) => {
     // Tab filter
-    if (filter === "new" && job.applied) return false
+    if (filter === "new" && (job.applied || job.notRelevant)) return false
     if (filter === "applied" && !job.applied) return false
+    if (filter === "not_relevant" && !job.notRelevant) return false
 
     // Text search
     if (search) {
@@ -45,8 +51,9 @@ export const JobList: FC<{
 
   const counts = {
     all: topicJobs.length,
-    new: topicJobs.filter((j) => !j.applied).length,
+    new: topicJobs.filter((j) => !j.applied && !j.notRelevant).length,
     applied: topicJobs.filter((j) => j.applied).length,
+    not_relevant: topicJobs.filter((j) => j.notRelevant).length,
   }
 
   const handleTopicChange = (nextTopic: Topic): void => {
@@ -67,10 +74,18 @@ export const JobList: FC<{
     })
   }
 
+  const handleMarkNotRelevant = (job: JobWithMeta): void => {
+    startTransition(async () => {
+      await markAsNotRelevant(job.id)
+      router.refresh()
+    })
+  }
+
   const tabs: { key: FilterTab; label: string }[] = [
     { key: "all", label: "All" },
     { key: "new", label: "New" },
     { key: "applied", label: "Applied" },
+    { key: "not_relevant", label: "Not Relevant" },
   ]
 
   return (
@@ -162,7 +177,7 @@ export const JobList: FC<{
         <div className="overflow-hidden rounded-lg border border-border">
           {/* Table header */}
           <div className="hidden border-b border-border bg-muted/50 px-4 py-3 sm:grid sm:grid-cols-12 sm:gap-4">
-            <div className="col-span-5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="col-span-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Job
             </div>
             <div className="col-span-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -170,6 +185,9 @@ export const JobList: FC<{
             </div>
             <div className="col-span-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Found
+            </div>
+            <div className="col-span-1 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Actions
             </div>
             <div className="col-span-2 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Status
@@ -179,7 +197,12 @@ export const JobList: FC<{
           {/* Table rows */}
           <div className="divide-y divide-border">
             {filteredJobs.map((job) => (
-              <JobRow job={job} key={job.id} onToggleApplied={() => handleApplyToggle(job)} />
+              <JobRow
+                job={job}
+                key={job.id}
+                onMarkNotRelevant={() => handleMarkNotRelevant(job)}
+                onToggleApplied={() => handleApplyToggle(job)}
+              />
             ))}
           </div>
         </div>

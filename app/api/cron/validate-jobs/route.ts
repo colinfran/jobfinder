@@ -4,10 +4,10 @@ import { jobs } from "@/lib/db/schema"
 import { processDuplicateJobs, validateJobLinks } from "./validate-job-link"
 
 export const GET = async (request: Request): Promise<NextResponse> => {
-  // const authHeader = request.headers.get("authorization")
-  // if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-  //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  // }
+  const authHeader = request.headers.get("authorization")
+  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
 
   console.log("🚀 Validate-jobs endpoint called")
 

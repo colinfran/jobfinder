@@ -67,6 +67,7 @@ export const isLinkStillValid = async (link: string): Promise<boolean> => {
     return true
   } catch (error) {
     // Timeout, network error, or other issues = treat as invalid
+    console.log(`❌ Error validating link ${link}:`, error instanceof Error ? error.message : error)
     return false
   }
 }

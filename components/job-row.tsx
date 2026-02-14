@@ -2,7 +2,13 @@
 
 import type { Job } from "@/lib/db/schema"
 import { FC } from "react"
-import { Check, Plus } from "lucide-react"
+import { Check, Plus, EllipsisVertical } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const timeAgo = (date: Date): string => {
   const now = new Date()
@@ -33,12 +39,13 @@ const sourceColor = (source: string): string => {
   }
 }
 
-type JobWithApplied = Job & { applied: boolean }
+type JobWithApplied = Job & { applied: boolean; notRelevant: boolean }
 
-export const JobRow: FC<{ job: JobWithApplied; onToggleApplied: () => void }> = ({
-  job,
-  onToggleApplied,
-}) => {
+export const JobRow: FC<{
+  job: JobWithApplied
+  onToggleApplied: () => void
+  onMarkNotRelevant: () => void
+}> = ({ job, onToggleApplied, onMarkNotRelevant }) => {
   const handleLinkClick = (): void => {
     if (!job.applied) {
       onToggleApplied()
@@ -52,7 +59,7 @@ export const JobRow: FC<{ job: JobWithApplied; onToggleApplied: () => void }> = 
       }`}
     >
       {/* Job title & company */}
-      <div className="col-span-5 flex flex-col gap-0.5 overflow-hidden">
+      <div className="col-span-4 flex flex-col gap-0.5 overflow-hidden">
         <a
           className="truncate text-sm font-medium text-foreground underline-offset-2 hover:underline"
           href={job.link}
@@ -82,8 +89,23 @@ export const JobRow: FC<{ job: JobWithApplied; onToggleApplied: () => void }> = 
         <span className="text-xs text-muted-foreground">{timeAgo(new Date(job.createdAt))}</span>
       </div>
 
-      {/* Status */}
-      <div className="col-span-2 flex justify-end">
+      <div className="col-span-1 flex justify-end items-center ">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+              <EllipsisVertical className="h-4 w-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={onMarkNotRelevant}>
+              {job.notRelevant ? "Mark as Relevant" : "Mark as Not Relevant"}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {/* Status & Menu */}
+      <div className="col-span-2 flex justify-end items-center gap-2">
         <button
           className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
             job.applied
