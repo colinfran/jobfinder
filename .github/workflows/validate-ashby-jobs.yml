@@ -2,8 +2,8 @@ name: Validate Ashby Jobs
 
 on:
   schedule:
-    # Run daily at 1 AM, 7 AM, 1 PM, and 7 PM UTC
-    - cron: "0 1,7,13,19 * * *"
+    # Run daily at 7 AM and 7 PM PST (8 AM and 8 PM PDT)
+    - cron: "0 3,15 * * *"
   workflow_dispatch: # Allow manual trigger
 
 jobs:
