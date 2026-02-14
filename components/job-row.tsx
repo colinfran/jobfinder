@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Button } from "./ui/button"
 
 const timeAgo = (date: Date): string => {
   const now = new Date()
@@ -92,12 +93,12 @@ export const JobRow: FC<{
       <div className="absolute top-3 right-4 sm:static sm:col-span-1 sm:flex sm:justify-end sm:items-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+            <Button className="cursor-pointer" variant="outline">
               <EllipsisVertical className="h-4 w-4" />
-            </button>
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={onMarkNotRelevant}>
+            <DropdownMenuItem className="cursor-pointer" onClick={onMarkNotRelevant}>
               {job.notRelevant ? "Mark as Relevant" : "Mark as Not Relevant"}
             </DropdownMenuItem>
           </DropdownMenuContent>

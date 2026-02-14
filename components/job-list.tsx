@@ -58,6 +58,7 @@ export const JobList: FC<{
 
   const handleTopicChange = (nextTopic: Topic): void => {
     setTopic(nextTopic)
+    setFilter("all")
     startTransition(async () => {
       await setLastViewedTopic(nextTopic)
     })
@@ -99,7 +100,7 @@ export const JobList: FC<{
         <div className="flex flex-wrap items-center gap-2">
           {topics.map((tabTopic) => (
             <button
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              className={`cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 topic === tabTopic
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:text-foreground"
@@ -117,7 +118,7 @@ export const JobList: FC<{
           <div className="flex items-center gap-1 rounded-lg bg-muted p-1 w-max">
             {tabs.map((tab) => (
               <button
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                   filter === tab.key
                     ? "bg-background text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
