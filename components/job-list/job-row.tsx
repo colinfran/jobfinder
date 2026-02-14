@@ -19,7 +19,6 @@ export const JobRow: FC<{
   onToggleApplied: () => void
   onMarkNotRelevant: () => void
 }> = ({ job, onToggleApplied, onMarkNotRelevant }) => {
-  
   const handleLinkClick = (): void => {
     if (!job.applied) {
       onToggleApplied()
@@ -33,7 +32,7 @@ export const JobRow: FC<{
       }`}
     >
       {/* Job title & company */}
-      <div className="col-span-4 flex flex-col gap-0.5 overflow-hidden">
+      <div className="col-span-4 flex flex-col gap-0.5 overflow-hidden pr-12 sm:pr-0">
         <a
           className="truncate text-sm font-medium text-foreground underline-offset-2 hover:underline"
           href={job.link}
