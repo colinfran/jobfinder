@@ -11,7 +11,7 @@ import {
 } from "@/app/actions"
 import { JobRow } from "@/components/job-list/job-row"
 import type { Topic } from "@/lib/config/search-queries"
-import { MailIcon, SearchIcon } from "lucide-react"
+import { SearchIcon } from "lucide-react"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group"
 
 type FilterTab = "all" | "new" | "applied" | "not_relevant"
@@ -117,44 +117,38 @@ export const JobList: FC<{
 
         <div className="flex flex-col gap-4 min-[827px]:flex-row min-[827px]:items-center min-[826px]:justify-between">
           {/* Tabs */}
-          <div className="flex items-center gap-1 rounded-lg bg-muted p-1 w-max">
-            {tabs.map((tab) => (
-              <button
-                className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                  filter === tab.key
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-                key={tab.key}
-                onClick={() => setFilter(tab.key)}
-              >
-                {tab.label}
-                <span
-                  className={`ml-1.5 inline-flex items-center rounded-full px-1.5 py-0.5 text-xs ${
-                    filter === tab.key ? "bg-muted text-foreground" : "text-muted-foreground"
+          <div className="max-w-full overflow-x-auto">
+            <div className="flex w-max items-center gap-1 rounded-lg bg-muted p-1">
+              {tabs.map((tab) => (
+                <button
+                  className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                    filter === tab.key
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
+                  key={tab.key}
+                  onClick={() => setFilter(tab.key)}
                 >
-                  {counts[tab.key]}
-                </span>
-              </button>
-            ))}
+                  {tab.label}
+                  <span
+                    className={`ml-1.5 inline-flex items-center rounded-full px-1.5 py-0.5 text-xs ${
+                      filter === tab.key ? "bg-muted text-foreground" : "text-muted-foreground"
+                    }`}
+                  >
+                    {counts[tab.key]}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Search */}
           <div className="relative">
-            {/* <SearchIcon />
-            <input
-              className="h-9 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring sm:w-64"
-              placeholder="Search jobs..."
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            /> */}
             <InputGroup>
-              <InputGroupInput 
+              <InputGroupInput
                 className="w-full sm:w-64"
-                type="text" 
                 placeholder="Search jobs..."
+                type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
