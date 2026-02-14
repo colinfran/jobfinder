@@ -13,6 +13,7 @@ import { JobRow } from "@/components/job-list/job-row"
 import type { Topic } from "@/lib/config/search-queries"
 import { SearchIcon } from "lucide-react"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group"
+import { ScrollArea, ScrollBar } from "../ui/scroll-area"
 
 type FilterTab = "all" | "new" | "applied" | "not_relevant"
 type JobWithMeta = Job & { applied: boolean; notRelevant: boolean; topic: Topic }
@@ -117,7 +118,7 @@ export const JobList: FC<{
 
         <div className="flex flex-col gap-4 min-[832px]:flex-row min-[832px]:items-center min-[832px]:justify-between">
           {/* Tabs */}
-          <div className="max-w-full overflow-x-auto">
+          <ScrollArea className="max-w-full pb-3 sm:pb-0">
             <div className="flex w-max items-center gap-1 rounded-lg bg-muted p-1">
               {tabs.map((tab) => (
                 <button
@@ -140,7 +141,8 @@ export const JobList: FC<{
                 </button>
               ))}
             </div>
-          </div>
+            <ScrollBar className="mt-2" orientation="horizontal" />
+          </ScrollArea>
 
           {/* Search */}
           <div className="relative">
