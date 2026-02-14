@@ -9,8 +9,10 @@ import {
   markAsNotRelevant,
   setLastViewedTopic,
 } from "@/app/actions"
-import { JobRow } from "@/components/job-row"
+import { JobRow } from "@/components/job-list/job-row"
 import type { Topic } from "@/lib/config/search-queries"
+import { MailIcon, SearchIcon } from "lucide-react"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group"
 
 type FilterTab = "all" | "new" | "applied" | "not_relevant"
 type JobWithMeta = Job & { applied: boolean; notRelevant: boolean; topic: Topic }
@@ -113,7 +115,7 @@ export const JobList: FC<{
           ))}
         </div>
 
-        <div className="flex flex-col gap-4 min-[800px]:flex-row min-[800px]:items-center min-[800px]:justify-between">
+        <div className="flex flex-col gap-4 min-[827px]:flex-row min-[827px]:items-center min-[826px]:justify-between">
           {/* Tabs */}
           <div className="flex items-center gap-1 rounded-lg bg-muted p-1 w-max">
             {tabs.map((tab) => (
@@ -140,27 +142,26 @@ export const JobList: FC<{
 
           {/* Search */}
           <div className="relative">
-            <svg
-              className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.5}
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            {/* <SearchIcon />
             <input
               className="h-9 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring sm:w-64"
               placeholder="Search jobs..."
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-            />
+            /> */}
+            <InputGroup>
+              <InputGroupInput 
+                className="w-full sm:w-64"
+                type="text" 
+                placeholder="Search jobs..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <InputGroupAddon>
+                <SearchIcon />
+              </InputGroupAddon>
+            </InputGroup>
           </div>
         </div>
       </div>

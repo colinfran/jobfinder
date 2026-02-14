@@ -1,7 +1,7 @@
 import { db } from "@/lib/db"
 import { jobs, user, userJobs } from "@/lib/db/schema"
 import { and, desc, eq } from "drizzle-orm"
-import { JobList } from "@/components/job-list"
+import { JobList } from "@/components/job-list/job-list"
 import { TriggerButton } from "@/components/trigger-button"
 import { FC } from "react"
 import { auth } from "@/lib/auth"
