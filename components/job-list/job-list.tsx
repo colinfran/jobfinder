@@ -8,7 +8,7 @@ import {
   markAsUnapplied,
   markAsNotRelevant,
   setLastViewedTopic,
-} from "@/app/actions"
+} from "@/components/job-list/actions"
 import { JobRow } from "@/components/job-list/job-row"
 import type { Topic } from "@/lib/config/search-queries"
 import { SearchIcon } from "lucide-react"
