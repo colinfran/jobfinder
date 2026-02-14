@@ -31,9 +31,7 @@ const HeaderDropdown: FC = () => {
       fetchOptions: {
         onSuccess: () => {
           console.log("Signed out successfully")
-          setTimeout(() => {
-            router.push("/")
-          }, 100)
+          window.location.replace("/")
           setLoading(false)
         },
         onError: () => {
