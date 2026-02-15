@@ -9,8 +9,8 @@ import {
 } from "@/components/job-list/actions"
 import type { Topic } from "@/lib/config/search-queries"
 
-type FilterTab = "all" | "new" | "applied" | "not_relevant"
-type JobWithMeta = Job & { applied: boolean; notRelevant: boolean; topic: Topic }
+export type FilterTab = "all" | "new" | "applied" | "not_relevant"
+export type JobWithStatus = Job & { applied: boolean; notRelevant: boolean; topic: Topic }
 
 type UseJobListReturn = {
   filter: FilterTab
@@ -18,8 +18,8 @@ type UseJobListReturn = {
   search: string
   setSearch: (search: string) => void
   topic: Topic
-  filteredJobs: JobWithMeta[]
-  topicJobs: JobWithMeta[]
+  filteredJobs: JobWithStatus[]
+  topicJobs: JobWithStatus[]
   topicSources: Set<string>
   counts: {
     all: number
@@ -28,11 +28,11 @@ type UseJobListReturn = {
     not_relevant: number
   }
   handleTopicChange: (topic: Topic) => void
-  handleApplyToggle: (job: JobWithMeta) => void
-  handleMarkNotRelevant: (job: JobWithMeta) => void
+  handleApplyToggle: (job: JobWithStatus) => void
+  handleMarkNotRelevant: (job: JobWithStatus) => void
 }
 
-export const useJobList = (jobs: JobWithMeta[], initialTopic: Topic): UseJobListReturn => {
+export const useJobList = (jobs: JobWithStatus[], initialTopic: Topic): UseJobListReturn => {
   const [filter, setFilter] = useState<FilterTab>("all")
   const [search, setSearch] = useState("")
   const [topic, setTopic] = useState<Topic>(initialTopic)
@@ -98,7 +98,7 @@ export const useJobList = (jobs: JobWithMeta[], initialTopic: Topic): UseJobList
     })
   }
 
-  const handleApplyToggle = (job: JobWithMeta): void => {
+  const handleApplyToggle = (job: JobWithStatus): void => {
     const newAppliedState = !job.applied
 
     // Optimistic update
@@ -129,7 +129,7 @@ export const useJobList = (jobs: JobWithMeta[], initialTopic: Topic): UseJobList
     })
   }
 
-  const handleMarkNotRelevant = (job: JobWithMeta): void => {
+  const handleMarkNotRelevant = (job: JobWithStatus): void => {
     const newNotRelevantState = !job.notRelevant
 
     // Optimistic update

@@ -10,10 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "../ui/button"
 import { sourceColor, timeAgo } from "./job-utils"
-import { useJobListContext, type JobWithMeta } from "@/providers/job-list-provider"
+import { useJobListContext } from "@/providers/job-list-provider"
+import { JobWithStatus } from "@/hooks/use-job-list"
 
 export const JobRow: FC<{
-  job: JobWithMeta
+  job: JobWithStatus
 }> = ({ job }) => {
   const { handleApplyToggle, handleMarkNotRelevant } = useJobListContext()
 

@@ -1,15 +1,11 @@
 "use client"
 
-import { createContext, useContext, ReactNode, FC, FC } from "react"
-import type { Job } from "@/lib/db/schema"
+import { createContext, useContext, ReactNode, FC } from "react"
 import type { Topic } from "@/lib/config/search-queries"
-import { useJobList } from "@/hooks/use-job-list"
-
-type FilterTab = "all" | "new" | "applied" | "not_relevant"
-type JobWithMeta = Job & { applied: boolean; notRelevant: boolean; topic: Topic }
+import { JobWithStatus, useJobList } from "@/hooks/use-job-list"
 
 type JobListContextValue = ReturnType<typeof useJobList> & {
-  jobs: JobWithMeta[]
+  jobs: JobWithStatus[]
   topics: Topic[]
 }
 
@@ -17,7 +13,7 @@ const JobListContext = createContext<JobListContextValue | null>(null)
 
 type JobListProviderProps = {
   children: ReactNode
-  jobs: JobWithMeta[]
+  jobs: JobWithStatus[]
   topics: Topic[]
   initialTopic: Topic
 }
@@ -44,5 +40,3 @@ export const useJobListContext = (): JobListContextValue => {
   }
   return context
 }
-
-export type { FilterTab, JobWithMeta }
