@@ -8,6 +8,7 @@ import { auth } from "@/lib/auth/auth"
 import { headers } from "next/headers"
 import { DEFAULT_TOPIC, TOPICS, TOPIC_BY_QUERY, type Topic } from "@/lib/config/search-queries"
 import { JobListProvider } from "@/providers/job-list-provider"
+import { redirect } from "next/navigation"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -17,7 +18,9 @@ const Page: FC = async () => {
   const userId = session?.user?.id
 
   if (!userId) {
-    return null
+    // redirect user back to home page if not authenticated
+    // (this should be handled by the proxy, but this is an extra safeguard)
+    redirect("/")
   }
 
   const userRow = await db
