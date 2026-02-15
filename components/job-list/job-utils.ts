@@ -17,7 +17,7 @@ export const sourceColor = (source: string): string => {
     case "greenhouse.io":
       return "bg-teal-500/15 text-teal-600"
     case "lever.co":
-      return "bg-gray-100/15 text-gray-400"
+      return "bg-gray-200 text-gray-700"
     case "ashbyhq.com":
       return "bg-violet-500/15 text-violet-600"
     case "myworkdayjobs.com":

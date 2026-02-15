@@ -5,7 +5,8 @@ import { JobRow } from "@/components/job-list/job-row"
 import { SearchIcon } from "lucide-react"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group"
 import { ScrollArea, ScrollBar } from "../ui/scroll-area"
-import { useJobListContext, type FilterTab } from "@/providers/job-list-provider"
+import { useJobListContext } from "@/providers/job-list-provider"
+import { FilterTab } from "@/hooks/use-job-list"
 
 export const JobList: FC = () => {
   const {
