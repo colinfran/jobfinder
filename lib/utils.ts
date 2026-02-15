@@ -6,12 +6,12 @@ export const cn = (...inputs: ClassValue[]): string => {
 }
 
 export const getNextCronRun = (): Date => {
-  // Cron: "0 */6 * * *" - runs every 6 hours at minute 0
+  // Cron: "0 0,12 * * *" - every 12 hours at minute 0
   const now = new Date()
   const next = new Date(now)
-  // Find the next hour that's a multiple of 6
+  // Find the next hour that's a multiple of 12
   const currentHour = now.getHours()
-  const nextHour = Math.ceil((currentHour + 1) / 6) * 6
+  const nextHour = Math.ceil((currentHour + 1) / 12) * 12
   if (nextHour >= 24) {
     // Next run is tomorrow
     next.setDate(next.getDate() + 1)
