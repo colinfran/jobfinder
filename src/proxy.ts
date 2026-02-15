@@ -9,9 +9,6 @@ export const proxy = async (request: NextRequest): Promise<NextResponse> => {
 
   const url = new URL(request.url)
   const pathname = url.pathname
-  console.log(
-    `Proxy: ${session ? "Authenticated user" : "Unauthenticated user"} accessing ${pathname}`,
-  )
 
   // If user is NOT signed in and tries to access dashboard → redirect home
   if (!session && pathname.startsWith("/dashboard")) {
