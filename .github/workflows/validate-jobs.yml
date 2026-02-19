@@ -7,7 +7,7 @@ on:
   workflow_dispatch: # Allow manual trigger
 
 jobs:
-  validate-ashby:
+  validate-jobs:
     runs-on: ubuntu-latest
 
     steps:
