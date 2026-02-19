@@ -62,18 +62,23 @@ export function isValidWorkdayLocation(locationInfo: WorkdayLocationInfo): boole
     normalizedRemoteType === "remote" ||
     locations.some((loc) => loc.toLowerCase().includes("remote"))
 
-  // If no remote type specified, be permissive
-  if (!remoteType) {
-    return true
-  }
-
   // For "On-site", only valid if in SF area
   if (normalizedRemoteType === "on-site") {
     return hasSF
   }
 
-  // For Remote or Hybrid, check if remote or SF area
-  return isRemote || hasSF
+  // For "Hybrid" or "Remote", check if remote or SF area
+  if (normalizedRemoteType === "hybrid" || normalizedRemoteType === "remote") {
+    return isRemote || hasSF
+  }
+
+  // If remote type is specified but it's something else, invalid
+  if (remoteType) {
+    return false
+  }
+
+  // No remote type specified - only valid if locations contain SF or Remote
+  return hasSF || isRemote
 }
 
 export function isValidWorkdayJob(html: string): boolean {
