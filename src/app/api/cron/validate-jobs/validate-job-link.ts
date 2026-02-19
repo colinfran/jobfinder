@@ -3,6 +3,50 @@ import { db } from "@/lib/db"
 import { jobs } from "@/lib/db/schema"
 import { normalizeJobUrl } from "../search-jobs/normalize-url"
 
+const extractGreenhouseRootHref = (body: string): string | null => {
+  const match = body.match(
+    /"loaderData"\s*:\s*{[\s\S]*?"root"\s*:\s*{[\s\S]*?"href"\s*:\s*"([^"]+)"/,
+  )
+
+  return match?.[1] ?? null
+}
+
+const isGreenhouseJobPageValid = (requestedUrl: URL, body: string): boolean => {
+  if (body.includes("This job is no longer available") || body.includes("not found")) {
+    return false
+  }
+
+  const rootHref = extractGreenhouseRootHref(body)
+  if (!rootHref) {
+    return true
+  }
+
+  try {
+    const rootHrefUrl = new URL(rootHref)
+
+    if (rootHrefUrl.searchParams.get("error") === "true") {
+      return false
+    }
+
+    const requestedPath = requestedUrl.pathname.replace(/\/+$/, "")
+    const resolvedPath = rootHrefUrl.pathname.replace(/\/+$/, "")
+    const requestedJobId = requestedPath.match(/\/jobs\/(\d+)/)?.[1]
+    const resolvedJobId = resolvedPath.match(/\/jobs\/(\d+)/)?.[1]
+
+    if (requestedJobId && !resolvedJobId) {
+      return false
+    }
+
+    if (requestedJobId && resolvedJobId && requestedJobId !== resolvedJobId) {
+      return false
+    }
+  } catch {
+    return true
+  }
+
+  return true
+}
+
 // Helper: check if a URL has unnecessary suffixes
 export const hasUnnecessarySuffix = (link: string): boolean => {
   try {
@@ -48,7 +92,7 @@ export const isLinkStillValid = async (link: string): Promise<boolean> => {
 
     // Greenhouse: check for error or not found indicators
     if (url.hostname.includes("greenhouse")) {
-      return !body.includes("This job is no longer available") && !body.includes("not found")
+      return isGreenhouseJobPageValid(url, body)
     }
 
     // Workday: check for error indicators
