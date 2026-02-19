@@ -1,7 +1,7 @@
 import { extractSource } from "@/app/api/cron/search-jobs/extract-source"
 import { extractCompany } from "@/app/api/cron/search-jobs/extract-company"
 import { insertJob } from "@/lib/db/insert-job"
-import { isValidJobLink } from "./is-valid-job"
+import { isValidJobLink } from "./is-valid-job-link"
 import { normalizeJobUrl } from "./normalize-url"
 import { isLinkStillValid } from "@/app/api/cron/validate-jobs/validate-job-link"
 
