@@ -49,13 +49,18 @@ export function isValidAshbyLocation(locationInfo: LocationInfo): boolean {
     return hasSF
   }
 
-  // If no Location Type specified, include it (can't determine, be permissive)
-  if (!locationType) {
-    return true
+  // For "Hybrid" or "Remote" location types, check if remote or SF area
+  if (normalizedLocationType === "hybrid" || normalizedLocationType === "remote") {
+    return isRemote || hasSF
   }
 
-  // For Remote or Hybrid location types, check if remote or SF area
-  return isRemote || hasSF
+  // If location type is specified but it's something else, invalid
+  if (locationType) {
+    return false
+  }
+
+  // No location type specified - only valid if location itself is SF or Remote
+  return hasSF || isRemote
 }
 
 export function isValidAshbyJob(html: string): boolean {
