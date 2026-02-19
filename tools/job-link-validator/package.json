@@ -1,5 +1,5 @@
 {
-  "name": "ashby-validator",
+  "name": "job-link-validator",
   "private": true,
   "type": "module",
   "scripts": {

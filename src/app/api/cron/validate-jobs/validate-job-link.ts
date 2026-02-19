@@ -2,50 +2,8 @@ import { eq, inArray } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { jobs } from "@/lib/db/schema"
 import { normalizeJobUrl } from "../search-jobs/normalize-url"
-
-const extractGreenhouseRootHref = (body: string): string | null => {
-  const match = body.match(
-    /"loaderData"\s*:\s*{[\s\S]*?"root"\s*:\s*{[\s\S]*?"href"\s*:\s*"([^"]+)"/,
-  )
-
-  return match?.[1] ?? null
-}
-
-const isGreenhouseJobPageValid = (requestedUrl: URL, body: string): boolean => {
-  if (body.includes("This job is no longer available") || body.includes("not found")) {
-    return false
-  }
-
-  const rootHref = extractGreenhouseRootHref(body)
-  if (!rootHref) {
-    return true
-  }
-
-  try {
-    const rootHrefUrl = new URL(rootHref)
-
-    if (rootHrefUrl.searchParams.get("error") === "true") {
-      return false
-    }
-
-    const requestedPath = requestedUrl.pathname.replace(/\/+$/, "")
-    const resolvedPath = rootHrefUrl.pathname.replace(/\/+$/, "")
-    const requestedJobId = requestedPath.match(/\/jobs\/(\d+)/)?.[1]
-    const resolvedJobId = resolvedPath.match(/\/jobs\/(\d+)/)?.[1]
-
-    if (requestedJobId && !resolvedJobId) {
-      return false
-    }
-
-    if (requestedJobId && resolvedJobId && requestedJobId !== resolvedJobId) {
-      return false
-    }
-  } catch {
-    return true
-  }
-
-  return true
-}
+import { isGreenhouseJobPageValid } from "./greenhouse"
+import { isLeverJobPageValid } from "./lever"
 
 // Helper: check if a URL has unnecessary suffixes
 export const hasUnnecessarySuffix = (link: string): boolean => {
@@ -85,9 +43,12 @@ export const isLinkStillValid = async (link: string): Promise<boolean> => {
     // Read response body to check for dead job indicators
     const body = await response.text()
 
-    // Lever: check for "Apply for this job" button
+    // This only works for job sites that server-side render the job page
+    // so we can reliably check the HTML content for valid job indicators
+
+    // Lever: check for "Apply for this job" button and location
     if (url.hostname.includes("lever.co")) {
-      return body.includes("Apply for this job")
+      return isLeverJobPageValid(body)
     }
 
     // Greenhouse: check for error or not found indicators
@@ -95,15 +56,8 @@ export const isLinkStillValid = async (link: string): Promise<boolean> => {
       return isGreenhouseJobPageValid(url, body)
     }
 
-    // Workday: check for error indicators
-    if (url.hostname.includes("myworkdayjobs")) {
-      if (
-        body.includes("Job not found") ||
-        body.includes("The job you are looking for is no longer available") ||
-        body.includes("The page you are looking for doesn't exist.")
-      )
-        return false
-    }
+    // Workday: fetch request not reliable; skipping this check here
+    // using GitHub Actions with Puppeteer to validate Workday jobs instead
 
     // ashbyhq: fetch request not reliable; skipping this check here
     // using GitHub Actions with Puppeteer to validate Ashby jobs instead

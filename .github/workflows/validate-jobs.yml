@@ -1,9 +1,9 @@
-name: Validate Ashby Jobs
+name: Validate Jobs
 
 on:
   schedule:
     # Run daily at 7 AM and 7 PM PST (8 AM and 8 PM PDT)
-    - cron: "0 3,15 * * *"
+    - cron: "0 3,9,15,21 * * *"
   workflow_dispatch: # Allow manual trigger
 
 jobs:
@@ -26,16 +26,16 @@ jobs:
           key: chromium-${{ runner.os }}-${{ hashFiles('tools/ashby-validator/package.json') }}
 
       - name: Install dependencies
-        working-directory: tools/ashby-validator
+        working-directory: tools/job-link-validator
         run: npm install
 
       - name: Validate Ashby jobs
         env:
           APP_URL: ${{ secrets.APP_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-        working-directory: tools/ashby-validator
+        working-directory: tools/job-link-validator
         run: npm run start
 
       - name: Notify on failure
         if: failure()
-        run: echo "Ashby job validation failed"
+        run: echo "Job validation failed"
