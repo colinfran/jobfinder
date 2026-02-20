@@ -44,6 +44,7 @@ JobFinder is an automated job search aggregator that collects listings from mult
    DATABASE_URL=postgresql://your_database_url
    SERPER_API_KEY=your_serper_api_key
    CRON_SECRET=your_cron_secret
+   GITHUB_TOKEN=your_github_pat_token
    BETTER_AUTH_SECRET=your_betterauth_secret
    BETTER_AUTH_URL=http://localhost:3000 // or production url
    GITHUB_CLIENT_ID=your_github_client_id
@@ -51,24 +52,60 @@ JobFinder is an automated job search aggregator that collects listings from mult
    NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000 // or production url
    ```
 
+   **Note on GITHUB_TOKEN:** Create a Personal Access Token (classic) at https://github.com/settings/tokens with `workflow` and `repo` scopes. This is used to trigger the validation workflow via API.
+
 4. Set up the database:
 
    ```bash
    npm run db:setup
    ```
 
-5. Start the development server:
+5. Install dependencies for the validation tool:
+
+   ```bash
+   cd tools/job-link-validator
+   npm install
+   cd ../..
+   ```
+
+6. Start the development server:
 
    ```bash
    npm run dev
    ```
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser.
+7. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 
 ## Three Core Processes
 
-1. **Search** (Vercel cron) – Calls Serper API with predefined queries, validates links are live, inserts jobs.
-2. **Validation** (Vercel cron) – Removes duplicates and dead links (except Ashby).
-3. **Ashby Validation** (GitHub Actions) – Uses Puppeteer to check Ashby jobs (JavaScript-rendered sites need a real browser).
+### 1. Search (Vercel Cron)
+Runs on schedule: `0 0,12 * * *` (daily at 12:00am and 12:00pm UTC)
+- Calls Serper API with predefined job search queries
+- Validates links are live for Lever.co and Greenhouse (server-side rendered sites) using fetch + HTML parsing
+- Skips initial validation for Ashby and Workday (client-side rendered; validated later by GitHub Actions)
+- Deduplicates job postings
+- Inserts valid jobs into the database
+
+### 2. Validation (Vercel Cron)
+Runs on schedule: `20 0,12 * * *` (daily at 12:20am and 12:20pm UTC)
+- Removes duplicates from all job sources (Greenhouse, Lever.co, Ashby, Workday)
+- Validates dead links for Greenhouse and Lever.co (server-side rendered) using fetch + HTML parsing:
+  - **Greenhouse**: Parses canonical URL meta tag to detect removed jobs
+  - **Lever.co**: Extracts location from twitter meta tags and validates workplace type
+- Triggers GitHub Actions workflow for Ashby and Workday validation
+
+### 3. Puppeteer Validation (GitHub Actions)
+Triggered by:
+- API trigger: Via `repository_dispatch` event (called from Vercel validation cron at 12:20am and 12:20pm UTC)
+- Manual trigger: Via GitHub Actions `workflow_dispatch` button
+
+Uses headless Puppeteer browser to validate:
+- **Ashby**: Extracts location and location type from job page, validates SF Bay Area presence
+- **Workday**: Extracts location and remote type from job page, validates SF Bay Area presence
+
+**Location Validation Rules:**
+- Accepts: San Francisco, SF Bay Area, Bay Area, Remote
+- Rejects: Non-SF locations without explicit Remote designation
+- Requires: On-site positions must be in SF; Hybrid/Remote must include SF or Remote option
 

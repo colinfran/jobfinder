@@ -178,13 +178,20 @@ export const validateJobLinks = async (): Promise<{ removed: number; errors: str
   await triggerGitHubActionValidation()
   const allJobs = await db.select().from(jobs)
 
+  // Process duplicates for all job sources (Greenhouse, Lever, Ashby, Workday)
+  const { duplicatesRemoved } = await processDuplicateJobs(allJobs)
+  console.log(`🔀 Removed ${duplicatesRemoved} duplicate jobs`)
+
+  // Fetch jobs again after duplicate removal
+  const jobsAfterDedup = await db.select().from(jobs)
+
   // Filter out Ashby and Workday jobs (validated by GitHub Actions)
-  const remainingJobs = allJobs.filter(
+  const remainingJobs = jobsAfterDedup.filter(
     (job) => !job.source?.includes("ashbyhq") && !job.source?.includes("myworkdayjobs"),
   )
 
   console.log(
-    `⏭️ Skipping ${allJobs.length - remainingJobs.length} Ashby and Workday jobs (validated by GitHub Actions)`,
+    `⏭️ Skipping ${jobsAfterDedup.length - remainingJobs.length} Ashby and Workday jobs (validated by GitHub Actions)`,
   )
 
   let removed = 0
