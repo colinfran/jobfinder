@@ -5,6 +5,51 @@ import { normalizeJobUrl } from "../search-jobs/normalize-url"
 import { isGreenhouseJobPageValid } from "./greenhouse"
 import { isLeverJobPageValid } from "./lever"
 
+// Helper: trigger GitHub Actions validation workflow
+export const triggerGitHubActionValidation = async (): Promise<{
+  success: boolean
+  message: string
+}> => {
+  try {
+    const githubToken = process.env.GITHUB_TOKEN
+
+    if (!githubToken) {
+      console.warn("⚠️ GITHUB_TOKEN not set, skipping GitHub Actions trigger")
+      return { success: false, message: "GITHUB_TOKEN not configured" }
+    }
+
+    const dispatchUrl = `https://api.github.com/repos/colinfran/jobfinder/dispatches`
+
+    const response = await fetch(dispatchUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+      body: JSON.stringify({
+        event_type: "validate-jobs",
+      }),
+    })
+
+    if (!response.ok) {
+      const errorBody = await response.text()
+      console.error(`❌ GitHub API error: ${response.status} ${response.statusText}`)
+      console.error(`Error details: ${errorBody}`)
+      return { success: false, message: `GitHub API returned ${response.status}` }
+    }
+
+    console.log("✅ Successfully triggered GitHub Actions validate-jobs workflow")
+    return { success: true, message: "Workflow triggered successfully" }
+  } catch (error) {
+    console.error(
+      "❌ Error triggering GitHub Actions:",
+      error instanceof Error ? error.message : error,
+    )
+    return { success: false, message: error instanceof Error ? error.message : "Unknown error" }
+  }
+}
+
 // Helper: check if a URL has unnecessary suffixes
 export const hasUnnecessarySuffix = (link: string): boolean => {
   try {
@@ -130,13 +175,16 @@ export const processDuplicateJobs = async (
 
 // Helper: validate all job links
 export const validateJobLinks = async (): Promise<{ removed: number; errors: string[] }> => {
+  await triggerGitHubActionValidation()
   const allJobs = await db.select().from(jobs)
 
-  // Filter out Ashby jobs (validated by GitHub Actions)
-  const remainingJobs = allJobs.filter((job) => !job.source?.includes("ashbyhq"))
+  // Filter out Ashby and Workday jobs (validated by GitHub Actions)
+  const remainingJobs = allJobs.filter(
+    (job) => !job.source?.includes("ashbyhq") && !job.source?.includes("myworkdayjobs"),
+  )
 
   console.log(
-    `⏭️ Skipping ${allJobs.length - remainingJobs.length} Ashby jobs (validated by GitHub Actions)`,
+    `⏭️ Skipping ${allJobs.length - remainingJobs.length} Ashby and Workday jobs (validated by GitHub Actions)`,
   )
 
   let removed = 0
@@ -145,7 +193,6 @@ export const validateJobLinks = async (): Promise<{ removed: number; errors: str
   for (const job of remainingJobs) {
     try {
       const isValid = await isLinkStillValid(job.link)
-
       if (!isValid) {
         await db.delete(jobs).where(eq(jobs.id, job.id))
         removed++
