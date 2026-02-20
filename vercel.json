@@ -7,7 +7,7 @@
     },
     {
       "path": "/api/cron/validate-jobs",
-      "schedule": "0 2,8,14,20 * * *"
+      "schedule": "20 0,12 * * *"
     }
   ]
 }
