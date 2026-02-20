@@ -90,9 +90,9 @@ Runs on schedule: `0 0,12 * * *` (daily at 12:00am and 12:00pm UTC)
 ### 2. Validation (Vercel Cron)
 Runs on schedule: `20 0,12 * * *` (daily at 12:20am and 12:20pm UTC)
 - Removes duplicates from all job sources (Greenhouse, Lever.co, Ashby, Workday)
-- Validates dead links for Greenhouse and Lever.co (server-side rendered) using fetch + HTML parsing:
-  - **Greenhouse**: Parses canonical URL meta tag to detect removed jobs
-  - **Lever.co**: Extracts location from twitter meta tags and validates workplace type
+- Validates dead links and location for Greenhouse and Lever.co (server-side rendered) using fetch + HTML parsing:
+  - **Greenhouse**: Parses canonical URL meta tag to detect removed jobs, extracts location from og:description, validates SF Bay Area presence
+  - **Lever.co**: Extracts location from twitter meta tags, validates workplace type, validates SF Bay Area presence
 - Triggers GitHub Actions workflow for Ashby and Workday validation
 
 ### 3. Puppeteer Validation (GitHub Actions)
@@ -104,7 +104,7 @@ Uses headless Puppeteer browser to validate:
 - **Ashby**: Extracts location and location type from job page, validates SF Bay Area presence
 - **Workday**: Extracts location and remote type from job page, validates SF Bay Area presence
 
-**Location Validation Rules:**
+**Location Validation Rules (Applied to All Job Boards):**
 - Accepts: San Francisco, SF Bay Area, Bay Area, Remote
 - Rejects: Non-SF locations without explicit Remote designation
 - Requires: On-site positions must be in SF; Hybrid/Remote must include SF or Remote option
