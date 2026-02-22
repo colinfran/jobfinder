@@ -18,7 +18,7 @@ async function validateJobs(): Promise<void> {
 
     // Launch browser
     browser = await puppeteer.launch({
-      headless: true,
+      headless: false,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     })
 
