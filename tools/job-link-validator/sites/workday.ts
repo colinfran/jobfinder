@@ -29,9 +29,9 @@ export function extractWorkdayLocation(html: string): WorkdayLocationInfo {
 }
 
 async function extractWorkdayLocationFromPage(
-  page: import("puppeteer").Page,
+  frame: import("puppeteer").Frame,
 ): Promise<WorkdayLocationInfo> {
-  return page.evaluate(() => {
+  return frame.evaluate(() => {
     const readList = (root: Element | null): string[] => {
       if (!root) return []
       const nodes = Array.from(root.querySelectorAll("dd, li, span"))
@@ -73,6 +73,21 @@ async function extractWorkdayLocationFromPage(
 
     return { locations: fallbackLocations, remoteType }
   })
+}
+
+async function findFrameWithSelector(
+  page: import("puppeteer").Page,
+  selector: string,
+): Promise<import("puppeteer").Frame | null> {
+  const frames = page.frames()
+  for (const frame of frames) {
+    const handle = await frame.$(selector)
+    if (handle) {
+      await handle.dispose()
+      return frame
+    }
+  }
+  return null
 }
 
 export function isValidWorkdayLocation(locationInfo: WorkdayLocationInfo): boolean {
@@ -180,12 +195,22 @@ export async function validateWorkdayJobs(
         const page = await browser.newPage()
         page.setDefaultTimeout(10000)
         try {
+          await page.setUserAgent(
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+          )
+          await page.setViewport({ width: 1280, height: 800 })
+          await page.setExtraHTTPHeaders({
+            "Accept-Language": "en-US,en;q=0.9",
+          })
+
           console.log(`🔍 Validating: ${job.title}`)
 
           try {
             const response = await page.goto(job.link, {
               waitUntil: "networkidle2",
             })
+
+            await new Promise((resolve) => setTimeout(resolve, 1000))
 
             try {
               await page.waitForSelector('[data-automation-id="job-posting-details"]', {
@@ -207,7 +232,13 @@ export async function validateWorkdayJobs(
 
             let locationInfo: WorkdayLocationInfo
             try {
-              locationInfo = await extractWorkdayLocationFromPage(page)
+              const detailsSelector = '[data-automation-id="job-posting-details"]'
+              const frame = await findFrameWithSelector(page, detailsSelector)
+              if (!frame) {
+                console.log(`⚠️ Missing job-posting-details, skipping removal: ${job.title}`)
+                return
+              }
+              locationInfo = await extractWorkdayLocationFromPage(frame)
             } catch {
               locationInfo = extractWorkdayLocation(content)
             }
