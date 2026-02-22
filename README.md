@@ -95,14 +95,18 @@ Runs on schedule: `20 0,12 * * *` (daily at 12:20am and 12:20pm UTC)
   - **Lever.co**: Extracts location from twitter meta tags, validates workplace type, validates SF Bay Area presence
 - Triggers GitHub Actions workflow for Ashby and Workday validation
 
-### 3. Puppeteer Validation (GitHub Actions)
+### 3. Ashby + Workday Validation (GitHub Actions)
 Triggered by:
 - API trigger: Via `repository_dispatch` event (called from Vercel validation cron at 12:20am and 12:20pm UTC)
 - Manual trigger: Via GitHub Actions `workflow_dispatch` button
 
-Uses headless Puppeteer browser to validate:
-- **Ashby**: Extracts location and location type from job page, validates SF Bay Area presence
-- **Workday**: Extracts location and remote type from job page, validates SF Bay Area presence
+Validation strategy:
+- **Ashby**: Uses Puppeteer to load the posting page, extracts location + location type, validates SF Bay Area presence
+- **Workday**: Calls Workday's CXS JSON endpoint (`/wday/cxs/...`) and validates from API fields (`location`, `additionalLocations`, `remoteType`)
+
+Workday safety behavior:
+- If Workday CXS responds with errors (for example 403) or location data is missing, the job is skipped (not auto-removed)
+- Jobs are removed only when Workday data is successfully fetched and fails location validation
 
 **Location Validation Rules (Applied to All Job Boards):**
 - Accepts: San Francisco, SF Bay Area, Bay Area, Remote
