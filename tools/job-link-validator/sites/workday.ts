@@ -81,20 +81,13 @@ export function isValidWorkdayLocation(locationInfo: WorkdayLocationInfo): boole
   return hasSF || isRemote
 }
 
-export function isValidWorkdayJob(html: string): boolean {
-  // Check if page contains error message
-  if (
+export function hasWorkdayError(html: string): boolean {
+  return (
     html.includes('data-automation-id="errorMessage"') ||
     html.includes("The page you are looking for doesn't exist") ||
     html.includes("Job not found") ||
     html.includes("The job you are looking for is no longer available")
-  ) {
-    return false
-  }
-
-  // Check location
-  const locationInfo = extractWorkdayLocation(html)
-  return isValidWorkdayLocation(locationInfo)
+  )
 }
 
 type Job = {
@@ -147,10 +140,29 @@ export async function validateWorkdayJobs(
               waitUntil: "networkidle2",
             })
 
-            const content = await page.content()
-            const isValid = response && response.status() < 400 && isValidWorkdayJob(content)
+            try {
+              await page.waitForSelector('[data-automation-id="locations"]', { timeout: 5000 })
+            } catch {
+              // Some Workday pages load location differently; fall back to current content.
+            }
 
-            if (!isValid) {
+            const content = await page.content()
+            const isHttpOk = response && response.status() < 400
+            const hasError = hasWorkdayError(content)
+
+            if (!isHttpOk || hasError) {
+              console.log(`❌ Invalid: ${job.title}`)
+              invalidJobIds.push(job.id)
+              return
+            }
+
+            const locationInfo = extractWorkdayLocation(content)
+            if (locationInfo.locations.length === 0) {
+              console.log(`⚠️ Unknown location, skipping removal: ${job.title}`)
+              return
+            }
+
+            if (!isValidWorkdayLocation(locationInfo)) {
               console.log(`❌ Invalid: ${job.title}`)
               invalidJobIds.push(job.id)
             } else {
