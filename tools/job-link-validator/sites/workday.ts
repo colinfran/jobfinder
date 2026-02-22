@@ -5,89 +5,15 @@ export type WorkdayLocationInfo = {
   remoteType: string | null
 }
 
-export function extractWorkdayLocation(html: string): WorkdayLocationInfo {
-  // Extract all location values from data-automation-id="locations"
-  const locationsMatch = html.match(/<div data-automation-id="locations"[^>]*>[\s\S]*?<\/div>/i)
-
-  const locations: string[] = []
-  if (locationsMatch) {
-    const locationSection = locationsMatch[0]
-    const locationRegex = /<dd class="[^"]*">([^<]+)<\/dd>/g
-    let match
-    while ((match = locationRegex.exec(locationSection)) !== null) {
-      locations.push(match[1].trim())
-    }
-  }
-
-  // Extract remote type from data-automation-id="remoteType"
-  const remoteTypeMatch = html.match(
-    /<div data-automation-id="remoteType"[^>]*>[\s\S]*?<dd class="[^"]*">([^<]+)<\/dd>/i,
-  )
-  const remoteType = remoteTypeMatch?.[1]?.trim() || null
-
-  return { locations, remoteType }
+type WorkdayJobPostingInfo = {
+  location?: string
+  additionalLocations?: string[]
+  remoteType?: string | null
+  posted?: boolean
 }
 
-async function extractWorkdayLocationFromPage(
-  frame: import("puppeteer").Frame,
-): Promise<WorkdayLocationInfo> {
-  return frame.evaluate(() => {
-    const readList = (root: Element | null): string[] => {
-      if (!root) return []
-      const nodes = Array.from(root.querySelectorAll("dd, li, span"))
-      return nodes
-        .map((node) => (node.textContent || "").trim())
-        .filter((value) => value.length > 0)
-    }
-
-    const getByAutomationId = (id: string): string[] =>
-      readList(document.querySelector(`[data-automation-id="${id}"]`))
-
-    const findDetailsValue = (label: string): string[] => {
-      const details = document.querySelector('[data-automation-id="job-posting-details"]')
-      if (!details) return []
-
-      const headings = Array.from(details.querySelectorAll("dt"))
-      const heading = headings.find((node) =>
-        (node.textContent || "").trim().toLowerCase().includes(label),
-      )
-      if (!heading) return []
-
-      const values: string[] = []
-      let sibling = heading.nextElementSibling
-      while (sibling && sibling.tagName === "DD") {
-        const text = (sibling.textContent || "").trim()
-        if (text) values.push(text)
-        sibling = sibling.nextElementSibling
-      }
-      return values
-    }
-
-    const locations = getByAutomationId("locations")
-    const fallbackLocations = locations.length > 0 ? locations : findDetailsValue("location")
-
-    const remoteTypeValues = getByAutomationId("remoteType")
-    const fallbackRemote =
-      remoteTypeValues.length > 0 ? remoteTypeValues : findDetailsValue("remote type")
-    const remoteType = fallbackRemote[0] || null
-
-    return { locations: fallbackLocations, remoteType }
-  })
-}
-
-async function findFrameWithSelector(
-  page: import("puppeteer").Page,
-  selector: string,
-): Promise<import("puppeteer").Frame | null> {
-  const frames = page.frames()
-  for (const frame of frames) {
-    const handle = await frame.$(selector)
-    if (handle) {
-      await handle.dispose()
-      return frame
-    }
-  }
-  return null
+type WorkdayCxsResponse = {
+  jobPostingInfo?: WorkdayJobPostingInfo
 }
 
 export function isValidWorkdayLocation(locationInfo: WorkdayLocationInfo): boolean {
@@ -152,6 +78,41 @@ export function hasWorkdayError(html: string): boolean {
   )
 }
 
+export function buildWorkdayCxsUrl(jobLink: string): string | null {
+  try {
+    const url = new URL(jobLink)
+    const hostParts = url.hostname.split(".")
+    const tenant = hostParts[0]
+    const pathParts = url.pathname.split("/").filter(Boolean)
+    const jobIndex = pathParts.indexOf("job")
+    if (jobIndex === -1 || jobIndex === 0) {
+      return null
+    }
+
+    const site = pathParts[jobIndex - 1]
+    const jobPath = pathParts.slice(jobIndex).join("/")
+    return `${url.origin}/wday/cxs/${tenant}/${site}/${jobPath}`
+  } catch {
+    return null
+  }
+}
+
+export function extractWorkdayLocationFromApi(
+  response: WorkdayCxsResponse,
+): WorkdayLocationInfo | null {
+  const info = response.jobPostingInfo
+  if (!info) return null
+
+  const locations: string[] = []
+  if (info.location) locations.push(info.location)
+  if (Array.isArray(info.additionalLocations)) {
+    locations.push(...info.additionalLocations)
+  }
+
+  const remoteType = info.remoteType ?? null
+  return { locations, remoteType }
+}
+
 type Job = {
   id: string
   title: string
@@ -192,57 +153,36 @@ export async function validateWorkdayJobs(
     const batch = jobs.slice(i, i + batchSize)
     await Promise.all(
       batch.map(async (job) => {
-        const page = await browser.newPage()
-        page.setDefaultTimeout(10000)
         try {
-          await page.setUserAgent(
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-          )
-          await page.setViewport({ width: 1280, height: 800 })
-          await page.setExtraHTTPHeaders({
-            "Accept-Language": "en-US,en;q=0.9",
-          })
-
           console.log(`🔍 Validating: ${job.title}`)
 
           try {
-            const response = await page.goto(job.link, {
-              waitUntil: "networkidle2",
-            })
-
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-
-            try {
-              await page.waitForSelector('[data-automation-id="job-posting-details"]', {
-                timeout: 7000,
-              })
-            } catch {
-              // Some Workday pages load location differently; fall back to current content.
-            }
-
-            const content = await page.content()
-            const isHttpOk = response && response.status() < 400
-            const hasError = hasWorkdayError(content)
-
-            if (!isHttpOk || hasError) {
-              console.log(`❌ Invalid: ${job.title}`)
-              invalidJobIds.push(job.id)
+            const cxsUrl = buildWorkdayCxsUrl(job.link)
+            if (!cxsUrl) {
+              console.log(`⚠️ Unsupported Workday URL, skipping removal: ${job.title}`)
               return
             }
 
-            let locationInfo: WorkdayLocationInfo
-            try {
-              const detailsSelector = '[data-automation-id="job-posting-details"]'
-              const frame = await findFrameWithSelector(page, detailsSelector)
-              if (!frame) {
-                console.log(`⚠️ Missing job-posting-details, skipping removal: ${job.title}`)
-                return
-              }
-              locationInfo = await extractWorkdayLocationFromPage(frame)
-            } catch {
-              locationInfo = extractWorkdayLocation(content)
+            const cxsResponse = await fetch(cxsUrl, {
+              headers: {
+                "User-Agent":
+                  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+                "Accept-Language": "en-US,en;q=0.9",
+                Accept: "application/json",
+              },
+            })
+
+            if (!cxsResponse.ok) {
+              console.log(
+                `⚠️ Workday API error ${cxsResponse.status}, skipping removal: ${job.title}`,
+              )
+              return
             }
-            if (locationInfo.locations.length === 0) {
+
+            const cxsJson = (await cxsResponse.json()) as WorkdayCxsResponse
+            const locationInfo = extractWorkdayLocationFromApi(cxsJson)
+
+            if (!locationInfo || locationInfo.locations.length === 0) {
               console.log(`⚠️ Unknown location, skipping removal: ${job.title}`)
               return
             }
@@ -259,8 +199,6 @@ export async function validateWorkdayJobs(
           }
         } catch (err) {
           console.error(`Error validating job ${job.id}:`, err)
-        } finally {
-          await page.close()
         }
       }),
     )
