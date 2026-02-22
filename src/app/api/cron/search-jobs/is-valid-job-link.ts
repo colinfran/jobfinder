@@ -22,7 +22,7 @@ export const isValidJobLink = (link: string): boolean => {
 
     // Workday: /.../job/<job-id>
     if (url.hostname.includes("myworkdayjobs.com")) {
-      return pathParts.includes("/job/") && pathParts.length >= 2
+      return pathParts.includes("job") && pathParts.length >= 2
     }
 
     return false

@@ -21,7 +21,7 @@ export const GET = async (request: Request): Promise<NextResponse> => {
       .from(jobs)
       .where(like(jobs.source, "%ashbyhq%"))
 
-    console.log(`📊 Found ${ashbyJobs.length} Ashby jobs`)
+    console.log(`📊 Pulled in ${ashbyJobs.length} Ashby jobs from the db`)
 
     return NextResponse.json({
       success: true,
