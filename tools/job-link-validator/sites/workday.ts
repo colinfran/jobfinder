@@ -28,6 +28,53 @@ export function extractWorkdayLocation(html: string): WorkdayLocationInfo {
   return { locations, remoteType }
 }
 
+async function extractWorkdayLocationFromPage(
+  page: import("puppeteer").Page,
+): Promise<WorkdayLocationInfo> {
+  return page.evaluate(() => {
+    const readList = (root: Element | null): string[] => {
+      if (!root) return []
+      const nodes = Array.from(root.querySelectorAll("dd, li, span"))
+      return nodes
+        .map((node) => (node.textContent || "").trim())
+        .filter((value) => value.length > 0)
+    }
+
+    const getByAutomationId = (id: string): string[] =>
+      readList(document.querySelector(`[data-automation-id="${id}"]`))
+
+    const findDetailsValue = (label: string): string[] => {
+      const details = document.querySelector('[data-automation-id="job-posting-details"]')
+      if (!details) return []
+
+      const headings = Array.from(details.querySelectorAll("dt"))
+      const heading = headings.find((node) =>
+        (node.textContent || "").trim().toLowerCase().includes(label),
+      )
+      if (!heading) return []
+
+      const values: string[] = []
+      let sibling = heading.nextElementSibling
+      while (sibling && sibling.tagName === "DD") {
+        const text = (sibling.textContent || "").trim()
+        if (text) values.push(text)
+        sibling = sibling.nextElementSibling
+      }
+      return values
+    }
+
+    const locations = getByAutomationId("locations")
+    const fallbackLocations = locations.length > 0 ? locations : findDetailsValue("location")
+
+    const remoteTypeValues = getByAutomationId("remoteType")
+    const fallbackRemote =
+      remoteTypeValues.length > 0 ? remoteTypeValues : findDetailsValue("remote type")
+    const remoteType = fallbackRemote[0] || null
+
+    return { locations: fallbackLocations, remoteType }
+  })
+}
+
 export function isValidWorkdayLocation(locationInfo: WorkdayLocationInfo): boolean {
   const { locations, remoteType } = locationInfo
 
@@ -141,7 +188,9 @@ export async function validateWorkdayJobs(
             })
 
             try {
-              await page.waitForSelector('[data-automation-id="locations"]', { timeout: 5000 })
+              await page.waitForSelector('[data-automation-id="job-posting-details"]', {
+                timeout: 7000,
+              })
             } catch {
               // Some Workday pages load location differently; fall back to current content.
             }
@@ -156,7 +205,12 @@ export async function validateWorkdayJobs(
               return
             }
 
-            const locationInfo = extractWorkdayLocation(content)
+            let locationInfo: WorkdayLocationInfo
+            try {
+              locationInfo = await extractWorkdayLocationFromPage(page)
+            } catch {
+              locationInfo = extractWorkdayLocation(content)
+            }
             if (locationInfo.locations.length === 0) {
               console.log(`⚠️ Unknown location, skipping removal: ${job.title}`)
               return

@@ -63,15 +63,28 @@ export function isValidAshbyLocation(locationInfo: LocationInfo): boolean {
   return hasSF || isRemote
 }
 
-export function isValidAshbyJob(html: string): boolean {
-  // Check if page contains error messages
-  if (html.includes("The job you requested was not found") || html.includes("Job not found")) {
-    return false
-  }
+export function hasAshbyError(html: string): boolean {
+  return html.includes("The job you requested was not found") || html.includes("Job not found")
+}
 
-  // Check location
-  const locationInfo = extractAshbyLocation(html)
-  return isValidAshbyLocation(locationInfo)
+async function extractAshbyLocationFromPage(page: import("puppeteer").Page): Promise<LocationInfo> {
+  return page.evaluate(() => {
+    const getValue = (label: string): string | null => {
+      const headings = Array.from(document.querySelectorAll("h2"))
+      const heading = headings.find(
+        (node) => (node.textContent || "").trim().toLowerCase() === label,
+      )
+      if (!heading) return null
+      const parent = heading.parentElement
+      const value = parent?.querySelector("p")?.textContent || ""
+      return value.trim() || null
+    }
+
+    return {
+      location: getValue("location"),
+      locationType: getValue("location type"),
+    }
+  })
 }
 
 type Job = {
@@ -124,10 +137,35 @@ export async function validateAshbyJobs(
               waitUntil: "networkidle2",
             })
 
-            const content = await page.content()
-            const isValid = response && response.status() < 400 && isValidAshbyJob(content)
+            try {
+              await page.waitForSelector(".ashby-job-posting-left-pane", { timeout: 5000 })
+            } catch {
+              // Some pages load the left pane asynchronously; fall back to current content.
+            }
 
-            if (!isValid) {
+            const content = await page.content()
+            const isHttpOk = response && response.status() < 400
+            const hasError = hasAshbyError(content)
+
+            if (!isHttpOk || hasError) {
+              console.log(`❌ Invalid: ${job.title}`)
+              invalidJobIds.push(job.id)
+              return
+            }
+
+            let locationInfo: LocationInfo
+            try {
+              locationInfo = await extractAshbyLocationFromPage(page)
+            } catch {
+              locationInfo = extractAshbyLocation(content)
+            }
+
+            if (!locationInfo.location) {
+              console.log(`⚠️ Unknown location, skipping removal: ${job.title}`)
+              return
+            }
+
+            if (!isValidAshbyLocation(locationInfo)) {
               console.log(`❌ Invalid: ${job.title}`)
               invalidJobIds.push(job.id)
             } else {
