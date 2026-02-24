@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { jobs } from "@/lib/db/schema"
-import { processDuplicateJobs, validateJobLinks } from "./validate-job-link"
+import { validateJobLinks } from "./validate-job-link"
 
 export const GET = async (request: Request): Promise<NextResponse> => {
   const authHeader = request.headers.get("authorization")
@@ -15,10 +15,8 @@ export const GET = async (request: Request): Promise<NextResponse> => {
     // Fetch all jobs from database
     const allJobs = await db.select().from(jobs)
     console.log(`📊 Checking ${allJobs.length} jobs for validity and duplicates`)
-    // Process duplicates
-    const { duplicatesRemoved } = await processDuplicateJobs(allJobs)
-    // Validate remaining job links
-    const { removed: jobsRemoved, errors } = await validateJobLinks()
+    // Validate job links (includes duplicate processing)
+    const { removed: jobsRemoved, duplicatesRemoved, errors } = await validateJobLinks()
     console.log(
       `✨ Validation complete. Removed ${jobsRemoved} invalid jobs, ${duplicatesRemoved} duplicates`,
     )
