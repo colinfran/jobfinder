@@ -1,4 +1,4 @@
-import type { Browser } from "puppeteer"
+import puppeteer, { Browser } from "puppeteer"
 
 export type LocationInfo = {
   location: string | null
@@ -97,116 +97,121 @@ type JobsResponse = {
   jobs: Job[]
 }
 
-export async function validateAshbyJobs(
-  appUrl: string,
-  cronSecret: string,
-  browser: Browser,
-): Promise<void> {
+export async function validateAshbyJobs(appUrl: string, cronSecret: string): Promise<void> {
   console.log("\n🔷 Starting Ashby job validation")
 
-  // Get all Ashby jobs from your API endpoint
-  console.log("📊 Fetching Ashby jobs...")
-  const jobsResponse = await fetch(`${appUrl}/api/ashby/get`, {
-    headers: {
-      Authorization: `Bearer ${cronSecret}`,
-    },
+  const browser: Browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   })
 
-  if (!jobsResponse.ok) {
-    throw new Error(`Failed to fetch Ashby jobs: ${jobsResponse.statusText}`)
-  }
-
-  const { jobs } = (await jobsResponse.json()) as JobsResponse
-  console.log(`📋 Found ${jobs.length} Ashby jobs to validate`)
-
-  const invalidJobIds: string[] = []
-
-  // Process jobs in batches of 5 for concurrency
-  const batchSize = 5
-  for (let i = 0; i < jobs.length; i += batchSize) {
-    const batch = jobs.slice(i, i + batchSize)
-    await Promise.all(
-      batch.map(async (job) => {
-        const page = await browser.newPage()
-        page.setDefaultTimeout(10000)
-        try {
-          console.log(`🔍 Validating: ${job.title}`)
-
-          try {
-            const response = await page.goto(job.link, {
-              waitUntil: "networkidle2",
-            })
-
-            try {
-              await page.waitForSelector(".ashby-job-posting-left-pane", { timeout: 5000 })
-            } catch {
-              // Some pages load the left pane asynchronously; fall back to current content.
-            }
-
-            const content = await page.content()
-            const isHttpOk = response && response.status() < 400
-            const hasError = hasAshbyError(content)
-
-            if (!isHttpOk || hasError) {
-              console.log(`❌ Invalid: ${job.title}`)
-              invalidJobIds.push(job.id)
-              return
-            }
-
-            let locationInfo: LocationInfo
-            try {
-              locationInfo = await extractAshbyLocationFromPage(page)
-            } catch {
-              locationInfo = extractAshbyLocation(content)
-            }
-
-            if (!locationInfo.location) {
-              console.log(`⚠️ Unknown location, skipping removal: ${job.title}`)
-              return
-            }
-
-            if (!isValidAshbyLocation(locationInfo)) {
-              console.log(`❌ Invalid: ${job.title}`)
-              invalidJobIds.push(job.id)
-            } else {
-              console.log(`✅ Valid: ${job.title}`)
-            }
-          } catch (_err) {
-            console.log(`⚠️ Error loading page: ${job.title}`)
-            invalidJobIds.push(job.id)
-          }
-        } catch (err) {
-          console.error(`Error validating job ${job.id}:`, err)
-        } finally {
-          await page.close()
-        }
-      }),
-    )
-
-    // Small delay between batches
-    await new Promise((resolve) => setTimeout(resolve, 500))
-  }
-
-  // Send invalid job IDs to your API
-  if (invalidJobIds.length > 0) {
-    console.log(`\n🗑️ Removing ${invalidJobIds.length} invalid Ashby jobs`)
-
-    const deleteResponse = await fetch(`${appUrl}/api/ashby/validate`, {
-      method: "POST",
+  try {
+    // Get all Ashby jobs from your API endpoint
+    console.log("📊 Fetching Ashby jobs...")
+    const jobsResponse = await fetch(`${appUrl}/api/ashby/get`, {
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${cronSecret}`,
       },
-      body: JSON.stringify({ invalidJobIds }),
     })
 
-    if (!deleteResponse.ok) {
-      throw new Error(`Failed to delete Ashby jobs: ${deleteResponse.statusText}`)
+    if (!jobsResponse.ok) {
+      throw new Error(`Failed to fetch Ashby jobs: ${jobsResponse.statusText}`)
     }
 
-    const result = (await deleteResponse.json()) as { jobsRemoved: number }
-    console.log(`✨ ${result.jobsRemoved} Ashby jobs removed`)
-  } else {
-    console.log("✨ All Ashby jobs are valid!")
+    const { jobs } = (await jobsResponse.json()) as JobsResponse
+    console.log(`📋 Found ${jobs.length} Ashby jobs to validate`)
+
+    const invalidJobIds: string[] = []
+
+    // Process jobs in batches of 5 for concurrency
+    const batchSize = 5
+    for (let i = 0; i < jobs.length; i += batchSize) {
+      const batch = jobs.slice(i, i + batchSize)
+      await Promise.all(
+        batch.map(async (job) => {
+          const page = await browser.newPage()
+          page.setDefaultTimeout(10000)
+          try {
+            console.log(`🔍 Validating: ${job.title}`)
+
+            try {
+              const response = await page.goto(job.link, {
+                waitUntil: "networkidle2",
+              })
+
+              try {
+                await page.waitForSelector(".ashby-job-posting-left-pane", { timeout: 5000 })
+              } catch {
+                // Some pages load the left pane asynchronously; fall back to current content.
+              }
+
+              const content = await page.content()
+              const isHttpOk = response && response.status() < 400
+              const hasError = hasAshbyError(content)
+
+              if (!isHttpOk || hasError) {
+                console.log(`❌ Invalid: ${job.title}`)
+                invalidJobIds.push(job.id)
+                return
+              }
+
+              let locationInfo: LocationInfo
+              try {
+                locationInfo = await extractAshbyLocationFromPage(page)
+              } catch {
+                locationInfo = extractAshbyLocation(content)
+              }
+
+              if (!locationInfo.location) {
+                console.log(`⚠️ Unknown location, skipping removal: ${job.title}`)
+                return
+              }
+
+              if (!isValidAshbyLocation(locationInfo)) {
+                console.log(`❌ Invalid: ${job.title}`)
+                invalidJobIds.push(job.id)
+              } else {
+                console.log(`✅ Valid: ${job.title}`)
+              }
+            } catch (_err) {
+              console.log(`⚠️ Error loading page: ${job.title}`)
+              invalidJobIds.push(job.id)
+            }
+          } catch (err) {
+            console.error(`Error validating job ${job.id}:`, err)
+          } finally {
+            await page.close()
+          }
+        }),
+      )
+
+      // Small delay between batches
+      await new Promise((resolve) => setTimeout(resolve, 500))
+    }
+
+    // Send invalid job IDs to your API
+    if (invalidJobIds.length > 0) {
+      console.log(`\n🗑️ Removing ${invalidJobIds.length} invalid Ashby jobs`)
+
+      const deleteResponse = await fetch(`${appUrl}/api/ashby/validate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cronSecret}`,
+        },
+        body: JSON.stringify({ invalidJobIds }),
+      })
+
+      if (!deleteResponse.ok) {
+        throw new Error(`Failed to delete Ashby jobs: ${deleteResponse.statusText}`)
+      }
+
+      const result = (await deleteResponse.json()) as { jobsRemoved: number }
+      console.log(`✨ ${result.jobsRemoved} Ashby jobs removed`)
+    } else {
+      console.log("✨ All Ashby jobs are valid!")
+    }
+  } finally {
+    await browser.close()
   }
 }
