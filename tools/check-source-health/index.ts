@@ -1,12 +1,31 @@
 #!/usr/bin/env node
+import { fileURLToPath } from "node:url"
 
-type JobSource = {
+export type JobSource = {
   name: string
   domain: string
   testUrl: string
 }
 
-const JOB_SOURCES: JobSource[] = [
+type SourceHealthResult = {
+  source: string
+  healthy: boolean
+  status?: number
+  responseTime?: number
+  error?: string
+}
+
+type CheckSourceHealthDeps = {
+  fetchFn: typeof fetch
+  now: () => number
+}
+
+type CheckAllSourcesDeps = {
+  log: (message: string) => void
+  check: (source: JobSource) => Promise<SourceHealthResult>
+}
+
+export const JOB_SOURCES: JobSource[] = [
   {
     name: "Greenhouse",
     domain: "greenhouse.io",
@@ -29,22 +48,22 @@ const JOB_SOURCES: JobSource[] = [
   },
 ]
 
-async function checkSourceHealth(source: JobSource): Promise<{
-  source: string
-  healthy: boolean
-  status?: number
-  responseTime?: number
-  error?: string
-}> {
-  const startTime = Date.now()
+export async function checkSourceHealth(
+  source: JobSource,
+  deps: CheckSourceHealthDeps = {
+    fetchFn: fetch,
+    now: () => Date.now(),
+  },
+): Promise<SourceHealthResult> {
+  const startTime = deps.now()
 
   try {
-    const response = await fetch(source.testUrl, {
+    const response = await deps.fetchFn(source.testUrl, {
       method: "HEAD",
       signal: AbortSignal.timeout(10000), // 10s timeout
     })
 
-    const responseTime = Date.now() - startTime
+    const responseTime = deps.now() - startTime
 
     return {
       source: source.name,
@@ -53,7 +72,7 @@ async function checkSourceHealth(source: JobSource): Promise<{
       responseTime,
     }
   } catch (error) {
-    const responseTime = Date.now() - startTime
+    const responseTime = deps.now() - startTime
     return {
       source: source.name,
       healthy: false,
@@ -63,10 +82,16 @@ async function checkSourceHealth(source: JobSource): Promise<{
   }
 }
 
-async function checkAllSources(): Promise<void> {
-  console.log("🏥 Checking job source health...\n")
+export async function checkAllSources(
+  sources: JobSource[] = JOB_SOURCES,
+  deps: CheckAllSourcesDeps = {
+    log: (message: string) => console.log(message),
+    check: (source: JobSource) => checkSourceHealth(source),
+  },
+): Promise<boolean> {
+  deps.log("🏥 Checking job source health...\n")
 
-  const results = await Promise.all(JOB_SOURCES.map((source) => checkSourceHealth(source)))
+  const results = await Promise.all(sources.map((source) => deps.check(source)))
 
   let allHealthy = true
 
@@ -76,20 +101,24 @@ async function checkAllSources(): Promise<void> {
     const time = result.responseTime ? `${result.responseTime}ms` : ""
     const error = result.error ? `- ${result.error}` : ""
 
-    console.log(
-      `${icon} ${result.source.padEnd(15)} ${status.padEnd(6)} ${time.padEnd(8)} ${error}`,
-    )
+    deps.log(`${icon} ${result.source.padEnd(15)} ${status.padEnd(6)} ${time.padEnd(8)} ${error}`)
 
     if (!result.healthy) {
       allHealthy = false
     }
   }
 
-  console.log(`\n${allHealthy ? "✨ All sources healthy!" : "⚠️  Some sources are down"}`)
+  deps.log(`\n${allHealthy ? "✨ All sources healthy!" : "⚠️  Some sources are down"}`)
+  return allHealthy
+}
 
+export async function main(): Promise<void> {
+  const allHealthy = await checkAllSources()
   if (!allHealthy) {
     process.exit(1)
   }
 }
 
-checkAllSources()
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  void main()
+}

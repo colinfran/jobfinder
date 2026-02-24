@@ -5,34 +5,69 @@ import { validateWorkdayJobs } from "./sites/workday/index"
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const rootEnvPath = resolve(currentDir, "../../.env")
-// Only load .env in development; in production (GitHub Actions), GITHUB_ACTIONS env var is set
-if (!process.env.GITHUB_ACTIONS) {
-  process.loadEnvFile(rootEnvPath)
+
+type JobValidator = (appUrl: string, cronSecret: string) => Promise<void>
+
+type ValidateJobsOptions = {
+  env?: NodeJS.ProcessEnv
+  validators?: {
+    ashby: JobValidator
+    workday: JobValidator
+  }
+  logger?: {
+    log: (...args: unknown[]) => void
+    error: (...args: unknown[]) => void
+  }
 }
 
-async function validateJobs(): Promise<void> {
-  const appUrl = process.env.APP_URL || "http://localhost:3000"
-  const cronSecret = process.env.CRON_SECRET
+export function loadEnvIfNeeded(env: NodeJS.ProcessEnv = process.env): void {
+  // Only load .env in development; in production (GitHub Actions), GITHUB_ACTIONS env var is set
+  if (!env.GITHUB_ACTIONS) {
+    process.loadEnvFile(rootEnvPath)
+  }
+}
+
+export async function validateJobs(options: ValidateJobsOptions = {}): Promise<boolean> {
+  const env = options.env ?? process.env
+  const validators = options.validators ?? {
+    ashby: validateAshbyJobs,
+    workday: validateWorkdayJobs,
+  }
+  const logger = options.logger ?? console
+
+  const appUrl = env.APP_URL || "http://localhost:3000"
+  const cronSecret = env.CRON_SECRET
 
   if (!cronSecret) {
-    console.error("❌ CRON_SECRET environment variable is not set")
-    process.exit(1)
+    logger.error("❌ CRON_SECRET environment variable is not set")
+    return false
   }
 
   try {
-    console.log("🚀 Starting job validation")
+    logger.log("🚀 Starting job validation")
 
     // Validate Ashby jobs
-    await validateAshbyJobs(appUrl, cronSecret)
+    await validators.ashby(appUrl, cronSecret)
 
     // Validate Workday jobs
-    await validateWorkdayJobs(appUrl, cronSecret)
+    await validators.workday(appUrl, cronSecret)
 
-    console.log("\n🎉 All validations complete!")
+    logger.log("\n🎉 All validations complete!")
+    return true
   } catch (err) {
-    console.error("❌ Validation failed:", err)
+    logger.error("❌ Validation failed:", err)
+    return false
+  }
+}
+
+export async function main(): Promise<void> {
+  loadEnvIfNeeded()
+  const ok = await validateJobs()
+  if (!ok) {
     process.exit(1)
   }
 }
 
-validateJobs()
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  void main()
+}
