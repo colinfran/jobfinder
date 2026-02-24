@@ -1,4 +1,5 @@
 export { triggerGitHubActionValidation } from "./lib/github"
-export { hasUnnecessarySuffix, isLinkStillValid } from "./lib/link-check"
+export { hasUnnecessarySuffix, isLinkStillValid, validateLinkWithReason } from "./lib/link-check"
+export type { LinkValidationResult } from "./lib/link-check"
 export { processDuplicateJobs } from "./lib/duplicates"
 export { validateJobLinks } from "./lib/validate"

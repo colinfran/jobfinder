@@ -3,7 +3,35 @@ import { db } from "@/lib/db"
 import { jobs } from "@/lib/db/schema"
 import { processDuplicateJobs } from "./duplicates"
 import { triggerGitHubActionValidation } from "./github"
-import { isLinkStillValid } from "./link-check"
+import { validateLinkWithReason, type LinkValidationResult } from "./link-check"
+
+const formatValidationReason = (result: LinkValidationResult): string => {
+  if (result.reason === "http-error") {
+    return `HTTP ${result.status ?? "unknown"}`
+  }
+
+  if (result.reason === "greenhouse-content-invalid") {
+    return "Greenhouse content check failed"
+  }
+
+  if (result.reason === "lever-content-invalid") {
+    return "Lever content check failed"
+  }
+
+  if (result.reason === "timeout") {
+    return "Request timed out (5s)"
+  }
+
+  if (result.reason === "network-error") {
+    return "Network error"
+  }
+
+  if (result.reason === "invalid-url") {
+    return "Invalid URL"
+  }
+
+  return result.reason
+}
 
 export const validateJobLinks = async (): Promise<{
   removed: number
@@ -30,11 +58,13 @@ export const validateJobLinks = async (): Promise<{
 
   for (const job of remainingJobs) {
     try {
-      const isValid = await isLinkStillValid(job.link)
-      if (!isValid) {
+      const validation = await validateLinkWithReason(job.link)
+      if (!validation.isValid) {
         await db.delete(jobs).where(eq(jobs.id, job.id))
         removed++
-        console.log(`🗑️ Removed invalid job: ${job.title} (${job.link})`)
+        console.log(`🗑️ Removed invalid job: ${job.title}`)
+        console.log(`   ↳ reason=${formatValidationReason(validation)}`)
+        console.log(`   ↳ link=${job.link}`)
       } else {
         console.log(`✅ Valid: ${job.title}`)
       }

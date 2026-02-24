@@ -37,7 +37,11 @@ export const processDuplicateJobs = async (
 
       for (let i = 1; i < jobGroup.length; i++) {
         jobsToDelete.push(jobGroup[i].id)
-        console.log(`🔀 Removing duplicate: ${jobGroup[i].title} (kept oldest with clean URL)`)
+        console.log(`🔀 Removing duplicate: ${jobGroup[i].title}`)
+        console.log(`   ↳ reason=duplicate-normalized-url`)
+        console.log(`   ↳ normalized=${normalizedUrl}`)
+        console.log(`   ↳ removedLink=${jobGroup[i].link}`)
+        console.log(`   ↳ keptId=${jobToKeep.id} keptLink=${jobToKeep.link}`)
         duplicatesRemoved++
       }
     }
@@ -50,6 +54,8 @@ export const processDuplicateJobs = async (
   for (const update of jobsToUpdate) {
     await db.update(jobs).set({ link: update.newLink }).where(eq(jobs.id, update.id))
     console.log(`🔗 Updated URL for: ${update.title}`)
+    console.log(`   ↳ reason=normalized-canonical-url`)
+    console.log(`   ↳ newLink=${update.newLink}`)
   }
 
   return { duplicatesRemoved }

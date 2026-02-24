@@ -1,6 +1,20 @@
 import { isGreenhouseJobPageValid } from "../greenhouse"
 import { isLeverJobPageValid } from "../lever"
 
+export type LinkValidationResult = {
+  isValid: boolean
+  reason:
+    | "invalid-url"
+    | "http-error"
+    | "greenhouse-content-invalid"
+    | "lever-content-invalid"
+    | "validated"
+    | "non-target-source"
+    | "timeout"
+    | "network-error"
+  status?: number
+}
+
 export const hasUnnecessarySuffix = (link: string): boolean => {
   try {
     const url = new URL(link)
@@ -10,9 +24,15 @@ export const hasUnnecessarySuffix = (link: string): boolean => {
   }
 }
 
-export const isLinkStillValid = async (link: string): Promise<boolean> => {
+export const validateLinkWithReason = async (link: string): Promise<LinkValidationResult> => {
+  let url: URL
   try {
-    const url = new URL(link)
+    url = new URL(link)
+  } catch {
+    return { isValid: false, reason: "invalid-url" }
+  }
+
+  try {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 5000)
 
@@ -28,23 +48,43 @@ export const isLinkStillValid = async (link: string): Promise<boolean> => {
     clearTimeout(timeout)
 
     if (response.status >= 400) {
-      return false
+      return {
+        isValid: false,
+        reason: "http-error",
+        status: response.status,
+      }
     }
 
     const body = await response.text()
 
     if (url.hostname.includes("lever.co")) {
-      return isLeverJobPageValid(body)
+      const isValid = isLeverJobPageValid(body)
+      return {
+        isValid,
+        reason: isValid ? "validated" : "lever-content-invalid",
+      }
     }
 
     if (url.hostname.includes("greenhouse")) {
-      return isGreenhouseJobPageValid(url, body)
+      const isValid = isGreenhouseJobPageValid(url, body)
+      return {
+        isValid,
+        reason: isValid ? "validated" : "greenhouse-content-invalid",
+      }
     }
 
     // Workday + Ashby are validated by GitHub Actions browser workflows.
-    return true
+    return { isValid: true, reason: "non-target-source" }
   } catch (error) {
-    console.log(`❌ Error validating link ${link}:`, error instanceof Error ? error.message : error)
-    return false
+    const isTimeout = error instanceof Error && error.name === "AbortError"
+    return {
+      isValid: false,
+      reason: isTimeout ? "timeout" : "network-error",
+    }
   }
+}
+
+export const isLinkStillValid = async (link: string): Promise<boolean> => {
+  const result = await validateLinkWithReason(link)
+  return result.isValid
 }
