@@ -76,6 +76,40 @@ JobFinder is an automated job search aggregator that collects listings from mult
 
 7. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+## Testing
+
+All test-related files live under `_tests_/` (unit/integration, e2e, and test configs).
+
+Run unit/integration tests:
+
+```bash
+npm test
+```
+
+Run in watch mode:
+
+```bash
+npm run test:watch
+```
+
+Generate coverage report:
+
+```bash
+npm run test:coverage
+```
+
+Run end-to-end smoke tests (Playwright):
+
+```bash
+npm run test:e2e
+```
+
+E2E auth behavior:
+- Playwright starts the app with `E2E_AUTH_BYPASS=true`
+- A Playwright setup project signs in through Better Auth (`/api/auth/sign-in/email`) and stores real session state
+- If the test user does not exist yet, setup creates it via `/api/auth/sign-up/email`
+- `/dashboard` redirect behavior is still tested using a fresh unauthenticated browser context
+
 
 ## Three Core Processes
 
@@ -112,4 +146,3 @@ Workday safety behavior:
 - Accepts: San Francisco, SF Bay Area, Bay Area, Remote
 - Rejects: Non-SF locations without explicit Remote designation
 - Requires: On-site positions must be in SF; Hybrid/Remote must include SF or Remote option
-

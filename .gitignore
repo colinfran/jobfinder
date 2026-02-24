@@ -6,7 +6,10 @@
 .pnp.js
 
 # testing
-/coverage
+/_tests_/coverage
+/_tests_/e2e/report
+/_tests_/e2e/test-results
+/_tests_/e2e/.auth
 
 # production
 /build
@@ -35,7 +38,6 @@ next-env.d.ts
 
 # Playwright
 node_modules/
-/test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
