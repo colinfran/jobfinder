@@ -1,7 +1,7 @@
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
-import { validateAshbyJobs } from "./sites/ashby"
-import { validateWorkdayJobs } from "./sites/workday"
+import { validateAshbyJobs } from "./sites/ashby/index"
+import { validateWorkdayJobs } from "./sites/workday/index"
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const rootEnvPath = resolve(currentDir, "../../.env")
