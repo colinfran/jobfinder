@@ -38,20 +38,24 @@ export function isValidAshbyLocation(locationInfo: LocationInfo): boolean {
     "sf ",
   ]
   const hasSF = sfVariations.some((variation) => normalizedLocation.includes(variation))
+  const hasUS = /\b(united states|u\.?s\.?a?)\b/i.test(location)
 
-  const isRemote = normalizedLocation.includes("remote") || normalizedLocationType === "remote"
+  // "Location Type: Remote" alone is too broad (e.g. country-restricted remote roles).
+  // Remote roles must explicitly indicate the US in location text.
+  const isRemote = normalizedLocation.includes("remote")
+  const isRemoteInUS = isRemote && hasUS
 
   if (normalizedLocationType === "on-site") {
     return hasSF
   }
 
   if (normalizedLocationType === "hybrid" || normalizedLocationType === "remote") {
-    return isRemote || hasSF
+    return hasSF || hasUS
   }
 
   if (locationType) {
     return false
   }
 
-  return hasSF || isRemote
+  return hasSF || isRemoteInUS
 }
