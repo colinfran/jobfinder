@@ -19,7 +19,7 @@ const formatValidationReason = (result: LinkValidationResult): string => {
   }
 
   if (result.reason === "timeout") {
-    return "Request timed out (5s)"
+    return "Request timed out"
   }
 
   if (result.reason === "network-error") {
@@ -31,6 +31,10 @@ const formatValidationReason = (result: LinkValidationResult): string => {
   }
 
   return result.reason
+}
+
+const sleep = async (ms: number): Promise<void> => {
+  await new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 export const validateJobLinks = async (): Promise<{
@@ -55,25 +59,64 @@ export const validateJobLinks = async (): Promise<{
 
   let removed = 0
   const errors: string[] = []
+  const timedOutJobs: typeof remainingJobs = []
 
   for (const job of remainingJobs) {
     try {
       const validation = await validateLinkWithReason(job.link)
       if (!validation.isValid) {
-        await db.delete(jobs).where(eq(jobs.id, job.id))
-        removed++
-        console.log(`🗑️ Removed invalid job: ${job.title}`)
-        console.log(`   ↳ reason=${formatValidationReason(validation)}`)
-        console.log(`   ↳ link=${job.link}`)
+        if (validation.reason === "timeout") {
+          timedOutJobs.push(job)
+          console.log(`⏳ Queueing timeout retry: ${job.title}`)
+          console.log(`   ↳ link=${job.link}`)
+        } else {
+          await db.delete(jobs).where(eq(jobs.id, job.id))
+          removed++
+          console.log(`🗑️ Removed invalid job: ${job.title}`)
+          console.log(`   ↳ reason=${formatValidationReason(validation)}`)
+          console.log(`   ↳ link=${job.link}`)
+        }
       } else {
         console.log(`✅ Valid: ${job.title}`)
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      await sleep(500)
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "Unknown error"
       console.error(`❌ Error checking job ${job.id}:`, err)
       errors.push(`Failed to validate job ${job.id}: ${errorMsg}`)
+    }
+  }
+
+  if (timedOutJobs.length > 0) {
+    console.log(`🔁 Retrying ${timedOutJobs.length} timeout jobs with 15s timeout`)
+  }
+
+  for (const job of timedOutJobs) {
+    try {
+      const retryValidation = await validateLinkWithReason(job.link, { timeoutMs: 15000 })
+
+      if (!retryValidation.isValid) {
+        if (retryValidation.reason === "timeout" || retryValidation.reason === "network-error") {
+          console.log(`⏭️ Skipping delete after inconclusive retry: ${job.title}`)
+          console.log(`   ↳ reason=${formatValidationReason(retryValidation)}`)
+          console.log(`   ↳ link=${job.link}`)
+        } else {
+          await db.delete(jobs).where(eq(jobs.id, job.id))
+          removed++
+          console.log(`🗑️ Removed invalid job after retry: ${job.title}`)
+          console.log(`   ↳ reason=${formatValidationReason(retryValidation)}`)
+          console.log(`   ↳ link=${job.link}`)
+        }
+      } else {
+        console.log(`✅ Valid on retry: ${job.title}`)
+      }
+
+      await sleep(500)
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Unknown error"
+      console.error(`❌ Error retrying job ${job.id}:`, err)
+      errors.push(`Failed to retry validation for job ${job.id}: ${errorMsg}`)
     }
   }
 

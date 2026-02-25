@@ -15,6 +15,10 @@ export type LinkValidationResult = {
   status?: number
 }
 
+type ValidateLinkOptions = {
+  timeoutMs?: number
+}
+
 export const hasUnnecessarySuffix = (link: string): boolean => {
   try {
     const url = new URL(link)
@@ -24,7 +28,12 @@ export const hasUnnecessarySuffix = (link: string): boolean => {
   }
 }
 
-export const validateLinkWithReason = async (link: string): Promise<LinkValidationResult> => {
+export const validateLinkWithReason = async (
+  link: string,
+  options: ValidateLinkOptions = {},
+): Promise<LinkValidationResult> => {
+  const timeoutMs = options.timeoutMs ?? 5000
+
   let url: URL
   try {
     url = new URL(link)
@@ -34,7 +43,7 @@ export const validateLinkWithReason = async (link: string): Promise<LinkValidati
 
   try {
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 5000)
+    const timeout = setTimeout(() => controller.abort(), timeoutMs)
 
     const response = await fetch(link, {
       method: "GET",
