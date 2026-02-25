@@ -15,7 +15,9 @@
     "start": "next start",
     "prepare": "husky",
     "postbuild": "next-sitemap",
-    "db:setup": "drizzle-kit push"
+    "db:setup": "drizzle-kit push",
+    "tools:job-link-validator": "npm --prefix tools/job-link-validator run start",
+    "tools:check-source-health": "npm --prefix tools/check-source-health run start"
   },
   "dependencies": {
     "@alpacahq/alpaca-trade-api": "^3.1.3",

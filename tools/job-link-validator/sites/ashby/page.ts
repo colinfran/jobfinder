@@ -2,7 +2,12 @@ import type { Page } from "puppeteer"
 import type { LocationInfo } from "./types"
 
 export function hasAshbyError(html: string): boolean {
-  return html.includes("The job you requested was not found") || html.includes("Job not found")
+  const normalized = html.toLowerCase()
+  return (
+    normalized.includes("the job you requested was not found") ||
+    normalized.includes("job not found") ||
+    normalized.includes("page not found")
+  )
 }
 
 export async function extractAshbyLocationFromPage(page: Page): Promise<LocationInfo> {

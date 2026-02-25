@@ -26,6 +26,11 @@ export async function validateAshbyJobs(appUrl: string, cronSecret: string): Pro
         batch.map(async (job) => {
           const page = await browser.newPage()
           page.setDefaultTimeout(10000)
+          const markInvalid = (reason: string): void => {
+            console.log(`❌ Invalid (${reason}): ${job.title}`)
+            console.log(`   ↳ link=${job.link}`)
+            invalidJobIds.push(job.id)
+          }
 
           try {
             console.log(`🔍 Validating: ${job.title}`)
@@ -45,9 +50,14 @@ export async function validateAshbyJobs(appUrl: string, cronSecret: string): Pro
               const isHttpOk = response && response.status() < 400
               const hasError = hasAshbyError(content)
 
-              if (!isHttpOk || hasError) {
-                console.log(`❌ Invalid: ${job.title}`)
-                invalidJobIds.push(job.id)
+              if (!isHttpOk) {
+                const status = response ? response.status() : "no-response"
+                markInvalid(`http status ${status}`)
+                return
+              }
+
+              if (hasError) {
+                markInvalid("Ashby error page")
                 return
               }
 
@@ -60,18 +70,20 @@ export async function validateAshbyJobs(appUrl: string, cronSecret: string): Pro
 
               if (!locationInfo.location) {
                 console.log(`⚠️ Unknown location, skipping removal: ${job.title}`)
+                console.log(`   ↳ link=${job.link}`)
                 return
               }
 
               if (!isValidAshbyLocation(locationInfo)) {
-                console.log(`❌ Invalid: ${job.title}`)
-                invalidJobIds.push(job.id)
+                const locationType = locationInfo.locationType ?? "unknown"
+                markInvalid(
+                  `location mismatch (location=${locationInfo.location}; type=${locationType})`,
+                )
               } else {
                 console.log(`✅ Valid: ${job.title}`)
               }
             } catch {
-              console.log(`⚠️ Error loading page: ${job.title}`)
-              invalidJobIds.push(job.id)
+              markInvalid("page load error")
             }
           } catch (err) {
             console.error(`Error validating job ${job.id}:`, err)

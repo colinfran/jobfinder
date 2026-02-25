@@ -116,6 +116,7 @@ export async function validateWorkdayJobs(appUrl: string, cronSecret: string): P
         const locationInfo = extractLocationInfoFromPosting(matchedPosting)
         if (!locationInfo) {
           console.log(`⚠️ Unknown location, skipping removal: ${job.title}`)
+          console.log(`   ↳ link=${job.link}`)
           continue
         }
 
