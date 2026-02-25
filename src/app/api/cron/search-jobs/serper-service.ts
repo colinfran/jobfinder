@@ -3,6 +3,7 @@ import { extractCompany } from "@/app/api/cron/search-jobs/extract-company"
 import { insertJob } from "@/lib/db/insert-job"
 import { isValidJobLink } from "./is-valid-job-link"
 import { normalizeJobUrl } from "./normalize-url"
+import { normalizeJobTitle } from "./normalize-title"
 import { isLinkStillValid } from "@/app/api/cron/validate-jobs/validate-job-link"
 
 interface SerperOrganicResult {
@@ -53,22 +54,24 @@ export const processJobResult = async (
   alreadyExists: boolean
   title: string
 }> => {
+  const normalizedTitle = normalizeJobTitle(result.title, result.link)
+
   if (!isValidJobLink(result.link)) {
     console.log(`⚠️ Skipping non-job link: ${result.link}`)
-    return { success: false, inserted: false, alreadyExists: false, title: result.title }
+    return { success: false, inserted: false, alreadyExists: false, title: normalizedTitle }
   }
 
   // Validate that the link is still active before inserting
   const isValid = await isLinkStillValid(result.link)
   if (!isValid) {
     console.log(`⚠️ Skipping dead link: ${result.link}`)
-    return { success: false, inserted: false, alreadyExists: false, title: result.title }
+    return { success: false, inserted: false, alreadyExists: false, title: normalizedTitle }
   }
 
   try {
     const { success, alreadyExists } = await insertJob({
-      title: result.title,
-      company: extractCompany(result.title, result.link),
+      title: normalizedTitle,
+      company: extractCompany(normalizedTitle, result.link),
       link: normalizeJobUrl(result.link),
       snippet: result.snippet || null,
       source: extractSource(result.link),
@@ -76,18 +79,18 @@ export const processJobResult = async (
     })
 
     if (success && !alreadyExists) {
-      console.log(`✅ Inserted: ${result.title}`)
-      return { success: true, inserted: true, alreadyExists: false, title: result.title }
+      console.log(`✅ Inserted: ${normalizedTitle}`)
+      return { success: true, inserted: true, alreadyExists: false, title: normalizedTitle }
     } else if (alreadyExists) {
-      console.log(`📌 Already exists: ${result.title}`)
-      return { success: true, inserted: false, alreadyExists: true, title: result.title }
+      console.log(`📌 Already exists: ${normalizedTitle}`)
+      return { success: true, inserted: false, alreadyExists: true, title: normalizedTitle }
     } else {
-      console.log(`❌ Failed to insert: ${result.title}`)
-      return { success: false, inserted: false, alreadyExists: false, title: result.title }
+      console.log(`❌ Failed to insert: ${normalizedTitle}`)
+      return { success: false, inserted: false, alreadyExists: false, title: normalizedTitle }
     }
   } catch (err) {
     console.error("❌ Error inserting job:", err)
-    return { success: false, inserted: false, alreadyExists: false, title: result.title }
+    return { success: false, inserted: false, alreadyExists: false, title: normalizedTitle }
   }
 }
 
