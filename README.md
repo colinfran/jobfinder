@@ -117,19 +117,20 @@ E2E auth behavior:
 Runs on schedule: `0 0,12 * * *` (daily at 12:00am and 12:00pm UTC)
 - Calls Serper API with predefined job search queries
 - Validates links are live for Lever.co and Greenhouse (server-side rendered sites) using fetch + HTML parsing
-- Skips initial validation for Ashby and Workday (client-side rendered; validated later by GitHub Actions)
+- Skips initial validation for Ashby, Workday, and Gem (validated later by the Puppeteer validation workflow)
 - Deduplicates job postings
 - Inserts valid jobs into the database
+- Normalizes incoming titles to remove board suffixes like `- Jobs`, `- Greenhouse`, `- Lever`, `- Gem`
 
 ### 2. Validation (Vercel Cron)
 Runs on schedule: `20 0,12 * * *` (daily at 12:20am and 12:20pm UTC)
-- Removes duplicates from all job sources (Greenhouse, Lever.co, Ashby, Workday)
+- Removes duplicates from all job sources (Greenhouse, Lever.co, Ashby, Workday, Gem)
 - Validates dead links and location for Greenhouse and Lever.co (server-side rendered) using fetch + HTML parsing:
   - **Greenhouse**: Parses canonical URL meta tag to detect removed jobs, extracts location from og:description, validates SF Bay Area presence
   - **Lever.co**: Extracts location from twitter meta tags, validates workplace type, validates SF Bay Area presence
-- Triggers GitHub Actions workflow for Ashby and Workday validation
+- Triggers the Puppeteer workflow for Ashby, Workday, and Gem validation
 
-### 3. Ashby + Workday Validation (GitHub Actions)
+### 3. Ashby + Workday + Gem Validation (Puppeteer Workflow)
 Triggered by:
 - API trigger: Via `repository_dispatch` event (called from Vercel validation cron at 12:20am and 12:20pm UTC)
 - Manual trigger: Via GitHub Actions `workflow_dispatch` button
@@ -137,6 +138,7 @@ Triggered by:
 Validation strategy:
 - **Ashby**: Uses Puppeteer to load the posting page, extracts location + location type, validates SF Bay Area presence
 - **Workday**: Calls Workday's CXS JSON endpoint (`/wday/cxs/...`) and validates from API fields (`location`, `additionalLocations`, `remoteType`)
+- **Gem**: Uses Puppeteer to load the posting page, extracts location + location type, validates SF Bay Area presence
 
 Workday safety behavior:
 - If Workday CXS responds with errors (for example 403) or location data is missing, the job is skipped (not auto-removed)

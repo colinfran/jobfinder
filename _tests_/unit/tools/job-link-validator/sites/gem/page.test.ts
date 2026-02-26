@@ -32,7 +32,7 @@ describe("tools/job-link-validator/sites/gem/page", () => {
     })
   })
 
-  it("extracts hybrid location and workplace type", () => {
+  it("extracts workplace type for non-Bay-Area hybrid and leaves location empty", () => {
     const html = `
       <div class="attributesContainer-35">
         <div class="iconLabel-36"><span>Athens, Greece</span></div>
@@ -43,7 +43,7 @@ describe("tools/job-link-validator/sites/gem/page", () => {
     `
 
     expect(extractGemLocationFromHtml(html)).toEqual({
-      location: "Athens, Greece",
+      location: null,
       workplaceType: "Hybrid",
     })
   })

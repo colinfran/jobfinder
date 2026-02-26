@@ -18,23 +18,32 @@ describe("tools/job-link-validator/sites/gem/location", () => {
     ).toBe(true)
   })
 
-  it("rejects non-Bay-Area locations", () => {
+  it("accepts explicit remote locations", () => {
+    expect(
+      isValidGemLocation({
+        location: "Remote",
+        workplaceType: "Remote",
+      }),
+    ).toBe(true)
+
+    expect(
+      isValidGemLocation({
+        location: "United States • Remote",
+        workplaceType: "Hybrid",
+      }),
+    ).toBe(true)
+  })
+
+  it("rejects non-SF locations without explicit remote", () => {
     expect(
       isValidGemLocation({
         location: "Athens, Greece",
         workplaceType: "Hybrid",
       }),
     ).toBe(false)
-
-    expect(
-      isValidGemLocation({
-        location: "Remote",
-        workplaceType: "Remote",
-      }),
-    ).toBe(false)
   })
 
-  it("rejects mixed Bay Area + non-Bay-Area locations", () => {
+  it("rejects mixed SF + non-SF when not explicitly remote", () => {
     expect(
       isValidGemLocation({
         location: "San Francisco • New York",
