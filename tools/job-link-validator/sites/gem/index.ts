@@ -1,5 +1,5 @@
 export type { Job, JobsResponse, GemLocationInfo } from "./types"
-export { hasGemError, extractGemLocationFromPage } from "./page"
+export { hasGemError, extractGemLocationFromHtml, extractGemLocationFromPage } from "./page"
 export { isValidGemLocation } from "./location"
 export { fetchGemJobs, deleteInvalidGemJobs } from "./api"
 export { validateGemJobs } from "./validator"

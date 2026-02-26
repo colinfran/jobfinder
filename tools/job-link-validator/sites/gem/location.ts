@@ -10,7 +10,7 @@ export function isValidGemLocation(locationInfo: GemLocationInfo): boolean {
   const normalizedLocation = location.toLowerCase()
   const normalizedWorkplaceType = workplaceType?.toLowerCase() || null
 
-  const sfVariations = [
+  const bayAreaVariations = [
     "san francisco",
     "sf bay area",
     "sf bay",
@@ -20,23 +20,47 @@ export function isValidGemLocation(locationInfo: GemLocationInfo): boolean {
     "sf,",
     "sf ",
     "san jose",
+    "oakland",
+    "berkeley",
+    "palo alto",
+    "mountain view",
+    "redwood city",
+    "menlo park",
+    "fremont",
   ]
 
-  const hasSF = sfVariations.some((variation) => normalizedLocation.includes(variation))
-  const hasUS = /\b(united states|u\.?s\.?a?)\b/i.test(location)
-  const isRemote = normalizedLocation.includes("remote")
+  const clearlyNonBayAreaMarkers = [
+    "new york",
+    "athens",
+    "greece",
+    "canada",
+    "london",
+    "seattle",
+    "austin",
+    "boston",
+    "los angeles",
+  ]
+
+  const hasBayArea = bayAreaVariations.some((variation) => normalizedLocation.includes(variation))
+  const hasClearlyNonBayAreaMarker = clearlyNonBayAreaMarkers.some((marker) =>
+    normalizedLocation.includes(marker),
+  )
+
+  if (hasClearlyNonBayAreaMarker) {
+    return false
+  }
 
   if (normalizedWorkplaceType === "in office" || normalizedWorkplaceType === "on-site") {
-    return hasSF
+    return hasBayArea
   }
 
   if (normalizedWorkplaceType === "hybrid" || normalizedWorkplaceType === "remote") {
-    return hasSF || hasUS
+    return hasBayArea
   }
 
   if (workplaceType) {
     return false
   }
 
-  return hasSF || (hasUS && isRemote)
+  return hasBayArea
 }

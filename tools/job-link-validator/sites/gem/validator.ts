@@ -1,7 +1,7 @@
 import puppeteer, { type Browser } from "puppeteer"
 import { deleteInvalidGemJobs, fetchGemJobs } from "./api"
 import { isValidGemLocation } from "./location"
-import { extractGemLocationFromPage, hasGemError } from "./page"
+import { extractGemLocationFromHtml, hasGemError } from "./page"
 
 export async function validateGemJobs(appUrl: string, cronSecret: string): Promise<void> {
   console.log("\n💠 Starting Gem job validation")
@@ -55,7 +55,7 @@ export async function validateGemJobs(appUrl: string, cronSecret: string): Promi
                 return
               }
 
-              const locationInfo = await extractGemLocationFromPage(page)
+              const locationInfo = extractGemLocationFromHtml(content)
 
               if (!locationInfo.location) {
                 console.log(`⚠️ Unknown location, skipping removal: ${job.title}`)
