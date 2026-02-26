@@ -22,7 +22,29 @@ export const sourceColor = (source: string): string => {
       return "bg-violet-500/15 text-violet-600"
     case "myworkdayjobs.com":
       return "bg-blue-500/15 text-blue-600"
+    case "gem.com":
+      return "bg-fuchsia-500/15 text-fuchsia-600"
     default:
       return "bg-muted text-muted-foreground"
+  }
+}
+
+export const sourceLabel = (source: string | null): string => {
+  switch (source) {
+    case "greenhouse.io":
+      return "Greenhouse"
+    case "lever.co":
+      return "Lever"
+    case "ashbyhq.com":
+      return "Ashby"
+    case "myworkdayjobs.com":
+      return "Workday"
+    case "gem.com":
+      return "Gem"
+    case "unknown":
+    case null:
+      return "unknown"
+    default:
+      return source
   }
 }

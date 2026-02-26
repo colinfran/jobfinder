@@ -69,4 +69,10 @@ describe("JobRow", () => {
 
     expect(screen.getByRole("button", { name: /not relevant/i })).toBeDisabled()
   })
+
+  it("renders a friendly source label", () => {
+    render(<JobRow job={{ ...baseJob, source: "gem.com" }} />)
+
+    expect(screen.getByText("Gem")).toBeInTheDocument()
+  })
 })

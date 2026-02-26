@@ -46,6 +46,11 @@ export const JOB_SOURCES: JobSource[] = [
     domain: "myworkdayjobs.com",
     testUrl: "https://myworkdayjobs.com/",
   },
+  {
+    name: "Gem",
+    domain: "gem.com",
+    testUrl: "https://jobs.gem.com/",
+  },
 ]
 
 export async function checkSourceHealth(

@@ -1,4 +1,4 @@
-import { sourceColor, timeAgo } from "@/components/job-list/job-utils"
+import { sourceColor, sourceLabel, timeAgo } from "@/components/job-list/job-utils"
 
 describe("components/job-list/job-utils", () => {
   describe("timeAgo", () => {
@@ -37,8 +37,27 @@ describe("components/job-list/job-utils", () => {
       expect(sourceColor("greenhouse.io")).toBe("bg-teal-500/15 text-teal-600")
     })
 
+    it("returns gem styles", () => {
+      expect(sourceColor("gem.com")).toBe("bg-fuchsia-500/15 text-fuchsia-600")
+    })
+
     it("returns fallback styles for unknown source", () => {
       expect(sourceColor("example.com")).toBe("bg-muted text-muted-foreground")
+    })
+  })
+
+  describe("sourceLabel", () => {
+    it("returns friendly labels for known sources", () => {
+      expect(sourceLabel("greenhouse.io")).toBe("Greenhouse")
+      expect(sourceLabel("lever.co")).toBe("Lever")
+      expect(sourceLabel("ashbyhq.com")).toBe("Ashby")
+      expect(sourceLabel("myworkdayjobs.com")).toBe("Workday")
+      expect(sourceLabel("gem.com")).toBe("Gem")
+    })
+
+    it("returns fallback label for unknown source", () => {
+      expect(sourceLabel("example.com")).toBe("example.com")
+      expect(sourceLabel(null)).toBe("unknown")
     })
   })
 })

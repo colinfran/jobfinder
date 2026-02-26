@@ -1,4 +1,22 @@
+#!/usr/bin/env sh
+
 echo "Running pre-commit hook"
+
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+cd "$REPO_ROOT" || exit 1
+
+# Expand PATH for GUI apps (e.g., GitHub Desktop) that don't load shell profiles.
+PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
+
+# If node is installed via nvm, add the latest nvm bin to PATH.
+if [ -d "$HOME/.nvm/versions/node" ]; then
+  NVM_BIN=$(ls -1d "$HOME"/.nvm/versions/node/*/bin 2>/dev/null | tail -n 1)
+  if [ -n "$NVM_BIN" ]; then
+    PATH="$NVM_BIN:$PATH"
+  fi
+fi
+
+export PATH
 
 # Get only staged files (new/changed)
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx|js|jsx|mjs|json)$' || true)
@@ -9,7 +27,20 @@ if [ -z "$STAGED_FILES" ]; then
 fi
 
 echo "Linting staged files..."
-npx eslint --fix $STAGED_FILES
+
+if [ -x "$REPO_ROOT/node_modules/.bin/eslint" ]; then
+  ESLINT_CMD="$REPO_ROOT/node_modules/.bin/eslint"
+elif command -v npm >/dev/null 2>&1; then
+  ESLINT_CMD="npm exec -- eslint"
+elif command -v npx >/dev/null 2>&1; then
+  ESLINT_CMD="npx --yes eslint"
+else
+  echo "❌ Node tooling unavailable in PATH (eslint/npm/npx)"
+  echo "   Ensure Node is installed and visible to GitHub Desktop, then re-open the app"
+  exit 1
+fi
+
+$ESLINT_CMD --fix $STAGED_FILES
 
 if [ $? -ne 0 ]; then
   echo "❌ Linting failed"

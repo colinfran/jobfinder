@@ -1,6 +1,7 @@
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { validateAshbyJobs } from "./sites/ashby/index"
+import { validateGemJobs } from "./sites/gem/index"
 import { validateWorkdayJobs } from "./sites/workday/index"
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
@@ -13,6 +14,7 @@ type ValidateJobsOptions = {
   validators?: {
     ashby: JobValidator
     workday: JobValidator
+    gem: JobValidator
   }
   logger?: {
     log: (...args: unknown[]) => void
@@ -32,6 +34,7 @@ export async function validateJobs(options: ValidateJobsOptions = {}): Promise<b
   const validators = options.validators ?? {
     ashby: validateAshbyJobs,
     workday: validateWorkdayJobs,
+    gem: validateGemJobs,
   }
   const logger = options.logger ?? console
 
@@ -51,6 +54,9 @@ export async function validateJobs(options: ValidateJobsOptions = {}): Promise<b
 
     // Validate Workday jobs
     await validators.workday(appUrl, cronSecret)
+
+    // Validate Gem jobs
+    await validators.gem(appUrl, cronSecret)
 
     logger.log("\n🎉 All validations complete!")
     return true

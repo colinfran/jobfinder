@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "../ui/button"
-import { sourceColor, timeAgo } from "./job-utils"
+import { sourceColor, sourceLabel, timeAgo } from "./job-utils"
 import { useJobListContext } from "@/providers/job-list-provider"
 import { JobWithStatus } from "@/hooks/use-job-list"
 
@@ -52,7 +52,7 @@ export const JobRow: FC<{
         <span
           className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${sourceColor(job.source || "")}`}
         >
-          {job.source || "unknown"}
+          {sourceLabel(job.source)}
         </span>
       </div>
 

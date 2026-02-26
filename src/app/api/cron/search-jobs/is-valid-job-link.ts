@@ -25,6 +25,12 @@ export const isValidJobLink = (link: string): boolean => {
       return pathParts.includes("job") && pathParts.length >= 2
     }
 
+    // Gem: /<company>/<job-id>
+    if (url.hostname.includes("jobs.gem.com")) {
+      const lastPathPart = pathParts[pathParts.length - 1] ?? ""
+      return pathParts.length >= 2 && /^[a-z0-9_-]{6,}$/i.test(lastPathPart)
+    }
+
     return false
   } catch {
     return false

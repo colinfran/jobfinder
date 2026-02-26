@@ -45,6 +45,16 @@ const SOFTWARE_QUERIES = [
   'site:myworkdayjobs.com "full stack" "San Francisco" "hybrid"',
   'site:myworkdayjobs.com "full stack" "San Francisco" "remote"',
   'site:myworkdayjobs.com "fullstack" "San Francisco" "hybrid"',
+
+  // Gem - Frontend
+  'site:jobs.gem.com "frontend" "San Francisco" "hybrid"',
+  'site:jobs.gem.com "frontend" "San Francisco" "remote"',
+  'site:jobs.gem.com "front end" "San Francisco" "hybrid"',
+
+  // Gem - Full Stack
+  'site:jobs.gem.com "full stack" "San Francisco" "hybrid"',
+  'site:jobs.gem.com "full stack" "San Francisco" "remote"',
+  'site:jobs.gem.com "fullstack" "San Francisco" "hybrid"',
 ]
 
 const FINANCE_KEYWORDS = [
@@ -87,6 +97,14 @@ const FINANCE_QUERIES = [
     `site:myworkdayjobs.com "${keyword}" "San Francisco"`,
     `site:myworkdayjobs.com "${keyword}" "California" "remote"`,
     `site:myworkdayjobs.com "${keyword}" "United States" "remote"`,
+  ]),
+
+  // Gem - Finance
+  ...FINANCE_KEYWORDS.flatMap((keyword) => [
+    `site:jobs.gem.com "${keyword}" "San Francisco" "hybrid"`,
+    `site:jobs.gem.com "${keyword}" "San Francisco" "on-site"`,
+    `site:jobs.gem.com "${keyword}" "California" "remote"`,
+    `site:jobs.gem.com "${keyword}" "United States" "remote"`,
   ]),
 ]
 

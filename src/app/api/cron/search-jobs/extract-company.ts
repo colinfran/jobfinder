@@ -34,6 +34,14 @@ export const extractCompany = (title: string, link: string): string | null => {
         ? subdomain.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
         : null
     }
+
+    if (url.hostname.includes("jobs.gem.com")) {
+      return pathParts[0]
+        ? decodeURIComponent(pathParts[0])
+            .replace(/-/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase())
+        : null
+    }
   } catch {
     // fall through
   }
