@@ -47,6 +47,8 @@ JobFinder is an automated job search aggregator that collects listings from mult
    GITHUB_TOKEN=your_github_pat_token
    BETTER_AUTH_SECRET=your_betterauth_secret
    BETTER_AUTH_URL=http://localhost:3000 // or production url
+   GOOGLE_CLIENT_ID=your_google_client_id
+   GOOGLE_CLIENT_SECRET=your_google_client_id
    GITHUB_CLIENT_ID=your_github_client_id
    GITHUB_CLIENT_SECRET=your_github_client_secret
    NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000 // or production url
