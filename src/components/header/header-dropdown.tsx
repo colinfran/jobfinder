@@ -82,7 +82,7 @@ const HeaderDropdown: FC = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <button
-                    className="flex w-full flex-row items-center gap-2"
+                    className="flex w-full flex-row items-center gap-2 cursor-pointer"
                     type="submit"
                     onClick={onClick}
                   >

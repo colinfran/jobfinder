@@ -4,10 +4,10 @@ export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
 })
 
-export const authenticate = async (): Promise<void> => {
+export const authenticate = async (brand: "github" | "google"): Promise<void> => {
   try {
     await authClient.signIn.social({
-      provider: "github",
+      provider: brand,
       callbackURL: "/dashboard",
       errorCallbackURL: "/",
       newUserCallbackURL: "/dashboard",
