@@ -36,6 +36,16 @@ jest.mock("@/components/job-list/job-row", () => ({
   JobRow: ({ job }: { job: { title: string } }) => <div>{job.title}</div>,
 }))
 
+jest.mock("@/components/job-list/virtualized-list", () => ({
+  VirtualJobRows: ({ jobs }: { jobs: Array<{ id: number; title: string }> }) => (
+    <div>
+      {jobs.map((job) => (
+        <div key={job.id}>{job.title}</div>
+      ))}
+    </div>
+  ),
+}))
+
 jest.mock("@/components/ui/input-group", () => ({
   InputGroup: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   InputGroupAddon: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,

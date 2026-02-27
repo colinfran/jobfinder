@@ -1,12 +1,12 @@
 "use client"
 
 import { FC } from "react"
-import { JobRow } from "@/components/job-list/job-row"
 import { SearchIcon } from "lucide-react"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group"
 import { ScrollArea, ScrollBar } from "../ui/scroll-area"
 import { useJobListContext } from "@/providers/job-list-provider"
 import { FilterTab } from "@/hooks/use-job-list"
+import { VirtualJobRows } from "@/components/job-list/virtualized-list"
 
 export const JobList: FC = () => {
   const {
@@ -32,7 +32,7 @@ export const JobList: FC = () => {
   ]
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-h-0 flex-1 flex-col gap-6">
       <p className="text-sm text-muted-foreground">
         {topicJobs.length} jobs found across {topicSources.size} sources
       </p>
@@ -103,7 +103,7 @@ export const JobList: FC = () => {
 
       {/* Job list */}
       {filteredJobs.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16">
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center rounded-lg border border-dashed border-border py-16">
           <p className="text-sm text-muted-foreground">
             {jobs.length === 0
               ? "No jobs found yet. The cron job runs every 6 hours. Please check back soon!"
@@ -111,7 +111,7 @@ export const JobList: FC = () => {
           </p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-border">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border">
           {/* Table header */}
           <div className="hidden border-b border-border bg-muted/50 px-4 py-3 sm:grid sm:grid-cols-12 sm:gap-4">
             <div className="col-span-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -131,12 +131,7 @@ export const JobList: FC = () => {
             </div>
           </div>
 
-          {/* Table rows */}
-          <div className="divide-y divide-border">
-            {filteredJobs.map((job) => (
-              <JobRow job={job} key={job.id} />
-            ))}
-          </div>
+          <VirtualJobRows jobs={filteredJobs} />
         </div>
       )}
     </div>
