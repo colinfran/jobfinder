@@ -44,8 +44,11 @@ export const extractCompany = (title: string, link: string): string | null => {
     }
 
     if (url.hostname.includes("ats.rippling.com")) {
-      return pathParts[0]
-        ? decodeURIComponent(pathParts[0])
+      const jobsIndex = pathParts.findIndex((part) => part === "jobs")
+      const companySlug = jobsIndex >= 1 ? pathParts[jobsIndex - 1] : null
+
+      return companySlug
+        ? decodeURIComponent(companySlug)
             .replace(/-/g, " ")
             .replace(/\b\w/g, (c) => c.toUpperCase())
         : null

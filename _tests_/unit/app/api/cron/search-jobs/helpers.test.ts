@@ -27,6 +27,11 @@ describe("search-jobs helpers", () => {
           "https://ats.rippling.com/plenful/jobs/f46685aa-2e9d-4dd8-9d55-618c215670ec",
         ),
       ).toBe(true)
+      expect(
+        isValidJobLink(
+          "https://ats.rippling.com/en-US/soluna-us-services-llc/jobs/4603bd73-2e41-4144-b5d5-3711f8258daa",
+        ),
+      ).toBe(true)
     })
 
     it("rejects malformed or unsupported links", () => {
@@ -112,6 +117,12 @@ describe("search-jobs helpers", () => {
         extractCompany(
           "irrelevant",
           "https://ats.rippling.com/acme-inc/jobs/f46685aa-2e9d-4dd8-9d55-618c215670ec",
+        ),
+      ).toBe("Acme Inc")
+      expect(
+        extractCompany(
+          "irrelevant",
+          "https://ats.rippling.com/en-US/acme-inc/jobs/f46685aa-2e9d-4dd8-9d55-618c215670ec",
         ),
       ).toBe("Acme Inc")
     })

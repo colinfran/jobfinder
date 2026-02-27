@@ -1,4 +1,19 @@
-export const extractRipplingWorkLocationsFromNextData = (body: string): string[] | null => {
+type RipplingNextData = {
+  props?: {
+    pageProps?: {
+      apiData?: {
+        workLocations?: string[]
+        jobPost?: {
+          uuid?: string
+          workLocations?: string[]
+        }
+      }
+      workLocations?: string[]
+    }
+  }
+}
+
+const parseRipplingNextData = (body: string): RipplingNextData | null => {
   const nextDataMatch = body.match(
     /<script[^>]*id=["']__NEXT_DATA__["'][^>]*>([\s\S]*?)<\/script>/i,
   )
@@ -6,33 +21,28 @@ export const extractRipplingWorkLocationsFromNextData = (body: string): string[]
   if (!jsonText) return null
 
   try {
-    const payload = JSON.parse(jsonText) as {
-      props?: {
-        pageProps?: {
-          apiData?: {
-            workLocations?: string[]
-            jobPost?: {
-              workLocations?: string[]
-            }
-          }
-          workLocations?: string[]
-        }
-      }
-    }
-
-    const apiLocations = payload.props?.pageProps?.apiData?.workLocations
-    const jobPostLocations = payload.props?.pageProps?.apiData?.jobPost?.workLocations
-    const pageLocations = payload.props?.pageProps?.workLocations
-    const locations = apiLocations ?? jobPostLocations ?? pageLocations
-
-    if (!Array.isArray(locations) || locations.length === 0) {
-      return null
-    }
-
-    return locations.filter((value) => typeof value === "string" && value.trim().length > 0)
+    return JSON.parse(jsonText) as RipplingNextData
   } catch {
     return null
   }
+}
+
+export const extractRipplingWorkLocationsFromNextData = (body: string): string[] | null => {
+  const payload = parseRipplingNextData(body)
+  if (!payload) {
+    return null
+  }
+
+  const apiLocations = payload.props?.pageProps?.apiData?.workLocations
+  const jobPostLocations = payload.props?.pageProps?.apiData?.jobPost?.workLocations
+  const pageLocations = payload.props?.pageProps?.workLocations
+  const locations = apiLocations ?? jobPostLocations ?? pageLocations
+
+  if (!Array.isArray(locations) || locations.length === 0) {
+    return null
+  }
+
+  return locations.filter((value) => typeof value === "string" && value.trim().length > 0)
 }
 
 export const extractRipplingLocationFromSidebar = (body: string): string | null => {
@@ -68,18 +78,25 @@ export const isValidRipplingLocation = (location: string | null): boolean => {
 }
 
 export const isRipplingJobPageValid = (body: string): boolean => {
-  const normalizedBody = body.toLowerCase()
+  const nextData = parseRipplingNextData(body)
+  const hasJobPostUuid = Boolean(nextData?.props?.pageProps?.apiData?.jobPost?.uuid)
 
-  if (
-    normalizedBody.includes("the page you're looking for doesn't exist") ||
-    normalizedBody.includes("the link you followed may be broken") ||
-    normalizedBody.includes("listing may have been removed") ||
-    normalizedBody.includes("404 | page not found")
-  ) {
-    return false
+  if (!hasJobPostUuid) {
+    const hasNotFoundHeading = />\s*The page you're looking for doesn't exist\s*</i.test(body)
+    const hasNotFoundCaption =
+      />\s*The link you followed may be broken or the listing may have been removed\.\s*</i.test(
+        body,
+      )
+    const has404Title = /<title>\s*404\s*\|\s*page not found\s*<\/title>/i.test(body)
+
+    if ((hasNotFoundHeading && hasNotFoundCaption) || has404Title) {
+      return false
+    }
   }
 
-  if (!normalizedBody.includes("apply now")) {
+  const normalizedBody = body.toLowerCase()
+
+  if (!hasJobPostUuid && !normalizedBody.includes("apply now")) {
     return false
   }
 

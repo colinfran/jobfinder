@@ -43,6 +43,33 @@ describe("validate-jobs/rippling", () => {
     expect(isRipplingJobPageValid(html)).toBe(false)
   })
 
+  it("does not treat translation JSON not-found copy as a dead page", () => {
+    const html = `
+      <script id="__NEXT_DATA__" type="application/json">
+        {
+          "props": {
+            "pageProps": {
+              "apiData": {
+                "jobPost": { "uuid": "588bb9f2-be0d-4dd0-84f9-a1bb362defcd" },
+                "workLocations": ["Remote (United States)"]
+              }
+            }
+          }
+        }
+      </script>
+      <script>
+        window.__I18N__ = {
+          pageNotFound: {
+            title: "The page you're looking for doesn't exist",
+            caption: "The link you followed may be broken or the listing may have been removed."
+          }
+        }
+      </script>
+    `
+
+    expect(isRipplingJobPageValid(html)).toBe(true)
+  })
+
   it("accepts valid rippling page with apply button and valid location", () => {
     const html = `
       <button>Apply now</button>
