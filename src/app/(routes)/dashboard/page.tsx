@@ -49,7 +49,7 @@ const Page: FC = async () => {
 
   return (
     <div className="mx-auto flex h-full min-h-0 w-full max-w-5xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
-      <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <header className="mb-8 flex gap-4 flex-row justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">JobFinder</h1>
         </div>
