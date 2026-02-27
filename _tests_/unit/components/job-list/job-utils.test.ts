@@ -41,6 +41,10 @@ describe("components/job-list/job-utils", () => {
       expect(sourceColor("gem.com")).toBe("bg-fuchsia-500/15 text-fuchsia-600")
     })
 
+    it("returns rippling styles", () => {
+      expect(sourceColor("rippling.com")).toBe("bg-rose-500/15 text-rose-600")
+    })
+
     it("returns fallback styles for unknown source", () => {
       expect(sourceColor("example.com")).toBe("bg-muted text-muted-foreground")
     })
@@ -53,6 +57,7 @@ describe("components/job-list/job-utils", () => {
       expect(sourceLabel("ashbyhq.com")).toBe("Ashby")
       expect(sourceLabel("myworkdayjobs.com")).toBe("Workday")
       expect(sourceLabel("gem.com")).toBe("Gem")
+      expect(sourceLabel("rippling.com")).toBe("Rippling")
     })
 
     it("returns fallback label for unknown source", () => {

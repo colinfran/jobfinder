@@ -116,18 +116,19 @@ E2E auth behavior:
 ### 1. Search (Vercel Cron)
 Runs on schedule: `0 0,12 * * *` (daily at 12:00am and 12:00pm UTC)
 - Calls Serper API with predefined job search queries
-- Validates links are live for Lever.co and Greenhouse (server-side rendered sites) using fetch + HTML parsing
+- Validates links are live for Lever.co, Greenhouse, and Rippling (server-side rendered sites) using fetch + HTML parsing
 - Skips initial validation for Ashby, Workday, and Gem (validated later by the Puppeteer validation workflow)
 - Deduplicates job postings
 - Inserts valid jobs into the database
-- Normalizes incoming titles to remove board suffixes like `- Jobs`, `- Greenhouse`, `- Lever`, `- Gem`
+- Normalizes incoming titles to remove board suffixes like `- Jobs`, `- Greenhouse`, `- Lever`, `- Gem`, `- Rippling`
 
 ### 2. Validation (Vercel Cron)
 Runs on schedule: `20 0,12 * * *` (daily at 12:20am and 12:20pm UTC)
-- Removes duplicates from all job sources (Greenhouse, Lever.co, Ashby, Workday, Gem)
-- Validates dead links and location for Greenhouse and Lever.co (server-side rendered) using fetch + HTML parsing:
+- Removes duplicates from all job sources (Greenhouse, Lever.co, Rippling, Ashby, Workday, Gem)
+- Validates dead links and location for Greenhouse, Lever.co, and Rippling (server-side rendered) using fetch + HTML parsing:
   - **Greenhouse**: Parses canonical URL meta tag to detect removed jobs, extracts location from og:description, validates SF Bay Area presence
   - **Lever.co**: Extracts location from twitter meta tags, validates workplace type, validates SF Bay Area presence
+   - **Rippling**: Parses `__NEXT_DATA__` for `workLocations` (with sidebar fallback), detects removed listing copy, validates SF Bay Area presence
 - Triggers the Puppeteer workflow for Ashby, Workday, and Gem validation
 
 ### 3. Ashby + Workday + Gem Validation (Puppeteer Workflow)

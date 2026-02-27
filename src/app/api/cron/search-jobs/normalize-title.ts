@@ -15,7 +15,7 @@ export const normalizeJobTitle = (title: string, link: string): string => {
   for (let i = 0; i < 3; i++) {
     const nextTitle = normalizedTitle
       .replace(/\s[-|–—]\s(?:jobs?)\.?$/i, "")
-      .replace(/\s[-|–—]\s(?:greenhouse|lever|ashby|workday|gem)\.?$/i, "")
+      .replace(/\s[-|–—]\s(?:greenhouse|lever|ashby|workday|gem|rippling)\.?$/i, "")
       .trim()
 
     if (nextTitle === normalizedTitle) break

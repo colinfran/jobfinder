@@ -5,6 +5,7 @@ import {
 } from "@/app/api/cron/validate-jobs/lib/link-check"
 import { isGreenhouseJobPageValid } from "@/app/api/cron/validate-jobs/greenhouse"
 import { isLeverJobPageValid } from "@/app/api/cron/validate-jobs/lever"
+import { isRipplingJobPageValid } from "@/app/api/cron/validate-jobs/rippling"
 
 jest.mock("@/app/api/cron/validate-jobs/greenhouse", () => ({
   isGreenhouseJobPageValid: jest.fn(),
@@ -14,14 +15,20 @@ jest.mock("@/app/api/cron/validate-jobs/lever", () => ({
   isLeverJobPageValid: jest.fn(),
 }))
 
+jest.mock("@/app/api/cron/validate-jobs/rippling", () => ({
+  isRipplingJobPageValid: jest.fn(),
+}))
+
 describe("validate-jobs/lib/link-check", () => {
   const mockedGreenhouseValidation = jest.mocked(isGreenhouseJobPageValid)
   const mockedLeverValidation = jest.mocked(isLeverJobPageValid)
+  const mockedRipplingValidation = jest.mocked(isRipplingJobPageValid)
 
   beforeEach(() => {
     global.fetch = jest.fn()
     mockedGreenhouseValidation.mockReset()
     mockedLeverValidation.mockReset()
+    mockedRipplingValidation.mockReset()
   })
 
   it("detects suffixes", () => {
@@ -84,6 +91,34 @@ describe("validate-jobs/lib/link-check", () => {
     ).resolves.toEqual({
       isValid: false,
       reason: "greenhouse-content-invalid",
+    })
+  })
+
+  it("delegates rippling content validation", async () => {
+    ;(global.fetch as jest.Mock).mockResolvedValue({
+      status: 200,
+      text: async () => "html",
+    })
+    mockedRipplingValidation.mockReturnValue(false)
+
+    await expect(
+      validateLinkWithReason(
+        "https://ats.rippling.com/acme/jobs/12345678-1234-1234-1234-123456789abc",
+      ),
+    ).resolves.toEqual({
+      isValid: false,
+      reason: "rippling-content-invalid",
+    })
+
+    mockedRipplingValidation.mockReturnValue(true)
+
+    await expect(
+      validateLinkWithReason(
+        "https://ats.rippling.com/acme/jobs/12345678-1234-1234-1234-123456789abc",
+      ),
+    ).resolves.toEqual({
+      isValid: true,
+      reason: "validated",
     })
   })
 

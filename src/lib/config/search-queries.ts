@@ -55,6 +55,16 @@ const SOFTWARE_QUERIES = [
   'site:jobs.gem.com "full stack" "San Francisco" "hybrid"',
   'site:jobs.gem.com "full stack" "San Francisco" "remote"',
   'site:jobs.gem.com "fullstack" "San Francisco" "hybrid"',
+
+  // Rippling - Frontend
+  'site:ats.rippling.com "frontend" "San Francisco" "hybrid"',
+  'site:ats.rippling.com "frontend" "San Francisco" "remote"',
+  'site:ats.rippling.com "front end" "San Francisco" "hybrid"',
+
+  // Rippling - Full Stack
+  'site:ats.rippling.com "full stack" "San Francisco" "hybrid"',
+  'site:ats.rippling.com "full stack" "San Francisco" "remote"',
+  'site:ats.rippling.com "fullstack" "San Francisco" "hybrid"',
 ]
 
 const FINANCE_KEYWORDS = [
@@ -105,6 +115,14 @@ const FINANCE_QUERIES = [
     `site:jobs.gem.com "${keyword}" "San Francisco" "on-site"`,
     `site:jobs.gem.com "${keyword}" "California" "remote"`,
     `site:jobs.gem.com "${keyword}" "United States" "remote"`,
+  ]),
+
+  // Rippling - Finance
+  ...FINANCE_KEYWORDS.flatMap((keyword) => [
+    `site:ats.rippling.com "${keyword}" "San Francisco" "hybrid"`,
+    `site:ats.rippling.com "${keyword}" "San Francisco" "on-site"`,
+    `site:ats.rippling.com "${keyword}" "California" "remote"`,
+    `site:ats.rippling.com "${keyword}" "United States" "remote"`,
   ]),
 ]
 

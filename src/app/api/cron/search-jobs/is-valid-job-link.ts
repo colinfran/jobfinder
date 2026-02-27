@@ -31,6 +31,11 @@ export const isValidJobLink = (link: string): boolean => {
       return pathParts.length >= 2 && /^[a-z0-9_-]{6,}$/i.test(lastPathPart)
     }
 
+    // Rippling: /<company>/jobs/<UUID>
+    if (url.hostname.includes("ats.rippling.com")) {
+      return pathParts.length >= 3 && pathParts[1] === "jobs" && uuidRegex.test(pathParts[2] ?? "")
+    }
+
     return false
   } catch {
     return false

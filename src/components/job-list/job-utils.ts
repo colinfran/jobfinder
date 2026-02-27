@@ -24,6 +24,8 @@ export const sourceColor = (source: string): string => {
       return "bg-blue-500/15 text-blue-600"
     case "gem.com":
       return "bg-fuchsia-500/15 text-fuchsia-600"
+    case "rippling.com":
+      return "bg-rose-500/15 text-rose-600"
     default:
       return "bg-muted text-muted-foreground"
   }
@@ -41,6 +43,8 @@ export const sourceLabel = (source: string | null): string => {
       return "Workday"
     case "gem.com":
       return "Gem"
+    case "rippling.com":
+      return "Rippling"
     case "unknown":
     case null:
       return "unknown"

@@ -1,5 +1,6 @@
 import { isGreenhouseJobPageValid } from "../greenhouse"
 import { isLeverJobPageValid } from "../lever"
+import { isRipplingJobPageValid } from "../rippling"
 
 export type LinkValidationResult = {
   isValid: boolean
@@ -8,6 +9,7 @@ export type LinkValidationResult = {
     | "http-error"
     | "greenhouse-content-invalid"
     | "lever-content-invalid"
+    | "rippling-content-invalid"
     | "validated"
     | "non-target-source"
     | "timeout"
@@ -82,7 +84,15 @@ export const validateLinkWithReason = async (
       }
     }
 
-    // Workday + Ashby are validated by GitHub Actions browser workflows.
+    if (url.hostname.includes("ats.rippling.com")) {
+      const isValid = isRipplingJobPageValid(body)
+      return {
+        isValid,
+        reason: isValid ? "validated" : "rippling-content-invalid",
+      }
+    }
+
+    // Workday + Ashby + Gem are validated by browser workflows.
     return { isValid: true, reason: "non-target-source" }
   } catch (error) {
     const isTimeout = error instanceof Error && error.name === "AbortError"

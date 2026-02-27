@@ -22,6 +22,11 @@ describe("search-jobs helpers", () => {
       expect(isValidJobLink("https://jobs.gem.com/retool/am9icG9zdDppL9ORnuR9EgdVBqn0pzKu")).toBe(
         true,
       )
+      expect(
+        isValidJobLink(
+          "https://ats.rippling.com/plenful/jobs/f46685aa-2e9d-4dd8-9d55-618c215670ec",
+        ),
+      ).toBe(true)
     })
 
     it("rejects malformed or unsupported links", () => {
@@ -72,6 +77,12 @@ describe("search-jobs helpers", () => {
           "https://jobs.lever.co/offchain-labs/123e4567-e89b-12d3-a456-426614174000",
         ),
       ).toBe("Offchain Labs - Head of Finance")
+      expect(
+        normalizeJobTitle(
+          "Staff Backend Engineer - Rippling",
+          "https://ats.rippling.com/plenful/jobs/f46685aa-2e9d-4dd8-9d55-618c215670ec",
+        ),
+      ).toBe("Staff Backend Engineer")
     })
 
     it("strips greenhouse prefix and then suffix", () => {
@@ -95,6 +106,12 @@ describe("search-jobs helpers", () => {
         extractCompany(
           "irrelevant",
           "https://jobs.gem.com/acme-inc/am9icG9zdDppL9ORnuR9EgdVBqn0pzKu",
+        ),
+      ).toBe("Acme Inc")
+      expect(
+        extractCompany(
+          "irrelevant",
+          "https://ats.rippling.com/acme-inc/jobs/f46685aa-2e9d-4dd8-9d55-618c215670ec",
         ),
       ).toBe("Acme Inc")
     })
@@ -124,6 +141,9 @@ describe("search-jobs helpers", () => {
       expect(extractSource("https://jobs.gem.com/retool/am9icG9zdDppL9ORnuR9EgdVBqn0pzKu")).toBe(
         "gem.com",
       )
+      expect(
+        extractSource("https://ats.rippling.com/plenful/jobs/f46685aa-2e9d-4dd8-9d55-618c215670ec"),
+      ).toBe("rippling.com")
     })
 
     it("falls back to normalized hostname or unknown", () => {

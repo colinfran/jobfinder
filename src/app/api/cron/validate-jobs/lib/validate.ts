@@ -18,6 +18,10 @@ const formatValidationReason = (result: LinkValidationResult): string => {
     return "Lever content check failed"
   }
 
+  if (result.reason === "rippling-content-invalid") {
+    return "Rippling content check failed"
+  }
+
   if (result.reason === "timeout") {
     return "Request timed out"
   }

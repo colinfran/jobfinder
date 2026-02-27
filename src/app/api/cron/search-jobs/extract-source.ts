@@ -7,6 +7,7 @@ export const extractSource = (link: string): string => {
     if (hostname.includes("ashbyhq")) return "ashbyhq.com"
     if (hostname.includes("myworkdayjobs")) return "myworkdayjobs.com"
     if (hostname.includes("gem.com")) return "gem.com"
+    if (hostname.includes("rippling.com")) return "rippling.com"
     return hostname
   } catch {
     return "unknown"
