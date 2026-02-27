@@ -16,8 +16,6 @@ export const JobList: FC = () => {
     setSearch,
     topic,
     filteredJobs,
-    topicJobs,
-    topicSources,
     counts,
     topics,
     jobs,
@@ -33,9 +31,6 @@ export const JobList: FC = () => {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6">
-      <p className="text-sm text-muted-foreground">
-        {topicJobs.length} jobs found across {topicSources.size} sources
-      </p>
       {/* Header controls */}
       <div className="flex flex-col gap-4">
         {/* Topics */}

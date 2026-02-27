@@ -86,7 +86,6 @@ describe("JobList", () => {
     render(<JobList />)
 
     expect(screen.getByText("Backend Engineer")).toBeInTheDocument()
-    expect(screen.getByText("1 jobs found across 1 sources")).toBeInTheDocument()
   })
 
   it("calls topic, tab, and search handlers", async () => {

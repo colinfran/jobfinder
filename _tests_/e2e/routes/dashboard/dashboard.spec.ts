@@ -15,5 +15,4 @@ test("dashboard loads with authenticated e2e session", async ({ page }) => {
 
   await expect(page).toHaveURL("/dashboard")
   await expect(page.getByRole("heading", { name: "JobFinder" })).toBeVisible()
-  await expect(page.getByText(/jobs found across/i)).toBeVisible()
 })
