@@ -14,6 +14,7 @@ export const useVirtualJobRows = ({ jobs }: VirtualJobRowsProps): UseVirtualJobR
   const [scrollTop, setScrollTop] = useState(0)
   const [viewportHeight, setViewportHeight] = useState(DEFAULT_VIEWPORT_HEIGHT)
   const [measuredHeights, setMeasuredHeights] = useState<Record<number, number>>({})
+  const [isReady, setIsReady] = useState(false)
   const isMobile = useIsMobile()
 
   const estimatedRowHeight = isMobile ? MOBILE_ESTIMATED_ROW_HEIGHT : DESKTOP_ESTIMATED_ROW_HEIGHT
@@ -48,6 +49,17 @@ export const useVirtualJobRows = ({ jobs }: VirtualJobRowsProps): UseVirtualJobR
       return Object.keys(next).length === Object.keys(previous).length ? previous : next
     })
   }, [jobs])
+
+  useEffect(() => {
+    if (isReady || jobs.length === 0) {
+      setIsReady(true)
+      return
+    }
+
+    if (measuredHeights[jobs[0].id] != null) {
+      setIsReady(true)
+    }
+  }, [isReady, jobs, measuredHeights])
 
   const { offsets, totalHeight } = useMemo(() => {
     const nextOffsets = new Array<number>(jobs.length + 1)
@@ -105,6 +117,7 @@ export const useVirtualJobRows = ({ jobs }: VirtualJobRowsProps): UseVirtualJobR
   return {
     handleHeightChange,
     handleScroll,
+    isReady,
     totalHeight,
     viewportRef,
     visibleRows,

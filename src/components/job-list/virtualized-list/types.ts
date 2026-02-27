@@ -19,6 +19,7 @@ export type VisibleRow = {
 export type UseVirtualJobRowsReturn = {
   handleHeightChange: (jobId: number, height: number) => void
   handleScroll: (event: UIEvent<HTMLDivElement>) => void
+  isReady: boolean
   totalHeight: number
   viewportRef: RefObject<HTMLDivElement | null>
   visibleRows: VisibleRow[]
