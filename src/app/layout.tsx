@@ -87,7 +87,7 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
         <link href="/manifest.json" rel="manifest" />
       </head>
 
-      <body className="flex h-dvh w-full flex-col overflow-hidden">
+      <body className="flex h-dvh w-full flex-col overflow-x-hidden overflow-y-auto">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
