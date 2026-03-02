@@ -67,63 +67,156 @@ const SOFTWARE_QUERIES = [
   'site:ats.rippling.com "fullstack" "San Francisco" "hybrid"',
 ]
 
-const FINANCE_KEYWORDS = [
-  "Finance",
-  "Finance manager",
-  "FP&A",
-  "FP&A Manager",
-  "Senior Financial Analyst",
-  "Financial Analyst",
-]
-
 const FINANCE_QUERIES = [
-  // Greenhouse - Finance
-  ...FINANCE_KEYWORDS.flatMap((keyword) => [
-    `site:greenhouse.io "${keyword}" "San Francisco" "hybrid"`,
-    `site:greenhouse.io "${keyword}" "San Francisco" "on-site"`,
-    `site:greenhouse.io "${keyword}" "California" "remote"`,
-    `site:greenhouse.io "${keyword}" "United States" "remote"`,
-  ]),
+  // Greenhouse - Financial Analyst
+  'site:greenhouse.io "Financial Analyst" "San Francisco" "hybrid"',
+  'site:greenhouse.io "Financial Analyst" "San Francisco" "remote"',
+  'site:greenhouse.io "Financial Analyst" "United States" "remote"',
 
-  // Lever - Finance
-  ...FINANCE_KEYWORDS.flatMap((keyword) => [
-    `site:lever.co "${keyword}" "San Francisco" "hybrid"`,
-    `site:lever.co "${keyword}" "San Francisco" "on-site"`,
-    `site:lever.co "${keyword}" "California" "remote"`,
-    `site:lever.co "${keyword}" "United States" "remote"`,
-  ]),
+  // Greenhouse - Senior Financial Analyst
+  'site:greenhouse.io "Senior Financial Analyst" "San Francisco" "hybrid"',
+  'site:greenhouse.io "Senior Financial Analyst" "San Francisco" "remote"',
+  'site:greenhouse.io "Senior Financial Analyst" "United States" "remote"',
 
-  // Ashby - Finance
-  ...FINANCE_KEYWORDS.flatMap((keyword) => [
-    `site:ashbyhq.com "${keyword}" "San Francisco" "hybrid"`,
-    `site:ashbyhq.com "${keyword}" "San Francisco" "on-site"`,
-    `site:ashbyhq.com "${keyword}" "California" "remote"`,
-    `site:ashbyhq.com "${keyword}" "United States" "remote"`,
-  ]),
+  // Greenhouse - Finance Manager
+  'site:greenhouse.io "Finance Manager" "San Francisco" "hybrid"',
+  'site:greenhouse.io "Finance Manager" "San Francisco" "remote"',
+  'site:greenhouse.io "Finance Manager" "United States" "remote"',
 
-  // Workday - Finance
-  ...FINANCE_KEYWORDS.flatMap((keyword) => [
-    `site:myworkdayjobs.com "${keyword}" "San Francisco"`,
-    `site:myworkdayjobs.com "${keyword}" "San Francisco"`,
-    `site:myworkdayjobs.com "${keyword}" "California" "remote"`,
-    `site:myworkdayjobs.com "${keyword}" "United States" "remote"`,
-  ]),
+  // Greenhouse - FPNA
+  'site:greenhouse.io "FPNA" "San Francisco" "hybrid"',
+  'site:greenhouse.io "FPNA" "San Francisco" "remote"',
+  'site:greenhouse.io "FPNA" "United States" "remote"',
 
-  // Gem - Finance
-  ...FINANCE_KEYWORDS.flatMap((keyword) => [
-    `site:jobs.gem.com "${keyword}" "San Francisco" "hybrid"`,
-    `site:jobs.gem.com "${keyword}" "San Francisco" "on-site"`,
-    `site:jobs.gem.com "${keyword}" "California" "remote"`,
-    `site:jobs.gem.com "${keyword}" "United States" "remote"`,
-  ]),
+  // Greenhouse - Financial Planning & Analysis
+  'site:greenhouse.io "Financial Planning & Analysis" "San Francisco" "hybrid"',
+  'site:greenhouse.io "Financial Planning & Analysis" "San Francisco" "remote"',
+  'site:greenhouse.io "Financial Planning & Analysis" "United States" "remote"',
 
-  // Rippling - Finance
-  ...FINANCE_KEYWORDS.flatMap((keyword) => [
-    `site:ats.rippling.com "${keyword}" "San Francisco" "hybrid"`,
-    `site:ats.rippling.com "${keyword}" "San Francisco" "on-site"`,
-    `site:ats.rippling.com "${keyword}" "California" "remote"`,
-    `site:ats.rippling.com "${keyword}" "United States" "remote"`,
-  ]),
+  // Lever - Financial Analyst
+  'site:lever.co "Financial Analyst" "San Francisco" "hybrid"',
+  'site:lever.co "Financial Analyst" "San Francisco" "remote"',
+  'site:lever.co "Financial Analyst" "United States" "remote"',
+
+  // Lever - Senior Financial Analyst
+  'site:lever.co "Senior Financial Analyst" "San Francisco" "hybrid"',
+  'site:lever.co "Senior Financial Analyst" "San Francisco" "remote"',
+  'site:lever.co "Senior Financial Analyst" "United States" "remote"',
+
+  // Lever - Finance Manager
+  'site:lever.co "Finance Manager" "San Francisco" "hybrid"',
+  'site:lever.co "Finance Manager" "San Francisco" "remote"',
+  'site:lever.co "Finance Manager" "United States" "remote"',
+
+  // Lever - FPNA
+  'site:lever.co "FPNA" "San Francisco" "hybrid"',
+  'site:lever.co "FPNA" "San Francisco" "remote"',
+  'site:lever.co "FPNA" "United States" "remote"',
+
+  // Lever - Financial Planning & Analysis
+  'site:lever.co "Financial Planning & Analysis" "San Francisco" "hybrid"',
+  'site:lever.co "Financial Planning & Analysis" "San Francisco" "remote"',
+  'site:lever.co "Financial Planning & Analysis" "United States" "remote"',
+
+  // Ashby - Financial Analyst
+  'site:ashbyhq.com "Financial Analyst" "San Francisco" "hybrid"',
+  'site:ashbyhq.com "Financial Analyst" "San Francisco" "remote"',
+  'site:ashbyhq.com "Financial Analyst" "United States" "remote"',
+
+  // Ashby - Senior Financial Analyst
+  'site:ashbyhq.com "Senior Financial Analyst" "San Francisco" "hybrid"',
+  'site:ashbyhq.com "Senior Financial Analyst" "San Francisco" "remote"',
+  'site:ashbyhq.com "Senior Financial Analyst" "United States" "remote"',
+
+  // Ashby - Finance Manager
+  'site:ashbyhq.com "Finance Manager" "San Francisco" "hybrid"',
+  'site:ashbyhq.com "Finance Manager" "San Francisco" "remote"',
+  'site:ashbyhq.com "Finance Manager" "United States" "remote"',
+
+  // Ashby - FPNA
+  'site:ashbyhq.com "FPNA" "San Francisco" "hybrid"',
+  'site:ashbyhq.com "FPNA" "San Francisco" "remote"',
+  'site:ashbyhq.com "FPNA" "United States" "remote"',
+
+  // Ashby - Financial Planning & Analysis
+  'site:ashbyhq.com "Financial Planning & Analysis" "San Francisco" "hybrid"',
+  'site:ashbyhq.com "Financial Planning & Analysis" "San Francisco" "remote"',
+  'site:ashbyhq.com "Financial Planning & Analysis" "United States" "remote"',
+
+  // Workday - Financial Analyst
+  'site:myworkdayjobs.com "Financial Analyst" "San Francisco" "hybrid"',
+  'site:myworkdayjobs.com "Financial Analyst" "San Francisco" "remote"',
+  'site:myworkdayjobs.com "Financial Analyst" "United States" "remote"',
+
+  // Workday - Senior Financial Analyst
+  'site:myworkdayjobs.com "Senior Financial Analyst" "San Francisco" "hybrid"',
+  'site:myworkdayjobs.com "Senior Financial Analyst" "San Francisco" "remote"',
+  'site:myworkdayjobs.com "Senior Financial Analyst" "United States" "remote"',
+
+  // Workday - Finance Manager
+  'site:myworkdayjobs.com "Finance Manager" "San Francisco" "hybrid"',
+  'site:myworkdayjobs.com "Finance Manager" "San Francisco" "remote"',
+  'site:myworkdayjobs.com "Finance Manager" "United States" "remote"',
+
+  // Workday - FPNA
+  'site:myworkdayjobs.com "FPNA" "San Francisco" "hybrid"',
+  'site:myworkdayjobs.com "FPNA" "San Francisco" "remote"',
+  'site:myworkdayjobs.com "FPNA" "United States" "remote"',
+
+  // Workday - Financial Planning & Analysis
+  'site:myworkdayjobs.com "Financial Planning & Analysis" "San Francisco" "hybrid"',
+  'site:myworkdayjobs.com "Financial Planning & Analysis" "San Francisco" "remote"',
+  'site:myworkdayjobs.com "Financial Planning & Analysis" "United States" "remote"',
+
+  // Gem - Financial Analyst
+  'site:jobs.gem.com "Financial Analyst" "San Francisco" "hybrid"',
+  'site:jobs.gem.com "Financial Analyst" "San Francisco" "remote"',
+  'site:jobs.gem.com "Financial Analyst" "United States" "remote"',
+
+  // Gem - Senior Financial Analyst
+  'site:jobs.gem.com "Senior Financial Analyst" "San Francisco" "hybrid"',
+  'site:jobs.gem.com "Senior Financial Analyst" "San Francisco" "remote"',
+  'site:jobs.gem.com "Senior Financial Analyst" "United States" "remote"',
+
+  // Gem - Finance Manager
+  'site:jobs.gem.com "Finance Manager" "San Francisco" "hybrid"',
+  'site:jobs.gem.com "Finance Manager" "San Francisco" "remote"',
+  'site:jobs.gem.com "Finance Manager" "United States" "remote"',
+
+  // Gem - FPNA
+  'site:jobs.gem.com "FPNA" "San Francisco" "hybrid"',
+  'site:jobs.gem.com "FPNA" "San Francisco" "remote"',
+  'site:jobs.gem.com "FPNA" "United States" "remote"',
+
+  // Gem - Financial Planning & Analysis
+  'site:jobs.gem.com "Financial Planning & Analysis" "San Francisco" "hybrid"',
+  'site:jobs.gem.com "Financial Planning & Analysis" "San Francisco" "remote"',
+  'site:jobs.gem.com "Financial Planning & Analysis" "United States" "remote"',
+
+  // Rippling - Financial Analyst
+  'site:ats.rippling.com "Financial Analyst" "San Francisco" "hybrid"',
+  'site:ats.rippling.com "Financial Analyst" "San Francisco" "remote"',
+  'site:ats.rippling.com "Financial Analyst" "United States" "remote"',
+
+  // Rippling - Senior Financial Analyst
+  'site:ats.rippling.com "Senior Financial Analyst" "San Francisco" "hybrid"',
+  'site:ats.rippling.com "Senior Financial Analyst" "San Francisco" "remote"',
+  'site:ats.rippling.com "Senior Financial Analyst" "United States" "remote"',
+
+  // Rippling - Finance Manager
+  'site:ats.rippling.com "Finance Manager" "San Francisco" "hybrid"',
+  'site:ats.rippling.com "Finance Manager" "San Francisco" "remote"',
+  'site:ats.rippling.com "Finance Manager" "United States" "remote"',
+
+  // Rippling - FPNA
+  'site:ats.rippling.com "FPNA" "San Francisco" "hybrid"',
+  'site:ats.rippling.com "FPNA" "San Francisco" "remote"',
+  'site:ats.rippling.com "FPNA" "United States" "remote"',
+
+  // Rippling - Financial Planning & Analysis
+  'site:ats.rippling.com "Financial Planning & Analysis" "San Francisco" "hybrid"',
+  'site:ats.rippling.com "Financial Planning & Analysis" "San Francisco" "remote"',
+  'site:ats.rippling.com "Financial Planning & Analysis" "United States" "remote"',
 ]
 
 export const SEARCH_QUERIES_BY_TOPIC: Record<Topic, string[]> = {
