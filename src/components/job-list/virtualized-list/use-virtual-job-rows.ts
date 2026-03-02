@@ -9,7 +9,10 @@ import {
 import { findFirstOffsetIndex } from "./utils"
 import { UseVirtualJobRowsReturn, VirtualJobRowsProps, VisibleRow } from "./types"
 
-export const useVirtualJobRows = ({ jobs }: VirtualJobRowsProps): UseVirtualJobRowsReturn => {
+export const useVirtualJobRows = ({
+  jobs,
+  resetScrollKey,
+}: VirtualJobRowsProps): UseVirtualJobRowsReturn => {
   const viewportRef = useRef<HTMLDivElement>(null)
   const [scrollTop, setScrollTop] = useState(0)
   const [viewportHeight, setViewportHeight] = useState(DEFAULT_VIEWPORT_HEIGHT)
@@ -49,6 +52,14 @@ export const useVirtualJobRows = ({ jobs }: VirtualJobRowsProps): UseVirtualJobR
       return Object.keys(next).length === Object.keys(previous).length ? previous : next
     })
   }, [jobs])
+
+  useEffect(() => {
+    setScrollTop(0)
+
+    if (viewportRef.current) {
+      viewportRef.current.scrollTo({ top: 0, behavior: "auto" })
+    }
+  }, [resetScrollKey])
 
   useEffect(() => {
     if (isReady || jobs.length === 0) {

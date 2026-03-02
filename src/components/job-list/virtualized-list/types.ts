@@ -3,6 +3,7 @@ import { JobWithStatus } from "@/hooks/use-job-list"
 
 export type VirtualJobRowsProps = {
   jobs: JobWithStatus[]
+  resetScrollKey?: string
 }
 
 export type MeasuredRowProps = {

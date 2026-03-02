@@ -6,9 +6,9 @@ import { VirtualJobRowsProps } from "./types"
 import { useVirtualJobRows } from "./use-virtual-job-rows"
 import { VirtualJobRowsSkeleton } from "./virtual-job-rows-skeleton"
 
-export const VirtualJobRows: FC<VirtualJobRowsProps> = ({ jobs }) => {
+export const VirtualJobRows: FC<VirtualJobRowsProps> = ({ jobs, resetScrollKey }) => {
   const { handleHeightChange, handleScroll, isReady, totalHeight, viewportRef, visibleRows } =
-    useVirtualJobRows({ jobs })
+    useVirtualJobRows({ jobs, resetScrollKey })
 
   return (
     <div className="relative min-h-0 flex-1">
