@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { JobRow } from "@/components/job-list/job-row"
+import type { JobWithStatus } from "@/hooks/use-job-list"
 
 const handleApplyToggleMock = jest.fn()
 const handleMarkNotRelevantMock = jest.fn()
@@ -27,7 +28,7 @@ jest.mock("@/components/ui/button", () => ({
   ),
 }))
 
-const baseJob = {
+const baseJob: JobWithStatus = {
   id: 1,
   title: "Frontend Engineer",
   company: "Acme",

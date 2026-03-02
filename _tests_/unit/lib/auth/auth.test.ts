@@ -9,10 +9,12 @@ describe("lib/auth/auth", () => {
     jest.clearAllMocks()
   })
 
-  it("configures github provider and db adapter", async () => {
+  it("configures github and google providers and db adapter", async () => {
     process.env.E2E_AUTH_BYPASS = "false"
     process.env.GITHUB_CLIENT_ID = "gh-id"
     process.env.GITHUB_CLIENT_SECRET = "gh-secret"
+    process.env.GOOGLE_CLIENT_ID = "google-id"
+    process.env.GOOGLE_CLIENT_SECRET = "google-secret"
 
     const betterAuthMock = jest.fn((config) => ({ config }))
     const drizzleAdapterMock = jest.fn(() => "adapter")
@@ -27,10 +29,14 @@ describe("lib/auth/auth", () => {
     expect(betterAuthMock).toHaveBeenCalledTimes(1)
 
     const config = (auth as { config: Record<string, unknown> }).config
-    expect(config.socialProviders).toEqual({
+    expect(config.socialProviders).toMatchObject({
       github: {
         clientId: "gh-id",
         clientSecret: "gh-secret",
+      },
+      google: {
+        clientId: "google-id",
+        clientSecret: "google-secret",
       },
     })
     expect(config.emailAndPassword).toBeUndefined()

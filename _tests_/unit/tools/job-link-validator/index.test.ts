@@ -1,6 +1,11 @@
 /** @jest-environment node */
 import { loadEnvIfNeeded, validateJobs } from "../../../../tools/job-link-validator/index"
 
+const makeEnv = (overrides: Partial<NodeJS.ProcessEnv> = {}): NodeJS.ProcessEnv => ({
+  NODE_ENV: "test",
+  ...overrides,
+})
+
 describe("tools/job-link-validator", () => {
   afterEach(() => {
     jest.restoreAllMocks()
@@ -10,7 +15,7 @@ describe("tools/job-link-validator", () => {
     const logger = { log: jest.fn(), error: jest.fn() }
 
     const ok = await validateJobs({
-      env: { APP_URL: "https://app.example.com" },
+      env: makeEnv({ APP_URL: "https://app.example.com" }),
       validators: { ashby: jest.fn(), workday: jest.fn(), gem: jest.fn() },
       logger,
     })
@@ -26,7 +31,7 @@ describe("tools/job-link-validator", () => {
     const logger = { log: jest.fn(), error: jest.fn() }
 
     const ok = await validateJobs({
-      env: { APP_URL: "https://app.example.com", CRON_SECRET: "secret" },
+      env: makeEnv({ APP_URL: "https://app.example.com", CRON_SECRET: "secret" }),
       validators: { ashby, workday, gem },
       logger,
     })
@@ -45,7 +50,7 @@ describe("tools/job-link-validator", () => {
     const logger = { log: jest.fn(), error: jest.fn() }
 
     const ok = await validateJobs({
-      env: { APP_URL: "https://app.example.com", CRON_SECRET: "secret" },
+      env: makeEnv({ APP_URL: "https://app.example.com", CRON_SECRET: "secret" }),
       validators: { ashby, workday, gem },
       logger,
     })
@@ -56,21 +61,17 @@ describe("tools/job-link-validator", () => {
   })
 
   it("loads .env when not running in GitHub Actions", () => {
-    const spy = jest
-      .spyOn(process, "loadEnvFile")
-      .mockReturnValue(undefined as unknown as NodeJS.ProcessEnv)
+    const spy = jest.spyOn(process, "loadEnvFile").mockReturnValue(undefined)
 
-    loadEnvIfNeeded({})
+    loadEnvIfNeeded(makeEnv())
 
     expect(spy).toHaveBeenCalledTimes(1)
   })
 
   it("does not load .env when running in GitHub Actions", () => {
-    const spy = jest
-      .spyOn(process, "loadEnvFile")
-      .mockReturnValue(undefined as unknown as NodeJS.ProcessEnv)
+    const spy = jest.spyOn(process, "loadEnvFile").mockReturnValue(undefined)
 
-    loadEnvIfNeeded({ GITHUB_ACTIONS: "true" })
+    loadEnvIfNeeded(makeEnv({ GITHUB_ACTIONS: "true" }))
 
     expect(spy).not.toHaveBeenCalled()
   })

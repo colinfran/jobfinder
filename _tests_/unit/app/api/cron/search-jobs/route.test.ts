@@ -4,6 +4,10 @@ import { processSearchQuery } from "@/app/api/cron/search-jobs/serper-service"
 
 jest.mock("@/lib/config/search-queries", () => ({
   SEARCH_QUERIES: ["q1", "q2"],
+  SEARCH_QUERIES_BY_TOPIC: {
+    software: ["q1"],
+    finance: ["q2"],
+  },
 }))
 
 jest.mock("@/app/api/cron/search-jobs/serper-service", () => ({
@@ -50,7 +54,7 @@ describe("api/cron/search-jobs GET", () => {
       errors: ["bad parse"],
     })
     expect(processSearchQuery).toHaveBeenCalledTimes(2)
-    expect(processSearchQuery).toHaveBeenNthCalledWith(1, "q1")
-    expect(processSearchQuery).toHaveBeenNthCalledWith(2, "q2")
+    expect(processSearchQuery).toHaveBeenNthCalledWith(1, "q1", "software")
+    expect(processSearchQuery).toHaveBeenNthCalledWith(2, "q2", "finance")
   })
 })

@@ -6,14 +6,16 @@ const setFilterMock = jest.fn()
 const setSearchMock = jest.fn()
 const handleTopicChangeMock = jest.fn()
 
+type MinimalJob = { id: number; title?: string }
+
 const defaultContext = {
   filter: "all",
   setFilter: setFilterMock,
   search: "",
   setSearch: setSearchMock,
   topic: "software",
-  filteredJobs: [],
-  topicJobs: [],
+  filteredJobs: [] as Array<MinimalJob>,
+  topicJobs: [] as Array<MinimalJob>,
   topicSources: new Set<string>(),
   counts: {
     all: 0,
@@ -22,7 +24,7 @@ const defaultContext = {
     not_relevant: 0,
   },
   topics: ["software", "finance"],
-  jobs: [],
+  jobs: [] as Array<MinimalJob>,
   handleTopicChange: handleTopicChangeMock,
 }
 

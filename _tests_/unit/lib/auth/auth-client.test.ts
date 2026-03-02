@@ -1,4 +1,4 @@
-let authenticate: () => Promise<void>
+let authenticate: (type: "github" | "google") => Promise<void>
 let signOut: (setLoading: (loading: boolean) => void) => Promise<void>
 let createAuthClientMock: jest.Mock
 let signInSocialMock: jest.Mock
@@ -34,10 +34,21 @@ describe("lib/auth/auth-client", () => {
   })
 
   it("authenticate uses github social sign in config", async () => {
-    await authenticate()
+    await authenticate("github")
 
     expect(signInSocialMock).toHaveBeenCalledWith({
       provider: "github",
+      callbackURL: "/dashboard",
+      errorCallbackURL: "/",
+      newUserCallbackURL: "/dashboard",
+    })
+  })
+
+  it("authenticate uses google social sign in config", async () => {
+    await authenticate("google")
+
+    expect(signInSocialMock).toHaveBeenCalledWith({
+      provider: "google",
       callbackURL: "/dashboard",
       errorCallbackURL: "/",
       newUserCallbackURL: "/dashboard",
@@ -48,7 +59,7 @@ describe("lib/auth/auth-client", () => {
     const errorSpy = jest.spyOn(console, "error").mockImplementation(() => undefined)
     signInSocialMock.mockRejectedValueOnce(new Error("oauth failed"))
 
-    await expect(authenticate()).resolves.toBeUndefined()
+    await expect(authenticate("github")).resolves.toBeUndefined()
     expect(errorSpy).toHaveBeenCalled()
 
     errorSpy.mockRestore()
