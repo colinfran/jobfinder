@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { SEARCH_QUERIES } from "@/lib/config/search-queries"
+import { SEARCH_QUERIES, SEARCH_QUERIES_BY_TOPIC } from "@/lib/config/search-queries"
 import { processSearchQuery } from "./serper-service"
 
 export const GET = async (request: Request): Promise<NextResponse> => {
@@ -14,10 +14,12 @@ export const GET = async (request: Request): Promise<NextResponse> => {
   let totalInserted = 0
   const allErrors: string[] = []
 
-  for (const query of SEARCH_QUERIES) {
-    const { inserted, errors } = await processSearchQuery(query)
-    totalInserted += inserted
-    allErrors.push(...errors)
+  for (const [topic, queries] of Object.entries(SEARCH_QUERIES_BY_TOPIC)) {
+    for (const query of queries) {
+      const { inserted, errors } = await processSearchQuery(query, topic as "software" | "finance")
+      totalInserted += inserted
+      allErrors.push(...errors)
+    }
   }
 
   console.log(`✨ Scrape complete. Inserted ${totalInserted} jobs`)

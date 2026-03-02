@@ -7,6 +7,7 @@ export type InsertJobParams = {
   link: string
   snippet: string | null
   source: string
+  topic: "software" | "finance"
   searchQuery: string
 }
 
@@ -25,6 +26,7 @@ export const insertJob = async (params: InsertJobParams): Promise<InsertJobResul
         link: params.link,
         snippet: params.snippet,
         source: params.source,
+        topic: params.topic,
         searchQuery: params.searchQuery,
       })
       .onConflictDoNothing({ target: jobs.link })

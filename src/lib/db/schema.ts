@@ -117,6 +117,7 @@ export const jobs = pgTable("jobs", {
   link: text("link").notNull().unique(),
   snippet: text("snippet"),
   source: text("source"),
+  topic: text("topic").default("software").notNull(),
   searchQuery: text("search_query"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 })

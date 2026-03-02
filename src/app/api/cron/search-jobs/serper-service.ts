@@ -5,6 +5,7 @@ import { isValidJobLink } from "./is-valid-job-link"
 import { normalizeJobUrl } from "./normalize-url"
 import { normalizeJobTitle } from "./normalize-title"
 import { isLinkStillValid } from "@/app/api/cron/validate-jobs/validate-job-link"
+import type { Topic } from "@/lib/config/search-queries"
 
 interface SerperOrganicResult {
   title: string
@@ -48,6 +49,7 @@ export const fetchSerperResults = async (query: string): Promise<SerperOrganicRe
 export const processJobResult = async (
   result: SerperOrganicResult,
   query: string,
+  topic: Topic,
 ): Promise<{
   success: boolean
   inserted: boolean
@@ -75,6 +77,7 @@ export const processJobResult = async (
       link: normalizeJobUrl(result.link),
       snippet: result.snippet || null,
       source: extractSource(result.link),
+      topic,
       searchQuery: query,
     })
 
@@ -97,6 +100,7 @@ export const processJobResult = async (
 // Process all results for a single search query
 export const processSearchQuery = async (
   query: string,
+  topic: Topic,
 ): Promise<{
   inserted: number
   errors: string[]
@@ -113,7 +117,7 @@ export const processSearchQuery = async (
 
     let inserted = 0
     for (const result of results) {
-      const { success, inserted: wasInserted } = await processJobResult(result, query)
+      const { success, inserted: wasInserted } = await processJobResult(result, query, topic)
       if (success && wasInserted) {
         inserted++
       }

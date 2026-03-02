@@ -6,7 +6,7 @@ import { TriggerButton } from "@/components/trigger-button"
 import { FC } from "react"
 import { auth } from "@/lib/auth/auth"
 import { headers } from "next/headers"
-import { DEFAULT_TOPIC, TOPICS, TOPIC_BY_QUERY, type Topic } from "@/lib/config/search-queries"
+import { DEFAULT_TOPIC, TOPICS, type Topic } from "@/lib/config/search-queries"
 import { JobListProvider } from "@/providers/job-list-provider"
 import { redirect } from "next/navigation"
 
@@ -44,7 +44,7 @@ const Page: FC = async () => {
     ...row.jobs,
     applied: row.user_jobs?.status === "applied",
     notRelevant: row.user_jobs?.status === "not_relevant",
-    topic: TOPIC_BY_QUERY[row.jobs.searchQuery ?? ""] ?? DEFAULT_TOPIC,
+    topic: (row.jobs.topic as Topic | null) ?? DEFAULT_TOPIC,
   }))
 
   return (
