@@ -12,8 +12,9 @@ const Page: FC = async () => {
           <h1 className="text-4xl font-bold mb-4 text-balance">JobFinder</h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
             An automated job search aggregator that collects listings from multiple platforms using
-            Google Search. Never miss an opportunity again. Track and manage all your applications
-            in one place.
+            Google Search. It is intentionally scoped to roles in the San Francisco Bay Area and
+            remote roles within the United States. Never miss an opportunity again. Track and manage
+            all your applications in one place.
           </p>
         </div>
 
@@ -35,7 +36,8 @@ const Page: FC = async () => {
               JobFinder uses Google Search and the Serper API to discover job postings across the
               web. Structured job details such as title, company, location, and application links
               are programmatically extracted and stored in PostgreSQL. Everything is presented in a
-              centralized dashboard for easy tracking.
+              centralized dashboard for easy tracking. Current search coverage is limited to San
+              Francisco Bay Area listings and U.S.-remote listings.
             </p>
           </div>
 
