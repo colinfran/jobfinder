@@ -83,10 +83,10 @@ const FINANCE_QUERIES = [
   'site:greenhouse.io "Finance Manager" "San Francisco" "remote"',
   'site:greenhouse.io "Finance Manager" "United States" "remote"',
 
-  // Greenhouse - FPNA
-  'site:greenhouse.io "FPNA" "San Francisco" "hybrid"',
-  'site:greenhouse.io "FPNA" "San Francisco" "remote"',
-  'site:greenhouse.io "FPNA" "United States" "remote"',
+  // Greenhouse - FP&A
+  'site:greenhouse.io "FP&A" "San Francisco" "hybrid"',
+  'site:greenhouse.io "FP&A" "San Francisco" "remote"',
+  'site:greenhouse.io "FP&A" "United States" "remote"',
 
   // Greenhouse - Financial Planning & Analysis
   'site:greenhouse.io "Financial Planning & Analysis" "San Francisco" "hybrid"',
@@ -108,10 +108,10 @@ const FINANCE_QUERIES = [
   'site:lever.co "Finance Manager" "San Francisco" "remote"',
   'site:lever.co "Finance Manager" "United States" "remote"',
 
-  // Lever - FPNA
-  'site:lever.co "FPNA" "San Francisco" "hybrid"',
-  'site:lever.co "FPNA" "San Francisco" "remote"',
-  'site:lever.co "FPNA" "United States" "remote"',
+  // Lever - FP&A
+  'site:lever.co "FP&A" "San Francisco" "hybrid"',
+  'site:lever.co "FP&A" "San Francisco" "remote"',
+  'site:lever.co "FP&A" "United States" "remote"',
 
   // Lever - Financial Planning & Analysis
   'site:lever.co "Financial Planning & Analysis" "San Francisco" "hybrid"',
@@ -133,10 +133,10 @@ const FINANCE_QUERIES = [
   'site:ashbyhq.com "Finance Manager" "San Francisco" "remote"',
   'site:ashbyhq.com "Finance Manager" "United States" "remote"',
 
-  // Ashby - FPNA
-  'site:ashbyhq.com "FPNA" "San Francisco" "hybrid"',
-  'site:ashbyhq.com "FPNA" "San Francisco" "remote"',
-  'site:ashbyhq.com "FPNA" "United States" "remote"',
+  // Ashby - FP&A
+  'site:ashbyhq.com "FP&A" "San Francisco" "hybrid"',
+  'site:ashbyhq.com "FP&A" "San Francisco" "remote"',
+  'site:ashbyhq.com "FP&A" "United States" "remote"',
 
   // Ashby - Financial Planning & Analysis
   'site:ashbyhq.com "Financial Planning & Analysis" "San Francisco" "hybrid"',
@@ -158,10 +158,10 @@ const FINANCE_QUERIES = [
   'site:myworkdayjobs.com "Finance Manager" "San Francisco" "remote"',
   'site:myworkdayjobs.com "Finance Manager" "United States" "remote"',
 
-  // Workday - FPNA
-  'site:myworkdayjobs.com "FPNA" "San Francisco" "hybrid"',
-  'site:myworkdayjobs.com "FPNA" "San Francisco" "remote"',
-  'site:myworkdayjobs.com "FPNA" "United States" "remote"',
+  // Workday - FP&A
+  'site:myworkdayjobs.com "FP&A" "San Francisco" "hybrid"',
+  'site:myworkdayjobs.com "FP&A" "San Francisco" "remote"',
+  'site:myworkdayjobs.com "FP&A" "United States" "remote"',
 
   // Workday - Financial Planning & Analysis
   'site:myworkdayjobs.com "Financial Planning & Analysis" "San Francisco" "hybrid"',
@@ -183,10 +183,10 @@ const FINANCE_QUERIES = [
   'site:jobs.gem.com "Finance Manager" "San Francisco" "remote"',
   'site:jobs.gem.com "Finance Manager" "United States" "remote"',
 
-  // Gem - FPNA
-  'site:jobs.gem.com "FPNA" "San Francisco" "hybrid"',
-  'site:jobs.gem.com "FPNA" "San Francisco" "remote"',
-  'site:jobs.gem.com "FPNA" "United States" "remote"',
+  // Gem - FP&A
+  'site:jobs.gem.com "FP&A" "San Francisco" "hybrid"',
+  'site:jobs.gem.com "FP&A" "San Francisco" "remote"',
+  'site:jobs.gem.com "FP&A" "United States" "remote"',
 
   // Gem - Financial Planning & Analysis
   'site:jobs.gem.com "Financial Planning & Analysis" "San Francisco" "hybrid"',
@@ -208,10 +208,10 @@ const FINANCE_QUERIES = [
   'site:ats.rippling.com "Finance Manager" "San Francisco" "remote"',
   'site:ats.rippling.com "Finance Manager" "United States" "remote"',
 
-  // Rippling - FPNA
-  'site:ats.rippling.com "FPNA" "San Francisco" "hybrid"',
-  'site:ats.rippling.com "FPNA" "San Francisco" "remote"',
-  'site:ats.rippling.com "FPNA" "United States" "remote"',
+  // Rippling - FP&A
+  'site:ats.rippling.com "FP&A" "San Francisco" "hybrid"',
+  'site:ats.rippling.com "FP&A" "San Francisco" "remote"',
+  'site:ats.rippling.com "FP&A" "United States" "remote"',
 
   // Rippling - Financial Planning & Analysis
   'site:ats.rippling.com "Financial Planning & Analysis" "San Francisco" "hybrid"',
