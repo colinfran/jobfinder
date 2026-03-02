@@ -23,10 +23,10 @@ const Page: FC = async () => {
           <div>
             <h3 className="text-lg font-semibold mb-2">Why This Exists</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Job hunting is repetitive and time-consuming. The same roles appear across different
-              platforms, and staying on top of new listings requires constant manual searching.
-              JobFinder automates this process, surfaces relevant opportunities faster, and
-              centralizes everything in one dashboard.
+              I originally built JobFinder for myself because job hunting is repetitive and
+              time-consuming. The same roles appear across different platforms, and staying on top
+              of new listings requires constant manual searching. After seeing how useful it was, I
+              adjusted it to help my younger brother with his search too.
             </p>
           </div>
 
@@ -125,9 +125,9 @@ const Page: FC = async () => {
         {/* Project Status */}
         <div className="mb-6">
           <p className="text-muted-foreground leading-relaxed">
-            JobFinder is actively evolving as I refine my job search workflow. While others are
-            welcome to use it, it is primarily a personal tool designed around my own application
-            strategy and filtering preferences.
+            JobFinder is actively evolving as I refine the workflow for both me and my younger
+            brother. While others are welcome to use it, it is still shaped by our real search
+            process and filtering preferences.
           </p>
         </div>
 
