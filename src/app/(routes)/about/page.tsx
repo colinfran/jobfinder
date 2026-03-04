@@ -1,4 +1,6 @@
 import { Badge } from "@/components/ui/badge"
+import { BrandIcon } from "@/components/brand-icons"
+import { Button } from "@/components/ui/button"
 import { Github, Linkedin, Globe } from "lucide-react"
 import Link from "next/link"
 import { FC } from "react"
@@ -129,6 +131,56 @@ const Page: FC = async () => {
             brother. While others are welcome to use it, it is still shaped by our real search
             process and filtering preferences.
           </p>
+        </div>
+
+        {/* Support */}
+        <div className="mb-8 space-y-4">
+          <h2 className="text-2xl font-bold">Support JobFinder</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            This project cannot run for free forever and will require donations to keep functioning
+            properly in the future. Running JobFinder has real ongoing costs, especially for the
+            Serper API (the most expensive part of this project).
+          </p>
+          <div>
+            <div className="flex flex-wrap gap-3">
+              <Button size="sm" variant="outline" asChild>
+                <Link
+                  href="https://www.paypal.com/donate/?hosted_button_id=BRFQSGWPVTFB6"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <BrandIcon brand="payPal" className="size-4 fill-current dark:fill-current" />
+                  Donate via PayPal
+                </Link>
+              </Button>
+              <Button size="sm" variant="outline" asChild>
+                <Link
+                  href="https://buymeacoffee.com/colinfran"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <BrandIcon
+                    brand="buyMeACoffee"
+                    className="size-4 fill-current dark:fill-current"
+                  />
+                  Buy Me a Coffee
+                </Link>
+              </Button>
+              <Button size="sm" variant="outline" asChild>
+                <Link
+                  href="https://github.com/sponsors/colinfran"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <BrandIcon
+                    brand="githubSponsors"
+                    className="size-4 fill-current dark:fill-current"
+                  />
+                  GitHub Sponsors
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Disclaimer */}

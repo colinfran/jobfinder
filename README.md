@@ -2,6 +2,14 @@
 
 JobFinder is an automated job search aggregator that collects listings from multiple platforms using Google Search. Never miss an opportunity again. Track and manage all your applications in one place.
 
+## Support / Donations
+
+This project cannot run for free forever and will require donations to function properly in the future. Running JobFinder has ongoing costs, especially for the Serper API (the most expensive part of this project).
+
+- PayPal: https://www.paypal.com/donate/?hosted_button_id=BRFQSGWPVTFB6
+- Buy Me a Coffee: https://buymeacoffee.com/colinfran
+- GitHub Sponsors: https://github.com/sponsors/colinfran
+
 ## Technologies Used
 
 [![React](https://img.shields.io/badge/React-000000?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
