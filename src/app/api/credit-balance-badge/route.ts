@@ -20,7 +20,7 @@ export const GET = async (): Promise<NextResponse> => {
     return NextResponse.json(
       {
         schemaVersion: 1,
-        label: "serper days left",
+        label: "Serper credits run out in",
         message: `${daysLeft} days`,
         color: getBadgeColor(daysLeft),
       },
@@ -34,7 +34,7 @@ export const GET = async (): Promise<NextResponse> => {
     return NextResponse.json(
       {
         schemaVersion: 1,
-        label: "serper days left",
+        label: "Serper credits run out in",
         message: "error",
         color: "lightgrey",
       },
