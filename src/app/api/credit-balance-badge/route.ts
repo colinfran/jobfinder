@@ -26,7 +26,9 @@ export const GET = async (): Promise<NextResponse> => {
       },
       {
         headers: {
-          "Cache-Control": "public, max-age=300, s-maxage=300",
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       },
     )
@@ -41,7 +43,9 @@ export const GET = async (): Promise<NextResponse> => {
       {
         status: 500,
         headers: {
-          "Cache-Control": "public, max-age=60, s-maxage=60",
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       },
     )

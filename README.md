@@ -6,7 +6,7 @@ JobFinder is an automated job search aggregator that collects listings from mult
 
 This project cannot run for free forever and will require donations to function properly in the future. Running JobFinder has ongoing costs, especially for the Serper API (the most expensive part of this project).
 
-[![Serper Credits Days Left](https://img.shields.io/endpoint?url=https%3A%2F%2Fjobfinder.dev%2Fapi%2Fcredit-balance-badge)](https://jobfinder.dev/about)
+[![Serper Credits Days Left](https://img.shields.io/endpoint?url=https%3A%2F%2Fjobfinder.dev%2Fapi%2Fcredit-balance-badge&cacheSeconds=0)](https://jobfinder.dev/about)
 
 - PayPal: https://www.paypal.com/donate/?hosted_button_id=BRFQSGWPVTFB6
 - Buy Me a Coffee: https://buymeacoffee.com/colinfran
