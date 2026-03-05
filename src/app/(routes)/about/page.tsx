@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button"
 import { Github, Linkedin, Globe } from "lucide-react"
 import Link from "next/link"
 import { FC } from "react"
+import { getCreditBalance } from "./action"
 
 const Page: FC = async () => {
+  const daysLeft = await getCreditBalance()
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12 max-w-3xl">
@@ -137,9 +139,9 @@ const Page: FC = async () => {
         <div className="mb-8 space-y-4">
           <h2 className="text-2xl font-bold">Support JobFinder</h2>
           <p className="text-muted-foreground leading-relaxed">
-            This project cannot run for free forever and will require donations to keep functioning
+            {`This project cannot run for free forever and will require donations to keep functioning
             properly in the future. Running JobFinder has real ongoing costs, especially for the
-            Serper API (the most expensive part of this project).
+            Serper API (the most expensive part of this project). There are about ${daysLeft} days left before I run out of credits, so if you find JobFinder useful, please consider donating to help cover the costs. Any amount helps and is greatly appreciated!`}
           </p>
           <div>
             <div className="flex flex-wrap gap-3">
