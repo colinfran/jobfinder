@@ -42,7 +42,14 @@ export async function validateWorkdayJobs(appUrl: string, cronSecret: string): P
     if (!origin || !tenant || !site) continue
 
     console.log(`🌐 Fetching Workday board index: ${tenant}/${site} (${boardJobs.length} jobs)`)
-    const postings = await fetchBoardPostings({ origin, tenant, site })
+    let postings: Awaited<ReturnType<typeof fetchBoardPostings>>
+    try {
+      postings = await fetchBoardPostings({ origin, tenant, site })
+    } catch (err) {
+      console.error(`⚠️ Workday board fetch failed, skipping removal for ${tenant}/${site}:`, err)
+      continue
+    }
+
     if (!postings) {
       console.log(`⚠️ Could not fetch board index, skipping removal: ${tenant}/${site}`)
       continue

@@ -6,6 +6,7 @@ import type {
   WorkdayPosting,
   WorkdaySearchResponse,
 } from "./types"
+import { fetchWithRetry } from "../../fetch-with-retry"
 
 const REQUEST_HEADERS = {
   "User-Agent":
@@ -15,11 +16,15 @@ const REQUEST_HEADERS = {
 
 export async function fetchWorkdayJobs(appUrl: string, cronSecret: string): Promise<Job[]> {
   console.log("📊 Fetching Workday jobs...")
-  const jobsResponse = await fetch(`${appUrl}/api/workday/get`, {
-    headers: {
-      Authorization: `Bearer ${cronSecret}`,
+  const jobsResponse = await fetchWithRetry(
+    `${appUrl}/api/workday/get`,
+    {
+      headers: {
+        Authorization: `Bearer ${cronSecret}`,
+      },
     },
-  })
+    { requestLabel: "Workday jobs fetch" },
+  )
 
   if (!jobsResponse.ok) {
     throw new Error(`Failed to fetch Workday jobs: ${jobsResponse.statusText}`)
@@ -34,14 +39,18 @@ export async function deleteInvalidWorkdayJobs(
   cronSecret: string,
   invalidJobIds: string[],
 ): Promise<number> {
-  const deleteResponse = await fetch(`${appUrl}/api/workday/validate`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${cronSecret}`,
+  const deleteResponse = await fetchWithRetry(
+    `${appUrl}/api/workday/validate`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${cronSecret}`,
+      },
+      body: JSON.stringify({ invalidJobIds }),
     },
-    body: JSON.stringify({ invalidJobIds }),
-  })
+    { requestLabel: "Workday invalid job delete" },
+  )
 
   if (!deleteResponse.ok) {
     throw new Error(`Failed to delete Workday jobs: ${deleteResponse.statusText}`)
@@ -68,20 +77,24 @@ export async function fetchBoardPostings(board: WorkdayBoard): Promise<WorkdayPo
     while (page < maxPages) {
       page += 1
 
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          ...REQUEST_HEADERS,
-          "Content-Type": "application/json",
-          Accept: "application/json",
+      const response = await fetchWithRetry(
+        endpoint,
+        {
+          method: "POST",
+          headers: {
+            ...REQUEST_HEADERS,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            appliedFacets: {},
+            limit,
+            offset,
+            searchText: "",
+          }),
         },
-        body: JSON.stringify({
-          appliedFacets: {},
-          limit,
-          offset,
-          searchText: "",
-        }),
-      })
+        { requestLabel: `Workday board search ${board.tenant}/${board.site}` },
+      )
 
       if (!response.ok) {
         break
@@ -121,13 +134,17 @@ export async function fetchDetailPosting(
   if (!parsed.jobPath) return null
 
   const endpoint = `${parsed.origin}/wday/cxs/${parsed.tenant}/${parsed.site}${parsed.jobPath}`
-  const response = await fetch(endpoint, {
-    method: "GET",
-    headers: {
-      ...REQUEST_HEADERS,
-      Accept: "application/json",
+  const response = await fetchWithRetry(
+    endpoint,
+    {
+      method: "GET",
+      headers: {
+        ...REQUEST_HEADERS,
+        Accept: "application/json",
+      },
     },
-  })
+    { requestLabel: `Workday detail fetch ${parsed.tenant}/${parsed.site}` },
+  )
 
   if (!response.ok) {
     return null

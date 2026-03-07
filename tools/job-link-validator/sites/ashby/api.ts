@@ -1,12 +1,17 @@
 import type { Job, JobsResponse } from "./types"
+import { fetchWithRetry } from "../../fetch-with-retry"
 
 export async function fetchAshbyJobs(appUrl: string, cronSecret: string): Promise<Job[]> {
   console.log("📊 Fetching Ashby jobs...")
-  const jobsResponse = await fetch(`${appUrl}/api/ashby/get`, {
-    headers: {
-      Authorization: `Bearer ${cronSecret}`,
+  const jobsResponse = await fetchWithRetry(
+    `${appUrl}/api/ashby/get`,
+    {
+      headers: {
+        Authorization: `Bearer ${cronSecret}`,
+      },
     },
-  })
+    { requestLabel: "Ashby jobs fetch" },
+  )
 
   if (!jobsResponse.ok) {
     throw new Error(`Failed to fetch Ashby jobs: ${jobsResponse.statusText}`)
@@ -21,14 +26,18 @@ export async function deleteInvalidAshbyJobs(
   cronSecret: string,
   invalidJobIds: string[],
 ): Promise<number> {
-  const deleteResponse = await fetch(`${appUrl}/api/ashby/validate`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${cronSecret}`,
+  const deleteResponse = await fetchWithRetry(
+    `${appUrl}/api/ashby/validate`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${cronSecret}`,
+      },
+      body: JSON.stringify({ invalidJobIds }),
     },
-    body: JSON.stringify({ invalidJobIds }),
-  })
+    { requestLabel: "Ashby invalid job delete" },
+  )
 
   if (!deleteResponse.ok) {
     throw new Error(`Failed to delete Ashby jobs: ${deleteResponse.statusText}`)

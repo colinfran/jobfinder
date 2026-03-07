@@ -1,12 +1,17 @@
 import type { Job, JobsResponse } from "./types"
+import { fetchWithRetry } from "../../fetch-with-retry"
 
 export async function fetchGemJobs(appUrl: string, cronSecret: string): Promise<Job[]> {
   console.log("📊 Fetching Gem jobs...")
-  const jobsResponse = await fetch(`${appUrl}/api/gem/get`, {
-    headers: {
-      Authorization: `Bearer ${cronSecret}`,
+  const jobsResponse = await fetchWithRetry(
+    `${appUrl}/api/gem/get`,
+    {
+      headers: {
+        Authorization: `Bearer ${cronSecret}`,
+      },
     },
-  })
+    { requestLabel: "Gem jobs fetch" },
+  )
 
   if (!jobsResponse.ok) {
     throw new Error(`Failed to fetch Gem jobs: ${jobsResponse.statusText}`)
@@ -21,14 +26,18 @@ export async function deleteInvalidGemJobs(
   cronSecret: string,
   invalidJobIds: string[],
 ): Promise<number> {
-  const deleteResponse = await fetch(`${appUrl}/api/gem/validate`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${cronSecret}`,
+  const deleteResponse = await fetchWithRetry(
+    `${appUrl}/api/gem/validate`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${cronSecret}`,
+      },
+      body: JSON.stringify({ invalidJobIds }),
     },
-    body: JSON.stringify({ invalidJobIds }),
-  })
+    { requestLabel: "Gem invalid job delete" },
+  )
 
   if (!deleteResponse.ok) {
     throw new Error(`Failed to delete Gem jobs: ${deleteResponse.statusText}`)
