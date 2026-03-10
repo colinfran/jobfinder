@@ -58,8 +58,7 @@ export async function validateGemJobs(appUrl: string, cronSecret: string): Promi
               const locationInfo = extractGemLocationFromHtml(content)
 
               if (!locationInfo.location) {
-                console.log(`⚠️ Unknown location, skipping removal: ${job.title}`)
-                console.log(`   ↳ link=${job.link}`)
+                markInvalid("missing location metadata")
                 return
               }
 

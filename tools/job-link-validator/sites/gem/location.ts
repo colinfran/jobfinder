@@ -34,6 +34,15 @@ export function isValidGemLocation(locationInfo: GemLocationInfo): boolean {
     "athens",
     "greece",
     "canada",
+    "czech",
+    "czech republic",
+    "czechia",
+    "brno",
+    "prague",
+    "emea",
+    "europe",
+    "uk",
+    "united kingdom",
     "london",
     "seattle",
     "austin",
@@ -41,30 +50,35 @@ export function isValidGemLocation(locationInfo: GemLocationInfo): boolean {
     "los angeles",
   ]
 
+  const usMarkers = ["united states", "u.s.", "us", "usa", "u.s.a"]
+
   const hasSF = sfVariations.some((variation) => normalizedLocation.includes(variation))
   const hasRemote = normalizedLocation.includes("remote")
   const hasClearlyNonSFMarker = clearlyNonSFMarkers.some((marker) =>
     normalizedLocation.includes(marker),
   )
+  const hasUSMarker = usMarkers.some((marker) => normalizedLocation.includes(marker))
+
+  const isAllowedRemoteLocation = hasRemote && (hasSF || hasUSMarker)
 
   if (normalizedWorkplaceType === "in office" || normalizedWorkplaceType === "on-site") {
     return hasSF && !hasClearlyNonSFMarker
   }
 
   if (normalizedWorkplaceType === "hybrid" || normalizedWorkplaceType === "remote") {
-    if (!(hasSF || hasRemote)) {
+    if (!(hasSF || isAllowedRemoteLocation)) {
       return false
     }
-    return !hasClearlyNonSFMarker || hasRemote
+    return !hasClearlyNonSFMarker
   }
 
   if (workplaceType) {
     return false
   }
 
-  if (!(hasSF || hasRemote)) {
+  if (!(hasSF || isAllowedRemoteLocation)) {
     return false
   }
 
-  return !hasClearlyNonSFMarker || hasRemote
+  return !hasClearlyNonSFMarker
 }

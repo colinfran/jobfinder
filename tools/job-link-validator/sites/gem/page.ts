@@ -3,10 +3,124 @@ import type { GemLocationInfo } from "./types"
 
 const WORKPLACE_VALUES = ["hybrid", "remote", "in office", "on-site", "on site", "onsite"]
 
-const LOCATION_HINT_REGEX =
-  /(san francisco|bay area|sf bay|san jose|oakland|berkeley|palo alto|mountain view|redwood city|menlo park|fremont|remote)/i
-
 const cleanText = (value: string): string => value.replace(/\s+/g, " ").trim()
+
+type JsonObject = Record<string, unknown>
+
+const asObject = (value: unknown): JsonObject | null => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null
+  }
+
+  return value as JsonObject
+}
+
+const readText = (value: unknown): string | null => {
+  if (typeof value !== "string") {
+    return null
+  }
+
+  const cleaned = cleanText(value)
+  return cleaned.length > 0 ? cleaned : null
+}
+
+const collectJsonLdObjects = (value: unknown): JsonObject[] => {
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => collectJsonLdObjects(item))
+  }
+
+  const obj = asObject(value)
+  if (!obj) {
+    return []
+  }
+
+  const graph = obj["@graph"]
+  if (Array.isArray(graph)) {
+    return graph.flatMap((item) => collectJsonLdObjects(item))
+  }
+
+  return [obj]
+}
+
+const extractJobPostingFromJsonLd = (html: string): GemLocationInfo => {
+  const scriptRegex = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi
+
+  let workplaceType: string | null = null
+  let location: string | null = null
+  let match = scriptRegex.exec(html)
+
+  while (match) {
+    const rawJson = match[1]?.trim()
+
+    if (!rawJson) {
+      match = scriptRegex.exec(html)
+      continue
+    }
+
+    try {
+      const parsed = JSON.parse(rawJson) as unknown
+      const objects = collectJsonLdObjects(parsed)
+
+      for (const obj of objects) {
+        const type = readText(obj["@type"])
+        if (type?.toLowerCase() !== "jobposting") {
+          continue
+        }
+
+        const locationType = readText(obj.jobLocationType)
+        if (locationType?.toLowerCase().includes("telecommute")) {
+          workplaceType = "remote"
+        }
+
+        const jobLocation = obj.jobLocation
+        const locations = Array.isArray(jobLocation) ? jobLocation : [jobLocation]
+
+        for (const item of locations) {
+          const locationObj = asObject(item)
+          const addressObj = asObject(locationObj?.address)
+
+          const parts = [
+            readText(locationObj?.name),
+            readText(addressObj?.addressLocality),
+            readText(addressObj?.addressRegion),
+            readText(addressObj?.addressCountry),
+          ].filter((value): value is string => Boolean(value))
+
+          if (parts.length > 0) {
+            location = cleanText(parts.join(", "))
+            break
+          }
+        }
+
+        if (!location) {
+          const req = obj.applicantLocationRequirements
+          const reqEntries = Array.isArray(req) ? req : [req]
+
+          for (const entry of reqEntries) {
+            const reqObj = asObject(entry)
+            const reqAddress = asObject(reqObj?.address)
+            const country = readText(reqAddress?.addressCountry) ?? readText(reqObj?.name)
+
+            if (country) {
+              location = country
+              break
+            }
+          }
+        }
+
+        if (location || workplaceType) {
+          return { location, workplaceType }
+        }
+      }
+    } catch {
+      // Ignore malformed JSON-LD blocks.
+    }
+
+    match = scriptRegex.exec(html)
+  }
+
+  return { location, workplaceType }
+}
 
 const extractClassTextValues = (html: string, classPrefix: string): string[] => {
   const values: string[] = []
@@ -37,7 +151,7 @@ export function hasGemError(html: string): boolean {
 }
 
 export function extractGemLocationFromHtml(html: string): GemLocationInfo {
-  const normalized = cleanText(html.replace(/<[^>]*>/g, " "))
+  const jsonLdLocation = extractJobPostingFromJsonLd(html)
 
   const iconLabelValues = extractClassTextValues(html, "iconLabel")
   const labelTextValues = extractClassTextValues(html, "labelText")
@@ -45,18 +159,15 @@ export function extractGemLocationFromHtml(html: string): GemLocationInfo {
 
   const workplaceType =
     metaValues.find((value) => WORKPLACE_VALUES.includes(value.toLowerCase())) ??
-    normalized.match(/\b(hybrid|remote|in office|on-site|on site|onsite)\b/i)?.[1] ??
+    jsonLdLocation.workplaceType ??
     null
 
   const location =
+    jsonLdLocation.location ??
     iconLabelValues.find((value) => {
       const lower = value.toLowerCase()
-      if (WORKPLACE_VALUES.includes(lower)) return false
-      return LOCATION_HINT_REGEX.test(value)
+      return !WORKPLACE_VALUES.includes(lower)
     }) ??
-    normalized.match(
-      /\b(san francisco(?:\s*bay\s*area)?|bay area|sf bay(?: area)?|san jose|oakland|berkeley|palo alto|mountain view|redwood city|menlo park|fremont|remote)\b/i,
-    )?.[1] ??
     null
 
   return {
