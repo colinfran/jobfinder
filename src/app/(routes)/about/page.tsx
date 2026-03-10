@@ -136,7 +136,7 @@ const Page: FC = async () => {
         </div>
 
         {/* Support */}
-        <div className="mb-8 space-y-4">
+        <div className="mb-8 scroll-mt-24 space-y-4" id="support-jobfinder">
           <h2 className="text-2xl font-bold">Support JobFinder</h2>
           <p className="text-muted-foreground leading-relaxed">
             {`This project cannot run for free forever and will require donations to keep functioning

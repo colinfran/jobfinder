@@ -7,6 +7,8 @@ import "./globals.css"
 import { FC } from "react"
 import { ThemeProvider } from "@/providers/theme-provider"
 import Header from "@/components/header/header"
+import { DonateToast } from "@/components/donate-toast"
+import { Toaster } from "@/components/ui/sonner"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -100,6 +102,8 @@ const RootLayout: FC<RootLayoutProps> = ({ children }) => {
               <main className="flex min-h-0 flex-1 flex-col gap-2 md:gap-4">{children}</main>
             </div>
           </TooltipProvider>
+          <Toaster />
+          <DonateToast />
         </ThemeProvider>
         <Analytics />
       </body>

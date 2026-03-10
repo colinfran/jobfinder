@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FC, Suspense, useState } from "react"
+import React, { FC, Suspense, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
 import { Loader2 } from "lucide-react"
@@ -11,12 +11,23 @@ import { AuthError } from "@/components/auth-error"
 import { BrandIcon } from "@/components/brand-icons"
 
 const Page: FC = () => {
-  const [loading, setLoading] = useState({ github: false, google: false })
+  const [loadingProvider, setLoadingProvider] = useState<"github" | "google" | null>(null)
+  const isAuthenticatingRef = useRef(false)
 
-  const onSubmit = (brand: "github" | "google"): void => {
-    setLoading((prev) => ({ ...prev, [brand]: true }))
-    authenticate(brand)
+  const onSubmit = async (brand: "github" | "google"): Promise<void> => {
+    if (isAuthenticatingRef.current) return
+
+    isAuthenticatingRef.current = true
+    setLoadingProvider(brand)
+
+    await authenticate(brand)
+
+    // If sign-in does not redirect (e.g. popup blocked/network issue), unlock the buttons.
+    isAuthenticatingRef.current = false
+    setLoadingProvider(null)
   }
+
+  const isAuthenticating = loadingProvider !== null
 
   return (
     <div className="mx-[2px] flex flex-col items-start p-8 md:items-center">
@@ -49,10 +60,12 @@ const Page: FC = () => {
           <div className="flex flex-col gap-2 w-full">
             <Button
               className="flex w-full cursor-pointer gap-4"
-              disabled={loading.google}
-              onClick={() => onSubmit("google")}
+              disabled={isAuthenticating}
+              onClick={() => {
+                void onSubmit("google")
+              }}
             >
-              {loading.google ? (
+              {loadingProvider === "google" ? (
                 <Loader2 className="animate-spin" size={16} />
               ) : (
                 <BrandIcon brand="google" />
@@ -61,10 +74,12 @@ const Page: FC = () => {
             </Button>
             <Button
               className="flex w-full cursor-pointer gap-4"
-              disabled={loading.github}
-              onClick={() => onSubmit("github")}
+              disabled={isAuthenticating}
+              onClick={() => {
+                void onSubmit("github")
+              }}
             >
-              {loading.github ? (
+              {loadingProvider === "github" ? (
                 <Loader2 className="animate-spin" size={16} />
               ) : (
                 <BrandIcon brand="github" />
