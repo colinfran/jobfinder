@@ -126,7 +126,7 @@ export const JobList: FC = () => {
             </div>
           </div>
 
-          <VirtualJobRows jobs={filteredJobs} resetScrollKey={`${topic}-${filter}`} />
+          <VirtualJobRows jobs={filteredJobs} resetScrollKey={`${topic}-${filter}-${search}`} />
         </div>
       )}
     </div>
