@@ -53,40 +53,37 @@ export const DonateToast: FC = () => {
 
   useEffect(() => {
     const checkAndShowToast = async (): Promise<void> => {
+      const lastShown = localStorage.getItem(STORAGE_KEY)
+      const now = Date.now()
+
+      const shouldShow = !lastShown || now - parseInt(lastShown, 10) >= SIX_HOURS_MS
+
+      if (!shouldShow || toastIdRef.current) {
+        return
+      }
+
       const { isAdmin, description } = await getDonateToastData()
 
       if (isAdmin) {
         return
       }
 
-      const lastShown = localStorage.getItem(STORAGE_KEY)
-      const now = Date.now()
-
-      const shouldShow = !lastShown || now - parseInt(lastShown, 10) >= SIX_HOURS_MS
-
-      // Only show if we should and there's no existing toast
-      if (shouldShow && !toastIdRef.current) {
-        if (toastIdRef.current) {
-          return
-        }
-
-        toastIdRef.current = toast("Support JobFinder", {
-          description,
-          closeButton: true,
-          duration: Infinity,
-          action: {
-            label: "Donate now",
-            onClick: () => {
-              localStorage.setItem(STORAGE_KEY, Date.now().toString())
-              window.location.assign("/about#support-jobfinder")
-            },
-          },
-          onDismiss: () => {
+      toastIdRef.current = toast("Support JobFinder", {
+        description,
+        closeButton: true,
+        duration: Infinity,
+        action: {
+          label: "Donate now",
+          onClick: () => {
             localStorage.setItem(STORAGE_KEY, Date.now().toString())
-            toastIdRef.current = null
+            window.location.assign("/about#support-jobfinder")
           },
-        })
-      }
+        },
+        onDismiss: () => {
+          localStorage.setItem(STORAGE_KEY, Date.now().toString())
+          toastIdRef.current = null
+        },
+      })
     }
 
     // Check on mount
