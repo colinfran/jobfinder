@@ -88,18 +88,6 @@ export const DonateToast: FC = () => {
 
     // Check on mount
     void checkAndShowToast()
-
-    // Set up interval to check every minute (in case tab stays open)
-    const interval = setInterval(() => {
-      void checkAndShowToast()
-    }, 60 * 1000)
-
-    return () => {
-      clearInterval(interval)
-      if (toastIdRef.current) {
-        toast.dismiss(toastIdRef.current)
-      }
-    }
   }, [])
 
   return null
